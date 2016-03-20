@@ -1,12 +1,10 @@
 function build(creep) {
     var sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
-    if(sites.length) {
-        if(creep.build(sites[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sites[0])
-        }
-        return true;
-    }
-    return false;
+    if(sites.length == 0)
+        return false;
+    if(creep.build(sites[0]) == ERR_NOT_IN_RANGE)
+        creep.moveTo(sites[0])
+    return true;
 }
 
 function recharge(creep) {
