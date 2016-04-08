@@ -1,47 +1,84 @@
-function build(creep) {
-    var sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
-    if(sites.length == 0)
+function findSpawn(creep) {
+    var roomSpawns = creep.room.find(FIND_MY_SPAWNS);
+    if(roomSpawns.length)
+        return roomSpawns[0]
+    console.log('Can not find spawn for creep ' + creep)
+    return undefined;
+}
+
+function isEnergyAvailable(creep, spawn) {
+    var needEnergy = creep.carryCapacity - creep.carry;
+    return needEnergy==0 ||
+           spawn != undefined && spawn.energy >= needEnergy;
+}
+
+function recharge(creep, spawn) {
+    if(!isEnergyAvailable(creep, spawn))
         return false;
-    if(creep.build(sites[0]) == ERR_NOT_IN_RANGE)
-        creep.moveTo(sites[0])
+    if(spawn.transferEnergy(creep)==ERR_NOT_IN_RANGE)
+        creep.moveTo(spawn);
     return true;
 }
 
-function recharge(creep) {
-	if(creep.carry.energy >= creep.carryCapacity)
-	    return false;
-    if(Game.spawns.Spawn1.transferEnergy(creep) == ERR_NOT_IN_RANGE)
-        creep.moveTo(creep);
+function build(creep, site) {
+    if()
+    if(creep.build(site) == ERR_NOT_IN_RANGE)
+        creep.moveTo(site)
     return true;
 }
 
 function repair(creep)
 {
-    var units = creep.room.find(FIND_MY_STRUCTURES, { filter: x => x.hits < x.hitsMax });
-    units.sort((a,b) => a.hits - b.hits);
-    if(units.length > 0) {
-        var unit = units[0]
-        var ret = creep.repair(units[0])
-        console.log('Repairing [' + unit + ']: ' + unit.hits + '/' + unit.hitsMax + ' => ' + ret)
-        if( ret == ERR_NOT_IN_RANGE) {
-            creep.moveTo(unit);
-        }
-    }
-    return false;
+    var structures = creep.room.find(FIND_MY_STRUCTURES, { filter: x => x.hits < x.hitsMax });
+    structures.sort((a,b) => a.hits - b.hits);
+    if(structures.length == 0)
+        return false;
+
+    var structure = structures[0]
+    var ret = creep.repair(structures[0])
+    console.log('Repairing [' + structure + ']: ' + structure.hits + '/' + structure.hitsMax + ' => ' + ret)
+    if( ret == ERR_NOT_IN_RANGE) {
+        creep.moveTo(unit);
+
+    return true;
 }
 
 function harvest(creep) {
-	if(creep.carry.energy < creep.carryCapacity) {
-		var sources = creep.room.find(FIND_SOURCES);
-		if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-			creep.moveTo(sources[0]);
-		}			
-	}
-	else {
-		if(creep.transfer(Game.spawns.Spawn1, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-			creep.moveTo(Game.spawns.Spawn1);
-		}
-	}
+    if(creep == undefined)
+        return false;
+
+    var spawn = findSpawn(creep)
+    if(spawn == undefined)
+        return false;
+
+    var sourceId = creep.memory.sourceId;
+    if(sourceId == undefined)
+        return false;
+
+    var source = creep.getObjectById(sourceId)
+    if(source == undefined)
+        return false;
+
+    return harvest(creep, spawn, source)
+}
+
+function harvest(creep, spawn, source)
+{
+    if( creep == undefined ||
+        spawn == undefined ||
+        source == undefined )
+        return -1;
+
+    if(creep.carry.energy < creep.carryCapacity)
+    {
+        if(creep.harvest(source) == ERR_NOT_IN_RANGE)
+            creep.moveTo(source);
+    }
+    else
+    {
+        if(creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
+            creep.moveTo(spawn);
+    }
 }
 
 function upgrade(creep)
@@ -51,7 +88,8 @@ function upgrade(creep)
     return true;
 }
 
-module.exports.move = function (creep) {
+module.exports.move = function (creep) 
+{
     return recharge(creep)
            || build(creep)
            || repair(creep)
