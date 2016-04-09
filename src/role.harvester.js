@@ -12,14 +12,6 @@ module.exports.move = function(creep, source, storage)
 {
     if(isFull(creep))
     {
-        var ret = creep.harvest(source);
-        if (ret == ERR_NOT_IN_RANGE)
-        {
-            creep.moveTo(source);
-        }
-    }
-    else
-    {
         if(isStorageFull(storage))
         {
             var controller = creep.room.controller;
@@ -36,6 +28,14 @@ module.exports.move = function(creep, source, storage)
             {
                 creep.moveTo(storage);
             }
+        }
+    }
+    else
+    {
+        var ret = creep.harvest(source);
+        if (ret == ERR_NOT_IN_RANGE)
+        {
+            creep.moveTo(source);
         }
     }
 }
