@@ -1,11 +1,16 @@
+function isFull(creep)
+{
+    return _.sum(creep.carry) >= creep.carryCapacity;
+}
+
+function isStorageFull(storage)
+{
+    return storage.energy >= storage.energyCapacity;
+}
+
 module.exports.move = function(creep, source, storage)
 {
-    var current = _.sum(creep.carry);
-    var total = creep.carryCapacity;
-
-    console.log(current + '/' + total)
-
-    if(current < total)
+    if(isFull(creep))
     {
         var ret = creep.harvest(source);
         if (ret == ERR_NOT_IN_RANGE)
@@ -15,14 +20,22 @@ module.exports.move = function(creep, source, storage)
     }
     else
     {
-        var ret = creep.transfer(storage, RESOURCE_ENERGY);
-        if (ret == ERR_NOT_IN_RANGE)
+        if(isStorageFull(storage))
         {
-            creep.moveTo(storage);
+            var controller = creep.room.controller;
+            var ret = creep.upgradeController(controller);
+            if (ret == ERR_NOT_IN_RANGE)
+            {
+                creep.moveTo(controller);
+            }
         }
-        else if(ret == ERR_FULL)
+        else
         {
-            console.log('HAHA I KEEP IT TO MYSELF!');
+            var ret = creep.transfer(storage, RESOURCE_ENERGY);
+            if (ret == ERR_NOT_IN_RANGE)
+            {
+                creep.moveTo(storage);
+            }
         }
     }
 }
