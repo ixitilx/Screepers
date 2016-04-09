@@ -18,7 +18,7 @@ module.exports.move = function(creep, source, storage)
         var ret = creep.transfer(storage, RESOURCE_ENERGY);
         if (ret == ERR_NOT_IN_RANGE)
         {
-            creep.moveTo(source);
+            creep.moveTo(storage);
         }
         else if(ret == ERR_FULL)
         {
