@@ -7,6 +7,9 @@ module.exports.loop = function ()
     var source = room.find(FIND_SOURCES_ACTIVE)
     for(var creep in Game.creeps)
     {
-        harvester.move(creep, source, storage);
+        if(creep.memory.role == 'harvester')
+        {
+            harvester.move(creep, source, storage);
+        }
     }
 }
