@@ -1,6 +1,11 @@
 module.exports.move = function(creep, source, storage)
 {
-    if(_.sum(creep.carry) < creep.carryCapacity)
+    var current = _.sum(creep.carry);
+    var total = creep.carryCapacity;
+
+    console.log(current + '/' + total)
+
+    if(current < total)
     {
         var ret = creep.harvest(source);
         if (ret == ERR_NOT_IN_RANGE)
