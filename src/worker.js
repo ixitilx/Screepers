@@ -7,10 +7,10 @@ Table           = tableModule.Table
 
 function onTick(creep)
 {
-    var task = Task.getById(creep.memory.taskId);
+    var task = taskModule.GetTaskById(creep.memory.taskId);
     var status = task.do(creep);
 
-    var table = TaskTable.getById(creep.memory.tableId);
+    var table = tableModule.GetTableById(creep.memory.tableId);
     var newTask = table.Lookup(task, status)
 
     if(task.Id != newTask.Id)

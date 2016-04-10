@@ -6,11 +6,6 @@ function Table(defaultTask)
     this.transitionTable = new Array();
     this.transitionTable[-1] = defaultTask;
 
-    this.GetById = function(index)
-    {
-        return tableRepo[index];
-    }
-
     this.AddStateTransition = function(task, status, newTask)
     {
         if(this.transitionTable[task.Id] == undefined)
@@ -31,3 +26,4 @@ function Table(defaultTask)
 }
 
 exports.Table = Table;
+exports.GetTableById = function(id) { return tableRepo[id]; }

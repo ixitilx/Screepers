@@ -10,7 +10,6 @@ function registerTask(task)
 function Task()
 {
     this.Id = registerTask(this);
-    this.getById = function(index) { return taskRepo[index]; }
 
     taskRepo.push(this);
 }
@@ -24,3 +23,4 @@ function TaskFromDoFunc(doFunc)
 
 exports.Task = Task;
 exports.TaskFromDoFunc = TaskFromDoFunc;
+exports.GetTaskById = function(id) { return taskRepo[id]; }
