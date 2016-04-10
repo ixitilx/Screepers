@@ -5,8 +5,6 @@ var tableModule = require('table')
 
 var tasklib = require('tasklib')
 
-var Table = tableModule.Table
-
 function onTick(creep)
 {
     var task = taskModule.GetTaskById(creep.memory.taskId)
@@ -25,9 +23,9 @@ function onTick(creep)
     }
 }
 
-function WorkerTable()
+function createWorkerTable()
 {
-    var table = new Table(tasklib.HarvestEnergyTask)
+    var table = new tableModule.Table(tasklib.HarvestEnergyTask)
 
     // Main logic
     table.AddStateTransition(tasklib.HarvestEnergyTask,     constants.TASK_DONE,        tasklib.StoreEnergyTask)
@@ -56,30 +54,9 @@ function WorkerTable()
     return table
 }
 
-function HarvesterTable()
-{
-    var table = new Table(tasklib.HarvestEnergyTask)
+var workerTable = createWorkerTable()
 
-    // Main logic
-    table.AddStateTransition(tasklib.HarvestEnergyTask,     constants.TASK_DONE,        tasklib.StoreEnergyTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_FULL,                   tasklib.BuildTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
-
-    // Doing fine
-    table.AddStateTransition(tasklib.HarvestEnergyTask,     OK,                         tasklib.HarvestEnergyTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       OK,                         tasklib.StoreEnergyTask)
-
-    // Move around
-    table.addMoveTransition(tasklib.HarvestEnergyTask,  tasklib.MoveToSourceTask)
-    table.addMoveTransition(tasklib.StoreEnergyTask,    tasklib.MoveToStorageTask)
-
-    return table
-}
-
-var workerTable = WorkerTable()
-var harvesterTable = HarvesterTable()
-
-function SpawnWorker(spawn)
+exports.spawnHarvester = function(spawn)
 {
     var mem = new Object()
     mem.role = 'worker'
@@ -94,22 +71,4 @@ function SpawnWorker(spawn)
     spawn.createCreep([WORK, CARRY, MOVE, MOVE], null, mem)
 }
 
-function SpawnHarvester(spawn)
-{
-    var mem = new Object()
-    mem.role = 'harvester'
-
-    var source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
-
-    mem.storageId = '570a80e8d21b022c2c7e8ada'
-    mem.taskId = HarvestEnergyTask.Id
-    mem.tableId = harvesterTable.Id
-    mem.sourceId = source.id
-
-    spawn.createCreep([WORK, CARRY, MOVE, MOVE], null, mem)
-}
-
-
 exports.onTick = onTick
-exports.spawnWorker = SpawnWorker
-exports.spawnHarvester = SpawnHarvester

@@ -11,10 +11,10 @@ function creepsByRole(role)
 
 function getProgress(site)
 {
-    return 100 * site.progress / site.progressTotal;
+    return 1000000 * site.progress / site.progressTotal;
 }
 
-function onTick() 
+function mainLoop()
 {
     var storage = Game.spawns.Spawn1
     for(var creepName in Game.creeps)
@@ -51,5 +51,5 @@ function onTick()
     //     worker.spawnHarvester(Game.spawns.Spawn1)
 }
 
-exports.loop = onTick;
+exports.loop = mainLoop;
 exports.creepsByRole = creepsByRole;
