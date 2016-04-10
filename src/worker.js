@@ -206,7 +206,7 @@ function SpawnWorker(spawn)
     mem.tableId = workerTable.Id
     mem.sourceId = source.id
 
-    spawn.createCreep([WORK, WORK, CARRY, MOVE], null, mem)
+    spawn.createCreep([WORK, CARRY, MOVE, MOVE], null, mem)
 }
 
 function SpawnHarvester(spawn)
