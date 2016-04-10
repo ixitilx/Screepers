@@ -19,7 +19,7 @@ function onTick(creep)
     if(task && newTask && task.Id != newTask.Id)
     {
         creep.memory.taskId = newTask.Id
-        creep.say('Switching to [' + newTask.Name + ']')
+        creep.say(newTask.Name)
     }
 }
 
