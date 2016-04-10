@@ -2,6 +2,7 @@ var constants   = require('constants')
 var tableModule = require('table')
 var tasklib     = require('tasklib')
 
+
 function createHarvesterTable()
 {
     var table = new tableModule.Table(tasklib.HarvestEnergyTask)
@@ -31,10 +32,9 @@ exports.spawn = function(spawn)
 
     var source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
 
-    mem.storageId = '570a80e8d21b022c2c7e8ada'
     mem.taskId = tasklib.HarvestEnergyTask.Id
     mem.tableId = harvesterTable.Id
     mem.sourceId = source.id
 
-    spawn.createCreep([WORK, CARRY, MOVE, MOVE], null, mem)
+    spawn.createCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], null, mem)
 }

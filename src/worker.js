@@ -1,5 +1,4 @@
 var constants   = require('constants')
-var taskModule  = require('task')
 var tableModule = require('table')
 var tasklib     = require('tasklib')
 
@@ -43,10 +42,10 @@ exports.spawn = function(spawn)
 
     var mem = new Object()
     mem.role = 'worker'
-    mem.storageId = spawn.id
+
     mem.taskId = tasklib.HarvestEnergyTask.Id
     mem.tableId = workerTable.Id
     mem.sourceId = source.id
 
-    spawn.createCreep([WORK, CARRY, MOVE, MOVE], null, mem)
+    spawn.createCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], null, mem)
 }

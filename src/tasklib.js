@@ -38,7 +38,7 @@ function StoreEnergy(creep)
 {
     var freeRoom = function(a) { return a.energyCapacity - a.energy }
     var storage = Game.getObjectById(creep.memory.storageId)
-    if(freeRoom(storage) == 0)
+    if(storage==undefined || freeRoom(storage) == 0)
     {
         var isStorage = function(structure)
         {
