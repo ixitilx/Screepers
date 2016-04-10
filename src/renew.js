@@ -1,9 +1,9 @@
 var nearbyCreeps = new Array();
 
 
-function findOldCreep(spawn)
+function findOldCreep(storage)
 {
-    nearbyCreeps = spawn.room.findInRange(FIND_MY_CREEPS, 1);
+    nearbyCreeps = storage.pos.findInRange(FIND_MY_CREEPS, 1);
 
     if (nearbyCreeps[0])
         var findOldCreepRet = nearbyCreeps[0];
@@ -15,12 +15,12 @@ function findOldCreep(spawn)
     return findOldCreepRet
 }
 
-function renewCreep(spawn, creep)
+function renewCreep(storage, creep)
 {
     if creep.ticksToLive <= floor(500/creep.body.length)
     {
         console.log(creep.name + 'was renewed.')
-        return spawn.renewCreep(creep);
+        return storage.renewCreep(creep);
     }
     else return DONE;
 }
