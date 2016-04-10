@@ -4,7 +4,7 @@ var tasklib     = require('tasklib')
 
 function createHarvesterTable()
 {
-    var table = new Table(tasklib.HarvestEnergyTask)
+    var table = new tableModule.Table(tasklib.HarvestEnergyTask)
 
     // Main logic
     table.AddStateTransition(tasklib.HarvestEnergyTask,     constants.TASK_DONE,        tasklib.StoreEnergyTask)
