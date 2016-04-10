@@ -56,13 +56,11 @@ function createWorkerTable()
 
 var workerTable = createWorkerTable()
 
-exports.spawnHarvester = function(spawn)
 {
-    var mem = new Object()
-    mem.role = 'worker'
-
     var source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
 
+    var mem = new Object()
+    mem.role = 'worker'
     mem.storageId = spawn.id
     mem.taskId = HarvestEnergyTask.Id
     mem.tableId = workerTable.Id

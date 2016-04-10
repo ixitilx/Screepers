@@ -1,5 +1,6 @@
 var worker = require('worker')
-var renew =  require('renew')
+var harvester = require('harvester')
+var renew = require('renew')
 
 function creepsByRole(role)
 {
@@ -45,10 +46,10 @@ function mainLoop()
     // renew.renewCreep(storage, renew.findOldCreep(storage))
 
     if(creepsByRole('worker').length < 10)
-        worker.spawnWorker(Game.spawns.Spawn1)
+        worker.spawn(Game.spawns.Spawn1)
 
     // if(creepsByRole('harvester').length < 1)
-    //     worker.spawnHarvester(Game.spawns.Spawn1)
+    //     harvester.spawn(Game.spawns.Spawn1)
 }
 
 exports.loop = mainLoop;

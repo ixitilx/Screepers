@@ -24,7 +24,7 @@ function createHarvesterTable()
 
 var harvesterTable = createHarvesterTable()
 
-exports.spawnHarvester = function(spawn)
+exports.spawn = function(spawn)
 {
     var mem = new Object()
     mem.role = 'harvester'
