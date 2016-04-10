@@ -13,6 +13,8 @@ function onTick(creep)
     console.log(task.Name + ': ' + status);
 
     var table = tableModule.GetTableById(creep.memory.tableId);
+
+    console.log(table);
     var newTask = table.Lookup(task, status)
 
     console.log(newTask);
