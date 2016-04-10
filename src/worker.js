@@ -84,6 +84,8 @@ function Build(creep)
 MoveToSourceTask        = TaskFromDoFunc('MoveToSource',        MoveToSource)
 MoveToStorageTask       = TaskFromDoFunc('MoveToStorage',       MoveToStorage)
 MoveToControllerTask    = TaskFromDoFunc('MoveToController',    MoveToController)
+MoveToSiteTask          = TaskFromDoFunc('MoveToSite',          MoveToSite)
+
 HarvestEnergyTask       = TaskFromDoFunc('HarvestEnergy',       HarvestEnergy)
 StoreEnergyTask         = TaskFromDoFunc('StoreEnergy',         StoreEnergy)
 UpgradeControllerTask   = TaskFromDoFunc('UpgradeController',   UpgradeController)
@@ -111,14 +113,14 @@ function WorkerTable()
     table.AddStateTransition(HarvestEnergyTask,     ERR_NOT_IN_RANGE, MoveToSourceTask)
     table.AddStateTransition(StoreEnergyTask,       ERR_NOT_IN_RANGE, MoveToStorageTask)
     table.AddStateTransition(UpgradeControllerTask, ERR_NOT_IN_RANGE, MoveToControllerTask)
-    table.AddStateTransition(BuildTask,             ERR_NOT_IN_RANGE, MoveToSite)
+    table.AddStateTransition(BuildTask,             ERR_NOT_IN_RANGE, MoveToSiteTask)
 
     // Suppress 'missing transition' errors
     // Doing fine, continue same task
     table.AddStateTransition(MoveToSourceTask,      OK, MoveToSourceTask)
     table.AddStateTransition(MoveToStorageTask,     OK, MoveToStorageTask)
     table.AddStateTransition(MoveToControllerTask,  OK, MoveToControllerTask)
-    table.AddStateTransition(MoveToSite,            OK, MoveToSite)
+    table.AddStateTransition(MoveToSiteTask,            OK, MoveToSiteTask)
 
     table.AddStateTransition(HarvestEnergyTask,     OK, HarvestEnergyTask)
     table.AddStateTransition(StoreEnergyTask,       OK, StoreEnergyTask)
@@ -129,13 +131,13 @@ function WorkerTable()
     table.AddStateTransition(MoveToSourceTask,      ERR_TIRED, MoveToSourceTask)
     table.AddStateTransition(MoveToStorageTask,     ERR_TIRED, MoveToStorageTask)
     table.AddStateTransition(MoveToControllerTask,  ERR_TIRED, MoveToControllerTask)
-    table.AddStateTransition(MoveToSite,            ERR_TIRED, MoveToSite)
+    table.AddStateTransition(MoveToSiteTask,        ERR_TIRED, MoveToSiteTask)
 
     // Move-no-path
     table.AddStateTransition(MoveToSourceTask,      ERR_NO_PATH, MoveToSourceTask)
     table.AddStateTransition(MoveToStorageTask,     ERR_NO_PATH, MoveToStorageTask)
     table.AddStateTransition(MoveToControllerTask,  ERR_NO_PATH, MoveToControllerTask)
-    table.AddStateTransition(MoveToSite,            ERR_NO_PATH, MoveToSite)
+    table.AddStateTransition(MoveToSiteTask,        ERR_NO_PATH, MoveToSiteTask)
 
     // Busy
     table.AddStateTransition(HarvestEnergyTask,     ERR_BUSY, HarvestEnergyTask)
