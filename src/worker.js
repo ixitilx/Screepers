@@ -85,7 +85,7 @@ UpgradeControllerTask = TaskFromDoFunc(UpgradeController);
 
 function WorkerTable()
 {
-    table = Table(HarvestEnergyTask);
+    table = new Table(HarvestEnergyTask);
 
     // Move tasks
     table.AddStateTransition(MoveToSourceTask, OK,      MoveToSourceTask);
