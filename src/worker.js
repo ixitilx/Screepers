@@ -68,7 +68,7 @@ function StoreEnergy(creep)
         return DONE;
 
     storage = Game.getObjectById(creep.memory.storageId);
-    return creep.tranfer()
+    return creep.transfer(storage)
 }
 
 function UpgradeController(creep)
