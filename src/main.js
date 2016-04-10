@@ -33,7 +33,7 @@ function mainLoop()
         if(sites && sites.length > 0)
         {
             sites.sort(
-                function(a, b) { return getProgress(a) - getProgress(b) }
+                function(a, b) { return getProgress(b) - getProgress(a) }
             );
 
             creepsByRole('worker').forEach(
