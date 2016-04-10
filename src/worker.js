@@ -104,6 +104,7 @@ function WorkerTable()
     table.AddStateTransition(StoreEnergyTask,       ERR_NOT_IN_RANGE, MoveToStorageTask);
     table.AddStateTransition(UpgradeControllerTask, ERR_NOT_IN_RANGE, MoveToControllerTask);
 
+    // Suppress 'missing transition' errors
     // Doing fine, continue same task
     table.AddStateTransition(MoveToSourceTask,      OK, MoveToSourceTask);
     table.AddStateTransition(MoveToStorageTask,     OK, MoveToStorageTask);
@@ -111,8 +112,8 @@ function WorkerTable()
     table.AddStateTransition(HarvestEnergyTask,     OK, HarvestEnergyTask);
     table.AddStateTransition(StoreEnergyTask,       OK, StoreEnergyTask);
     table.AddStateTransition(UpgradeControllerTask, OK, UpgradeControllerTask);
+    table.AddStateTransition(BuildTask,             OK, BuildTask);
 
-    // Suppress 'missing transition' errors
     // Move-tired
     table.AddStateTransition(MoveToSourceTask,      ERR_TIRED, MoveToSourceTask);
     table.AddStateTransition(MoveToStorageTask,     ERR_TIRED, MoveToStorageTask);
