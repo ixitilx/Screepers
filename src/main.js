@@ -1,6 +1,7 @@
 var worker = require('worker');
 var renew = require('renew'); 
 
+
 module.exports.loop = function () 
 {
     var storage = Game.spawns.Spawn1
