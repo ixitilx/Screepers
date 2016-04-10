@@ -53,9 +53,11 @@ function MoveToController(creep)    { return MoveToId(creep, creep.room.controll
 
 function HarvestEnergy(creep)
 {
+    console.log('Harvesting!');
     if(_.sum(creep.carry) >= creep.carryCapacity)
         return DONE;
 
+    console.log('Harvesting Energy Source!');
     source = Game.getObjectById(creep.memory.sourceId);
     return creep.harvest(source);
 }
