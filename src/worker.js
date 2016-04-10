@@ -221,7 +221,7 @@ function SpawnHarvester(spawn)
     mem.tableId = harvesterTable.Id
     mem.sourceId = source.id
 
-    spawn.createCreep([WORK, CARRY, MOVE], null, mem)
+    spawn.createCreep([WORK, CARRY, MOVE, MOVE], null, mem)
 }
 
 
