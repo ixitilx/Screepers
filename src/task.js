@@ -7,16 +7,17 @@ function registerTask(task)
 	return id;
 }
 
-function Task()
+function Task(name)
 {
     this.Id = registerTask(this);
+    this.Name = name;
 
     taskRepo.push(this);
 }
 
-function TaskFromDoFunc(doFunc)
+function TaskFromDoFunc(name, doFunc)
 {
-	var task = new Task();
+	var task = new Task(name);
 	task.do = doFunc;
 	return task;
 }

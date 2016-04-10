@@ -7,11 +7,10 @@ Table           = tableModule.Table
 
 function onTick(creep)
 {
-
     var task = taskModule.GetTaskById(creep.memory.taskId);
     var status = task.do(creep);
-    if(status != OK)
-        console.log('onTick: task.do = ' + status);
+
+    console.log(task.Name + ': ' + status);
 
     var table = tableModule.GetTableById(creep.memory.tableId);
     var newTask = table.Lookup(task, status)
@@ -54,7 +53,6 @@ function MoveToController(creep)    { return MoveTo(creep, creep.room.controller
 
 function HarvestEnergy(creep)
 {
-    console.log('HarvestEnergy');
     if(_.sum(creep.carry) >= creep.carryCapacity)
         return DONE;
 
@@ -64,7 +62,6 @@ function HarvestEnergy(creep)
 
 function StoreEnergy(creep)
 {
-    console.log('StoreEnergy');
     if(creep.carry.energy == 0)
         return DONE;
 
@@ -74,7 +71,6 @@ function StoreEnergy(creep)
 
 function UpgradeController(creep)
 {
-    console.log('UpgradeController');
     if(creep.carry.energy == 0)
         return DONE;
 
@@ -82,12 +78,12 @@ function UpgradeController(creep)
     return creep.upgradeController(controller);
 }
 
-MoveToSourceTask = TaskFromDoFunc(MoveToSource);
-MoveToStorageTask = TaskFromDoFunc(MoveToStorage);
-MoveToControllerTask = TaskFromDoFunc(MoveToController);
-HarvestEnergyTask = TaskFromDoFunc(HarvestEnergy);
-StoreEnergyTask = TaskFromDoFunc(StoreEnergy);
-UpgradeControllerTask = TaskFromDoFunc(UpgradeController);
+MoveToSourceTask        = TaskFromDoFunc('MoveToSource', MoveToSource);
+MoveToStorageTask       = TaskFromDoFunc('MoveToStorage', MoveToStorage);
+MoveToControllerTask    = TaskFromDoFunc('MoveToController', MoveToController);
+HarvestEnergyTask       = TaskFromDoFunc('HarvestEnergy', HarvestEnergy);
+StoreEnergyTask         = TaskFromDoFunc('StoreEnergy', StoreEnergy);
+UpgradeControllerTask   = TaskFromDoFunc('UpgradeController', UpgradeController);
 
 function WorkerTable()
 {
