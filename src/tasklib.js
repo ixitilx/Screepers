@@ -15,9 +15,9 @@ function MoveToId(creep, id)
     return MoveTo(creep, Game.getObjectById(id))
 }
 
-function MoveToSource(creep)        { return MoveToId(creep, creep.memory.sourceId); }
-function MoveToStorage(creep)       { return MoveToId(creep, creep.memory.storageId); }
-function MoveToController(creep)    { return MoveTo(creep, creep.room.controller); }
+function MoveToSource(creep)        { return MoveToId(creep, creep.memory.sourceId) }
+function MoveToStorage(creep)       { return MoveToId(creep, creep.memory.storageId) }
+function MoveToController(creep)    { return MoveTo(creep, creep.room.controller) }
 function MoveToSite(creep)
 {
     if(creep.memory.siteId)
@@ -36,9 +36,26 @@ function HarvestEnergy(creep)
 
 function StoreEnergy(creep)
 {
+    var freeRoom = function(a) { return a.energyCapacity - a.energy }
     var storage = Game.getObjectById(creep.memory.storageId)
-    if((storage.energyCapacity - storage.energy) < creep.carry.energy)
-        return ERR_FULL
+    if(freeRoom(storage) == 0)
+    {
+        var isStorage = function(structure)
+        {
+            return structure.structureType == STRUCTURE_EXTENSION ||
+                   structure.structureType == STRUCTURE_SPAWN
+        }
+        
+        var mostFreeRoom = function(a, b) { return freeRoom(b) - freeRoom(a) }
+
+        var storages = creep.room.find(FIND_MY_STRUCTURE, {filter: isStorage})
+        storages.sort(mostFreeRoom)
+        if(freeRoom(storages[0]) == 0)
+            return ERR_FULL
+
+        creep.memory.storageId = storages[0].id
+        return StoreEnergy(creep)
+    }
     return creep.transfer(storage, RESOURCE_ENERGY)
 }
 

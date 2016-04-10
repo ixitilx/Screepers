@@ -39,9 +39,11 @@ function creepLoop(creep)
 
 function mainLoop()
 {
+    // Creep control strategy
     for(var creepName in Game.creeps)
         creepLoop(Game.creeps[creepName])
 
+    
     // Building strategy
     if(Game.time % 100 == 0)
     {
@@ -58,10 +60,12 @@ function mainLoop()
         }
     }
     
+    
     // Renew strategy
     //var storage = Game.spawns.Spawn1
     // renew.renewCreep(storage, renew.findOldCreep(storage))
 
+    
     // Spawning strategy
     if(creepsByRole('worker').length < 6)
         worker.spawn(Game.spawns.Spawn1)

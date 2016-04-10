@@ -1,9 +1,8 @@
-var constants = require('constants')
-
-var taskModule = require('task')
+var constants   = require('constants')
+var taskModule  = require('task')
 var tableModule = require('table')
+var tasklib     = require('tasklib')
 
-var tasklib = require('tasklib')
 
 function createWorkerTable()
 {
