@@ -73,11 +73,18 @@ function UpgradeController(creep)
 function Build(creep)
 {
     if(creep.memory.siteId == undefined)
+    {
+        creep.say('build:undef')
         return DONE
+    }
+
     site = Game.getObjectById(creep.memory.siteId)
     var ret = creep.build(site)
     if(ret == ERR_INVALID_TARGET)
+    {
+        creep.say('build:inval')
         delete creep.memory.siteId
+    }
     return DONE
 }
 
@@ -121,7 +128,7 @@ function WorkerTable()
     table.AddStateTransition(MoveToSourceTask,      OK, MoveToSourceTask)
     table.AddStateTransition(MoveToStorageTask,     OK, MoveToStorageTask)
     table.AddStateTransition(MoveToControllerTask,  OK, MoveToControllerTask)
-    table.AddStateTransition(MoveToSiteTask,            OK, MoveToSiteTask)
+    table.AddStateTransition(MoveToSiteTask,        OK, MoveToSiteTask)
 
     table.AddStateTransition(HarvestEnergyTask,     OK, HarvestEnergyTask)
     table.AddStateTransition(StoreEnergyTask,       OK, StoreEnergyTask)
