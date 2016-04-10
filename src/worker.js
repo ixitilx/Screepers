@@ -1,8 +1,10 @@
+var constants = require('constants')
+
 var taskModule = require('task')
 var tableModule = require('table')
 
-var Task = taskModule.Task
-var TaskFromDoFunc = taskModule.TaskFromDoFunc
+var tasklib = require('tasklib')
+
 var Table = tableModule.Table
 
 function onTick(creep)
@@ -23,148 +25,53 @@ function onTick(creep)
     }
 }
 
-var DONE = 100
-
-function MoveTo(creep, dst)
-{
-    if(creep.pos.getRangeTo(dst)<=1)
-        return DONE
-    if(Memory.autoBuildRoad && Memory.autoBuildRoad == 1)
-        creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD)
-    return creep.moveTo(dst)
-}
-
-function MoveToId(creep, id)
-{
-    return MoveTo(creep, Game.getObjectById(id))
-}
-
-function MoveToSource(creep)        { return MoveToId(creep, creep.memory.sourceId); }
-function MoveToStorage(creep)       { return MoveToId(creep, creep.memory.storageId); }
-function MoveToController(creep)    { return MoveTo(creep, creep.room.controller); }
-function MoveToSite(creep)          
-{
-    if(creep.memory.siteId)
-        return MoveToId(creep, creep.memory.siteId)
-    return DONE
-}
-
-function HarvestEnergy(creep)
-{
-    if(_.sum(creep.carry) >= creep.carryCapacity)
-        return DONE
-
-    var source = Game.getObjectById(creep.memory.sourceId)
-    return creep.harvest(source)
-}
-
-function StoreEnergy(creep)
-{
-    var storage = Game.getObjectById(creep.memory.storageId)
-    if((storage.energyCapacity - storage.energy) < creep.carry.energy)
-        return ERR_FULL
-    return creep.transfer(storage, RESOURCE_ENERGY)
-}
-
-function UpgradeController(creep)
-{
-    var controller = creep.room.controller
-    return creep.upgradeController(controller)
-}
-
-function Build(creep)
-{
-    if(creep.memory.siteId == undefined)
-    {
-        console.log('build:undef')
-        return DONE
-    }
-
-    var site = Game.getObjectById(creep.memory.siteId)
-    var ret = creep.build(site)
-    if(ret == ERR_INVALID_TARGET)
-    {
-        console.log('build:inval')
-        delete creep.memory.siteId
-    }
-    return ret
-}
-
-var MoveToSourceTask        = TaskFromDoFunc('MoveToSource',        MoveToSource)
-var MoveToStorageTask       = TaskFromDoFunc('MoveToStorage',       MoveToStorage)
-var MoveToControllerTask    = TaskFromDoFunc('MoveToController',    MoveToController)
-var MoveToSiteTask          = TaskFromDoFunc('MoveToSite',          MoveToSite)
-
-var HarvestEnergyTask       = TaskFromDoFunc('HarvestEnergy',       HarvestEnergy)
-var StoreEnergyTask         = TaskFromDoFunc('StoreEnergy',         StoreEnergy)
-var UpgradeControllerTask   = TaskFromDoFunc('UpgradeController',   UpgradeController)
-var BuildTask               = TaskFromDoFunc('Build',               Build)
-
 function WorkerTable()
 {
-    var table = new Table(HarvestEnergyTask)
+    var table = new Table(tasklib.HarvestEnergyTask)
 
     // Main logic
-    table.AddStateTransition(HarvestEnergyTask,     DONE,       StoreEnergyTask)
-    table.AddStateTransition(StoreEnergyTask,       ERR_FULL,   BuildTask)
-    table.AddStateTransition(BuildTask,             DONE,       UpgradeControllerTask)
+    table.AddStateTransition(tasklib.HarvestEnergyTask,     constants.TASK_DONE,        tasklib.StoreEnergyTask)
+    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_FULL,                   tasklib.BuildTask)
+    table.AddStateTransition(tasklib.BuildTask,             constants.TASK_DONE,        tasklib.UpgradeControllerTask)
     
-    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask)
-    table.AddStateTransition(BuildTask,             ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask)
-    table.AddStateTransition(UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask)
+    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
+    table.AddStateTransition(tasklib.BuildTask,             ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
+    table.AddStateTransition(tasklib.UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
 
     // Doing fine
-    table.AddStateTransition(HarvestEnergyTask,     OK, HarvestEnergyTask)
-    table.AddStateTransition(StoreEnergyTask,       OK, StoreEnergyTask)
-    table.AddStateTransition(UpgradeControllerTask, OK, UpgradeControllerTask)
-    table.AddStateTransition(BuildTask,             OK, BuildTask)
+    table.AddStateTransition(tasklib.HarvestEnergyTask,     OK,                         tasklib.HarvestEnergyTask)
+    table.AddStateTransition(tasklib.StoreEnergyTask,       OK,                         tasklib.StoreEnergyTask)
+    table.AddStateTransition(tasklib.UpgradeControllerTask, OK,                         tasklib.UpgradeControllerTask)
+    table.AddStateTransition(tasklib.BuildTask,             OK,                         tasklib.BuildTask)
 
     // Move around
-    table.addMoveTransition(HarvestEnergyTask, MoveToSourceTask)
-    table.addMoveTransition(StoreEnergyTask, MoveToStorageTask)
-    table.addMoveTransition(BuildTask, MoveToSiteTask)
-    table.addMoveTransition(UpgradeControllerTask, MoveToControllerTask)
+    table.addMoveTransition(tasklib.HarvestEnergyTask,      tasklib.MoveToSourceTask)
+    table.addMoveTransition(tasklib.StoreEnergyTask,        tasklib.MoveToStorageTask)
+    table.addMoveTransition(tasklib.BuildTask,              tasklib.MoveToSiteTask)
+    table.addMoveTransition(tasklib.UpgradeControllerTask,  tasklib.MoveToControllerTask)
 
     // Errors
-    table.AddStateTransition(MoveToSiteTask, ERR_INVALID_TARGET, HarvestEnergyTask)
+    table.AddStateTransition(tasklib.MoveToSiteTask, ERR_INVALID_TARGET, tasklib.HarvestEnergyTask)
 
     return table
 }
 
 function HarvesterTable()
 {
-    var table = new Table(HarvestEnergyTask)
+    var table = new Table(tasklib.HarvestEnergyTask)
 
     // Main logic
-    table.AddStateTransition(HarvestEnergyTask,     DONE, StoreEnergyTask)
-    table.AddStateTransition(StoreEnergyTask,       ERR_FULL, HarvestEnergyTask)
-    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask)
+    table.AddStateTransition(tasklib.HarvestEnergyTask,     constants.TASK_DONE,        tasklib.StoreEnergyTask)
+    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_FULL,                   tasklib.BuildTask)
+    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
 
-    // Move
-    table.AddStateTransition(MoveToSourceTask,      DONE, HarvestEnergyTask)
-    table.AddStateTransition(MoveToStorageTask,     DONE, StoreEnergyTask)
+    // Doing fine
+    table.AddStateTransition(tasklib.HarvestEnergyTask,     OK,                         tasklib.HarvestEnergyTask)
+    table.AddStateTransition(tasklib.StoreEnergyTask,       OK,                         tasklib.StoreEnergyTask)
 
-    // Main task not in range
-    table.AddStateTransition(HarvestEnergyTask,     ERR_NOT_IN_RANGE, MoveToSourceTask)
-    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_IN_RANGE, MoveToStorageTask)
-
-    // Suppress 'missing transition' errors
-    // Doing fine, continue same task
-    table.AddStateTransition(MoveToSourceTask,      OK, MoveToSourceTask)
-    table.AddStateTransition(MoveToStorageTask,     OK, MoveToStorageTask)
-    table.AddStateTransition(HarvestEnergyTask,     OK, HarvestEnergyTask)
-    table.AddStateTransition(StoreEnergyTask,       OK, StoreEnergyTask)
-
-    // Move-tired
-    table.AddStateTransition(MoveToSourceTask,      ERR_TIRED, MoveToSourceTask)
-    table.AddStateTransition(MoveToStorageTask,     ERR_TIRED, MoveToStorageTask)
-
-    // Move-no-path
-    table.AddStateTransition(MoveToSourceTask,      ERR_NO_PATH, MoveToSourceTask)
-    table.AddStateTransition(MoveToStorageTask,     ERR_NO_PATH, MoveToStorageTask)
-
-    // Busy
-    table.AddStateTransition(HarvestEnergyTask,     ERR_BUSY, HarvestEnergyTask)
+    // Move around
+    table.addMoveTransition(tasklib.HarvestEnergyTask,  tasklib.MoveToSourceTask)
+    table.addMoveTransition(tasklib.StoreEnergyTask,    tasklib.MoveToStorageTask)
 
     return table
 }
@@ -177,7 +84,7 @@ function SpawnWorker(spawn)
     var mem = new Object()
     mem.role = 'worker'
 
-    source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
+    var source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
 
     mem.storageId = spawn.id
     mem.taskId = HarvestEnergyTask.Id
@@ -192,7 +99,7 @@ function SpawnHarvester(spawn)
     var mem = new Object()
     mem.role = 'harvester'
 
-    source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
+    var source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
 
     mem.storageId = '570a80e8d21b022c2c7e8ada'
     mem.taskId = HarvestEnergyTask.Id
