@@ -21,7 +21,7 @@ module.exports.loop = function ()
     if(_(Game.creeps).size() < 10)
         worker.spawnWorker(Game.spawns.Spawn1)
 
-    if(_.filter(Game.creeps, {role: 'harvester'}).size() < 1)
+    if(_.filter(Game.creeps, {role: 'harvester'}).length < 1)
         worker.spawnHarvester(Game.spawns.Spawn1)
 }
 
