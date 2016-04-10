@@ -10,7 +10,8 @@ function onTick(creep)
 
     var task = taskModule.GetTaskById(creep.memory.taskId);
     var status = task.do(creep);
-    console.log('onTick: task.do = ' + status);
+    if(status != OK)
+        console.log('onTick: task.do = ' + status);
 
     var table = tableModule.GetTableById(creep.memory.tableId);
     var newTask = table.Lookup(task, status)
@@ -68,7 +69,7 @@ function StoreEnergy(creep)
         return DONE;
 
     storage = Game.getObjectById(creep.memory.storageId);
-    return creep.transfer(storage)
+    return creep.transfer(storage, RESOURCE_ENERGY);
 }
 
 function UpgradeController(creep)
