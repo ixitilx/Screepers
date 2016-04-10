@@ -1,9 +1,9 @@
-taskModule = require('task')
-tableModule = require('table')
+var taskModule = require('task')
+var tableModule = require('table')
 
-Task            = taskModule.Task
-TaskFromDoFunc  = taskModule.TaskFromDoFunc
-Table           = tableModule.Table
+var Task = taskModule.Task
+var TaskFromDoFunc = taskModule.TaskFromDoFunc
+var Table = tableModule.Table
 
 function onTick(creep)
 {
@@ -54,19 +54,21 @@ function HarvestEnergy(creep)
     if(_.sum(creep.carry) >= creep.carryCapacity)
         return DONE
 
-    source = Game.getObjectById(creep.memory.sourceId)
+    var source = Game.getObjectById(creep.memory.sourceId)
     return creep.harvest(source)
 }
 
 function StoreEnergy(creep)
 {
-    storage = Game.getObjectById(creep.memory.storageId)
+    var storage = Game.getObjectById(creep.memory.storageId)
+    if((storage.energyCapacity - storage.energy) < creep.carry.energy)
+        return ERR_FULL
     return creep.transfer(storage, RESOURCE_ENERGY)
 }
 
 function UpgradeController(creep)
 {
-    controller = creep.room.controller
+    var controller = creep.room.controller
     return creep.upgradeController(controller)
 }
 
@@ -78,7 +80,7 @@ function Build(creep)
         return DONE
     }
 
-    site = Game.getObjectById(creep.memory.siteId)
+    var site = Game.getObjectById(creep.memory.siteId)
     var ret = creep.build(site)
     if(ret == ERR_INVALID_TARGET)
     {
@@ -88,19 +90,19 @@ function Build(creep)
     return ret
 }
 
-MoveToSourceTask        = TaskFromDoFunc('MoveToSource',        MoveToSource)
-MoveToStorageTask       = TaskFromDoFunc('MoveToStorage',       MoveToStorage)
-MoveToControllerTask    = TaskFromDoFunc('MoveToController',    MoveToController)
-MoveToSiteTask          = TaskFromDoFunc('MoveToSite',          MoveToSite)
+var MoveToSourceTask        = TaskFromDoFunc('MoveToSource',        MoveToSource)
+var MoveToStorageTask       = TaskFromDoFunc('MoveToStorage',       MoveToStorage)
+var MoveToControllerTask    = TaskFromDoFunc('MoveToController',    MoveToController)
+var MoveToSiteTask          = TaskFromDoFunc('MoveToSite',          MoveToSite)
 
-HarvestEnergyTask       = TaskFromDoFunc('HarvestEnergy',       HarvestEnergy)
-StoreEnergyTask         = TaskFromDoFunc('StoreEnergy',         StoreEnergy)
-UpgradeControllerTask   = TaskFromDoFunc('UpgradeController',   UpgradeController)
-BuildTask               = TaskFromDoFunc('Build',               Build)
+var HarvestEnergyTask       = TaskFromDoFunc('HarvestEnergy',       HarvestEnergy)
+var StoreEnergyTask         = TaskFromDoFunc('StoreEnergy',         StoreEnergy)
+var UpgradeControllerTask   = TaskFromDoFunc('UpgradeController',   UpgradeController)
+var BuildTask               = TaskFromDoFunc('Build',               Build)
 
 function WorkerTable()
 {
-    table = new Table(HarvestEnergyTask)
+    var table = new Table(HarvestEnergyTask)
 
     // Main logic
     table.AddStateTransition(HarvestEnergyTask,     DONE,       StoreEnergyTask)
@@ -111,51 +113,24 @@ function WorkerTable()
     table.AddStateTransition(BuildTask,             ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask)
     table.AddStateTransition(UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask)
 
-    // Move
-    table.AddStateTransition(MoveToSourceTask,      DONE, HarvestEnergyTask)
-    table.AddStateTransition(MoveToStorageTask,     DONE, StoreEnergyTask)
-    table.AddStateTransition(MoveToControllerTask,  DONE, UpgradeControllerTask)
-    table.AddStateTransition(MoveToSiteTask,        DONE, BuildTask)
-
-    // Main task not in range
-    table.AddStateTransition(HarvestEnergyTask,     ERR_NOT_IN_RANGE, MoveToSourceTask)
-    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_IN_RANGE, MoveToStorageTask)
-    table.AddStateTransition(UpgradeControllerTask, ERR_NOT_IN_RANGE, MoveToControllerTask)
-    table.AddStateTransition(BuildTask,             ERR_NOT_IN_RANGE, MoveToSiteTask)
-
-    // Suppress 'missing transition' errors
-    // Doing fine, continue same task
-    table.AddStateTransition(MoveToSourceTask,      OK, MoveToSourceTask)
-    table.AddStateTransition(MoveToStorageTask,     OK, MoveToStorageTask)
-    table.AddStateTransition(MoveToControllerTask,  OK, MoveToControllerTask)
-    table.AddStateTransition(MoveToSiteTask,        OK, MoveToSiteTask)
-
+    // Doing fine
     table.AddStateTransition(HarvestEnergyTask,     OK, HarvestEnergyTask)
     table.AddStateTransition(StoreEnergyTask,       OK, StoreEnergyTask)
     table.AddStateTransition(UpgradeControllerTask, OK, UpgradeControllerTask)
     table.AddStateTransition(BuildTask,             OK, BuildTask)
 
-    // Move-tired
-    table.AddStateTransition(MoveToSourceTask,      ERR_TIRED, MoveToSourceTask)
-    table.AddStateTransition(MoveToStorageTask,     ERR_TIRED, MoveToStorageTask)
-    table.AddStateTransition(MoveToControllerTask,  ERR_TIRED, MoveToControllerTask)
-    table.AddStateTransition(MoveToSiteTask,        ERR_TIRED, MoveToSiteTask)
-
-    // Move-no-path
-    table.AddStateTransition(MoveToSourceTask,      ERR_NO_PATH, MoveToSourceTask)
-    table.AddStateTransition(MoveToStorageTask,     ERR_NO_PATH, MoveToStorageTask)
-    table.AddStateTransition(MoveToControllerTask,  ERR_NO_PATH, MoveToControllerTask)
-    table.AddStateTransition(MoveToSiteTask,        ERR_NO_PATH, MoveToSiteTask)
-
-    // Busy
-    table.AddStateTransition(HarvestEnergyTask,     ERR_BUSY, HarvestEnergyTask)
+    // Move around
+    table.addMoveTransition(HarvestEnergyTask, MoveToSourceTask)
+    table.addMoveTransition(StoreEnergyTask, MoveToStorageTask)
+    table.addMoveTransition(BuildTask, MoveToSiteTask)
+    table.addMoveTransition(UpgradeControllerTask, MoveToControllerTask)
 
     return table
 }
 
 function HarvesterTable()
 {
-    table = new Table(HarvestEnergyTask)
+    var table = new Table(HarvestEnergyTask)
 
     // Main logic
     table.AddStateTransition(HarvestEnergyTask,     DONE, StoreEnergyTask)
