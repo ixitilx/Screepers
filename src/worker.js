@@ -108,6 +108,7 @@ function WorkerTable()
     table.AddStateTransition(MoveToSourceTask,      DONE, HarvestEnergyTask)
     table.AddStateTransition(MoveToStorageTask,     DONE, StoreEnergyTask)
     table.AddStateTransition(MoveToControllerTask,  DONE, UpgradeControllerTask)
+    table.AddStateTransition(MoveToSiteTask,        DONE, BuildTask)
 
     // Main task not in range
     table.AddStateTransition(HarvestEnergyTask,     ERR_NOT_IN_RANGE, MoveToSourceTask)
