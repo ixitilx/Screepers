@@ -120,7 +120,7 @@ var workerTable = WorkerTable()
 function SpawnWorker(spawn)
 {
     var mem = new Object();
-    mem.role = 'Worker';
+    mem.role = 'worker';
 
     source = spawn.room.find(FIND_SOURCES_ACTIVE)[0];
 
