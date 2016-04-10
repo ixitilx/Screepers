@@ -23,4 +23,4 @@ function TaskFromDoFunc(doFunc)
 }
 
 exports.Task = Task;
-
+exports.TaskFromDoFunc = TaskFromDoFunc;
