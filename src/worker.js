@@ -85,7 +85,7 @@ function Build(creep)
         console.log('build:inval')
         delete creep.memory.siteId
     }
-    return DONE
+    return ret
 }
 
 MoveToSourceTask        = TaskFromDoFunc('MoveToSource',        MoveToSource)
