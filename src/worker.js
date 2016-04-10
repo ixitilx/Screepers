@@ -5,25 +5,6 @@ var tableModule = require('table')
 
 var tasklib = require('tasklib')
 
-function onTick(creep)
-{
-    var task = taskModule.GetTaskById(creep.memory.taskId)
-    var status = task.do(creep)
-
-    var table = tableModule.GetTableById(creep.memory.tableId)
-    var newTask = table.Lookup(task, status)
-
-    if(Memory.debug && Memory.debug == 1)
-        console.log(creep.name + '.' + task.Name + '(' + status + ') => ' + (newTask?newTask.Name:'undefined'))
-
-    if(task && newTask && task.Id != newTask.Id)
-    {
-        creep.memory.taskId = newTask.Id
-        creep.say(newTask.Name)
-        onTick(creep)
-    }
-}
-
 function createWorkerTable()
 {
     var table = new tableModule.Table(tasklib.HarvestEnergyTask)
@@ -70,5 +51,3 @@ exports.spawn = function(spawn)
 
     spawn.createCreep([WORK, CARRY, MOVE, MOVE], null, mem)
 }
-
-exports.onTick = onTick
