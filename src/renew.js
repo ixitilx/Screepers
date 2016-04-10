@@ -15,7 +15,7 @@ function findOldCreep(spawn)
     return findOldCreepRet
 }
 
-function renew(spawn, creep)
+function renewCreep(spawn, creep)
 {
     if creep.ticksToLive <= floor(500/creep.body.length)
     {
@@ -26,4 +26,4 @@ function renew(spawn, creep)
 }
 
 exports.findOldCreep = findOldCreep;
-exports.renew = renew;
+exports.renewCreep = renewCreep;
