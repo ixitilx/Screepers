@@ -1,18 +1,22 @@
 var worker = require('worker')
 var renew =  require('renew')
 
+function getHarvesters()
+{
+    return _.filter(Game.creeps, function(c){ return c.memory.role=='harvester';})
+}
+
+
 
 module.exports.loop = function () 
 {
     var storage = Game.spawns.Spawn1
-    var room = storage.room
-    var source = room.find(FIND_SOURCES_ACTIVE)[0]
     for(var creepName in Game.creeps)
     {
         creep = Game.creeps[creepName]
         if(creep.memory)
         {
-            if(creep.memory.role == 'worker') worker.onTick(creep)
+            worker.onTick(creep)
         }
     }
     
@@ -21,7 +25,7 @@ module.exports.loop = function ()
     if(_(Game.creeps).size() < 10)
         worker.spawnWorker(Game.spawns.Spawn1)
 
-    if(_.filter(Game.creeps, {role: 'harvester'}).length < 1)
+    if(getHarvesters().length < 1)
         worker.spawnHarvester(Game.spawns.Spawn1)
 }
 
