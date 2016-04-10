@@ -42,6 +42,16 @@ function creepLoop(creep)
 
 function mainLoop()
 {
+    // Memory cleanup strategy
+    for(c in Memory.creeps)
+    {
+        if(Game.creeps[c] == undefined)
+        {
+            console.log('Cleaning [' + c + ']\'s memory')
+            delete Memory.creeps[c]
+        }
+    }
+
     // Creep control strategy
     for(var creepName in Game.creeps)
         creepLoop(Game.creeps[creepName])
@@ -75,16 +85,6 @@ function mainLoop()
 
     // if(creepsByRole('harvester').length < 1)
     //     harvester.spawn(Game.spawns.Spawn1)
-
-    // Memory cleanup strategy
-    for(c in Memory.creeps)
-    {
-        if(Game.creeps[c] == undefined)
-        {
-            console.log('Cleaning [' + c + ']\'s memory')
-            delete Memory.creeps[c]
-        }
-    }
 }
 
 exports.loop = mainLoop;
