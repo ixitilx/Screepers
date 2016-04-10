@@ -17,8 +17,5 @@ module.exports.loop = function ()
     }
 
     if(_(Game.creeps).size() < 10)
-        Game.spawns.Spawn1.createCreep([WORK,CARRY,MOVE], null, {role: 'harvester'});
-
-    // if(_(Game.creeps).filter({role: 'worker'}).size() < 1)
-    //     worker.spawnWorker(Game.spawns.Spawn1);
+        worker.spawnWorker(Game.spawns.Spawn1);
 }
