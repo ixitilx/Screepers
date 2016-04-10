@@ -1,5 +1,6 @@
 var worker = require('worker');
-var renew = renew('renew');
+var renew = require('renew'); 
+
 
 module.exports.loop = function () 
 {
