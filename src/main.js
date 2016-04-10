@@ -1,4 +1,3 @@
-var harvester = require('role.harvester');
 var worker = require('worker')
 
 module.exports.loop = function () 
@@ -11,7 +10,6 @@ module.exports.loop = function ()
         creep = Game.creeps[creepName]
         if(creep.memory)
         {
-            if(creep.memory.role == 'harvester') harvester.move(creep, source, storage);
             if(creep.memory.role == 'worker') worker.onTick(creep);
         }
     }
