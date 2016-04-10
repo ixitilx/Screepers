@@ -1,3 +1,5 @@
+var DONE = 100
+
 var tableRepo = new Array()
 
 function Table(defaultTask)
