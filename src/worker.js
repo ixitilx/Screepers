@@ -26,6 +26,8 @@ function MoveTo(creep, dst)
 {
     if(creep.pos.getRangeTo(dst)<=1)
         return DONE;
+    if(Memory.autoBuildRoad && Memory.autoBuildRoad == 1)
+        creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
     return creep.moveTo(dst);
 }
 
@@ -37,6 +39,12 @@ function MoveToId(creep, id)
 function MoveToSource(creep)        { return MoveToId(creep, creep.memory.sourceId); }
 function MoveToStorage(creep)       { return MoveToId(creep, creep.memory.storageId); }
 function MoveToController(creep)    { return MoveTo(creep, creep.room.controller); }
+function MoveToSite(creep)          
+{
+    if(creep.memory.siteId)
+        return MoveToId(creep, creep.memory.siteId);
+    return DONE;
+}
 
 function HarvestEnergy(creep)
 {
@@ -49,60 +57,77 @@ function HarvestEnergy(creep)
 
 function StoreEnergy(creep)
 {
-    if(creep.carry.energy == 0)
-        return DONE;
-
     storage = Game.getObjectById(creep.memory.storageId);
     return creep.transfer(storage, RESOURCE_ENERGY);
 }
 
 function UpgradeController(creep)
 {
-    if(creep.carry.energy == 0)
-        return DONE;
-
     controller = creep.room.controller;
     return creep.upgradeController(controller);
 }
 
-MoveToSourceTask        = TaskFromDoFunc('MoveToSource', MoveToSource);
-MoveToStorageTask       = TaskFromDoFunc('MoveToStorage', MoveToStorage);
-MoveToControllerTask    = TaskFromDoFunc('MoveToController', MoveToController);
-HarvestEnergyTask       = TaskFromDoFunc('HarvestEnergy', HarvestEnergy);
-StoreEnergyTask         = TaskFromDoFunc('StoreEnergy', StoreEnergy);
-UpgradeControllerTask   = TaskFromDoFunc('UpgradeController', UpgradeController);
+function Build(creep)
+{
+    if(creep.memory.siteId == undefined)
+        return DONE;
+    site = Game.getObjectById(creep.memory.siteId);
+    return creep.build(site);
+}
+
+MoveToSourceTask        = TaskFromDoFunc('MoveToSource',        MoveToSource);
+MoveToStorageTask       = TaskFromDoFunc('MoveToStorage',       MoveToStorage);
+MoveToControllerTask    = TaskFromDoFunc('MoveToController',    MoveToController);
+HarvestEnergyTask       = TaskFromDoFunc('HarvestEnergy',       HarvestEnergy);
+StoreEnergyTask         = TaskFromDoFunc('StoreEnergy',         StoreEnergy);
+UpgradeControllerTask   = TaskFromDoFunc('UpgradeController',   UpgradeController);
+BuildTask               = TaskFromDoFunc('Build',               Build);
 
 function WorkerTable()
 {
     table = new Table(HarvestEnergyTask);
 
-    // Move tasks
-    table.AddStateTransition(MoveToSourceTask, OK,          MoveToSourceTask);
-    table.AddStateTransition(MoveToSourceTask, ERR_TIRED,   MoveToSourceTask);
-    table.AddStateTransition(MoveToSourceTask, DONE,        HarvestEnergyTask);
+    // Main logic
+    table.AddStateTransition(HarvestEnergyTask,     DONE,       StoreEnergyTask);
+    table.AddStateTransition(StoreEnergyTask,       ERR_FULL,   BuildTask);
+    table.AddStateTransition(BuildTask,             DONE,       UpgradeControllerTask);
+    
+    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask);
+    table.AddStateTransition(BuildTask,             ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask);
+    table.AddStateTransition(UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES, HarvestEnergyTask);
 
-    table.AddStateTransition(MoveToStorageTask, OK,         MoveToStorageTask);
-    table.AddStateTransition(MoveToStorageTask, ERR_TIRED,  MoveToStorageTask);
-    table.AddStateTransition(MoveToStorageTask, DONE,       StoreEnergyTask);
+    // Move
+    table.AddStateTransition(MoveToSourceTask,      DONE, HarvestEnergyTask);
+    table.AddStateTransition(MoveToStorageTask,     DONE, StoreEnergyTask);
+    table.AddStateTransition(MoveToControllerTask,  DONE, UpgradeControllerTask);
 
-    table.AddStateTransition(MoveToControllerTask, OK,          MoveToControllerTask);
-    table.AddStateTransition(MoveToControllerTask, ERR_TIRED,   MoveToControllerTask);
-    table.AddStateTransition(MoveToControllerTask, DONE,        UpgradeControllerTask);
+    // Main task not in range
+    table.AddStateTransition(HarvestEnergyTask,     ERR_NOT_IN_RANGE, MoveToSourceTask);
+    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_IN_RANGE, MoveToStorageTask);
+    table.AddStateTransition(UpgradeControllerTask, ERR_NOT_IN_RANGE, MoveToControllerTask);
 
-    // Action tasks
-    table.AddStateTransition(HarvestEnergyTask, OK,                 HarvestEnergyTask);
-    table.AddStateTransition(HarvestEnergyTask, ERR_NOT_IN_RANGE,   MoveToSourceTask);
-    table.AddStateTransition(HarvestEnergyTask, DONE,               MoveToStorageTask);
+    // Suppress 'missing transition' errors
+    // Doing fine, continue same task
+    table.AddStateTransition(MoveToSourceTask,      OK, MoveToSourceTask);
+    table.AddStateTransition(MoveToStorageTask,     OK, MoveToStorageTask);
+    table.AddStateTransition(MoveToControllerTask,  OK, MoveToControllerTask);
+    table.AddStateTransition(HarvestEnergyTask,     OK, HarvestEnergyTask);
+    table.AddStateTransition(StoreEnergyTask,       OK, StoreEnergyTask);
+    table.AddStateTransition(UpgradeControllerTask, OK, UpgradeControllerTask);
+    table.AddStateTransition(BuildTask,             OK, BuildTask);
 
-    table.AddStateTransition(StoreEnergyTask, OK,               StoreEnergyTask);
-    table.AddStateTransition(StoreEnergyTask, ERR_NOT_IN_RANGE, StoreEnergyTask);
-    table.AddStateTransition(StoreEnergyTask, DONE,             MoveToSourceTask);
-    table.AddStateTransition(StoreEnergyTask, ERR_FULL,         UpgradeControllerTask);
+    // Move-tired
+    table.AddStateTransition(MoveToSourceTask,      ERR_TIRED, MoveToSourceTask);
+    table.AddStateTransition(MoveToStorageTask,     ERR_TIRED, MoveToStorageTask);
+    table.AddStateTransition(MoveToControllerTask,  ERR_TIRED, MoveToControllerTask);
 
-    table.AddStateTransition(UpgradeControllerTask, OK,                         UpgradeControllerTask);
-    table.AddStateTransition(UpgradeControllerTask, ERR_NOT_IN_RANGE,           MoveToControllerTask);
-    table.AddStateTransition(UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES,   HarvestEnergyTask);
-    table.AddStateTransition(UpgradeControllerTask, DONE,                       MoveToStorageTask);
+    // Move-no-path
+    table.AddStateTransition(MoveToSourceTask,      ERR_NO_PATH, MoveToSourceTask);
+    table.AddStateTransition(MoveToStorageTask,     ERR_NO_PATH, MoveToStorageTask);
+    table.AddStateTransition(MoveToControllerTask,  ERR_NO_PATH, MoveToControllerTask);
+
+    // Busy
+    table.AddStateTransition(HarvestEnergyTask,     ERR_BUSY, HarvestEnergyTask);
 
     return table;
 }
