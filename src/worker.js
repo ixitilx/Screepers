@@ -13,25 +13,12 @@ function onTick(creep)
     var table = tableModule.GetTableById(creep.memory.tableId);
     var newTask = table.Lookup(task, status)
 
-    console.log(creep.name + '.' + task.Name + '(' + status + ') => ' + (newTask?newTask.Name:'undefined'));
+    if(Memory.debug && Memory.debug == 1)
+        console.log(creep.name + '.' + task.Name + '(' + status + ') => ' + (newTask?newTask.Name:'undefined'));
 
     if(task && newTask && task.Id != newTask.Id)
         creep.memory.taskId = newTask.Id
 }
-
-//---------------------------------------------------------------------
-
-/*
-    var DONE = 100
-
-    var ret = creep.moveTo(source);
-    var ret = creep.harvest(source);
-    var ret = creep.transfer(storage, RESOURCE_ENERGY)
-    var ret = creep.upgradeController(controller)
-*/
-
-// task is 'processor', with 'data' stored in creep memory
-// each creep with harvester role dedicated to harvest specific source
 
 var DONE = 100;
 
