@@ -17,7 +17,7 @@ function Task()
 
 function TaskFromDoFunc(doFunc)
 {
-	var task = Task();
+	var task = new Task();
 	task.do = doFunc;
 	return task;
 }
