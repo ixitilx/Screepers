@@ -101,7 +101,7 @@ function WorkerTable()
 
     // Main task not in range
     table.AddStateTransition(HarvestEnergyTask,     ERR_NOT_IN_RANGE, MoveToSourceTask);
-    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_IN_RANGE, StoreEnergyTask);
+    table.AddStateTransition(StoreEnergyTask,       ERR_NOT_IN_RANGE, MoveToStorageTask);
     table.AddStateTransition(UpgradeControllerTask, ERR_NOT_IN_RANGE, MoveToControllerTask);
 
     // Doing fine, continue same task
