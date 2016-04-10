@@ -1,5 +1,5 @@
 var nearbyCreeps = new Array();
-
+var DONE = 100;
 
 function findOldCreep(storage)
 {
