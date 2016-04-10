@@ -74,7 +74,7 @@ function Build(creep)
 {
     if(creep.memory.siteId == undefined)
     {
-        creep.say('build:undef')
+        console.log('build:undef')
         return DONE
     }
 
@@ -82,7 +82,7 @@ function Build(creep)
     var ret = creep.build(site)
     if(ret == ERR_INVALID_TARGET)
     {
-        creep.say('build:inval')
+        console.log('build:inval')
         delete creep.memory.siteId
     }
     return DONE
