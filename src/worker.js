@@ -122,7 +122,7 @@ function SpawnWorker(spawn)
     var mem = new Object();
     mem.role = 'Worker';
 
-    source = spawn.room.find(FIND_ENERGY_ACTIVE)[0];
+    source = spawn.room.find(FIND_SOURCES_ACTIVE)[0];
 
     mem.storageId = spawn.Id;
     mem.taskId = HarvestEnergyTask.Id;
