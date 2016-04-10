@@ -26,6 +26,8 @@ function MoveTo(creep, dst)
 {
     if(creep.pos.getRangeTo(dst)<=1)
         return DONE;
+    if(Memory.autoBuildRoad && Memory.autoBuildRoad == 1)
+        creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
     return creep.moveTo(dst);
 }
 
