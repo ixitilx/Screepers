@@ -123,6 +123,9 @@ function WorkerTable()
     table.AddStateTransition(MoveToStorageTask,     ERR_NO_PATH, MoveToStorageTask);
     table.AddStateTransition(MoveToControllerTask,  ERR_NO_PATH, MoveToControllerTask);
 
+    // Busy
+    table.AddStateTransition(HarvestEnergyTask,     ERR_BUSY, HarvestEnergyTask);
+
     return table;
 }
 
