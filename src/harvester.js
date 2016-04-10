@@ -32,7 +32,7 @@ exports.spawn = function(spawn)
     var source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
 
     mem.storageId = '570a80e8d21b022c2c7e8ada'
-    mem.taskId = HarvestEnergyTask.Id
+    mem.taskId = tasklib.HarvestEnergyTask.Id
     mem.tableId = harvesterTable.Id
     mem.sourceId = source.id
 

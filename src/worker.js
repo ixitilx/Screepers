@@ -63,7 +63,7 @@ exports.spawn = function(spawn)
     var mem = new Object()
     mem.role = 'worker'
     mem.storageId = spawn.id
-    mem.taskId = HarvestEnergyTask.Id
+    mem.taskId = tasklib.HarvestEnergyTask.Id
     mem.tableId = workerTable.Id
     mem.sourceId = source.id
 
