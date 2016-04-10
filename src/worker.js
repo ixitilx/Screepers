@@ -54,17 +54,17 @@ function MoveToController(creep)    { return MoveToId(creep, creep.room.controll
 
 function HarvestEnergy(creep)
 {
-    console.log('Harvesting!');
+    console.log('HarvestEnergy');
     if(_.sum(creep.carry) >= creep.carryCapacity)
         return DONE;
 
-    console.log('Harvesting Energy Source!');
     source = Game.getObjectById(creep.memory.sourceId);
     return creep.harvest(source);
 }
 
 function StoreEnergy(creep)
 {
+    console.log('StoreEnergy');
     if(creep.carry.energy == 0)
         return DONE;
 
@@ -74,7 +74,7 @@ function StoreEnergy(creep)
 
 function UpgradeController(creep)
 {
-    console.log('Upgrading controller!');
+    console.log('UpgradeController');
     if(creep.carry.energy == 0)
         return DONE;
 
