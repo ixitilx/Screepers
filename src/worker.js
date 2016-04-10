@@ -120,10 +120,11 @@ var workerTable = WorkerTable()
 function SpawnWorker(spawn)
 {
     creepName = spawn.createCreep([WORK, CARRY, MOVE]);
-    
-    creep = Game.creeps[creepName];
 
-    creep.role = 'Worker';
+    console.log('Spawned [' + creepName + ']');
+
+    creep = Game.creeps[creepName];
+    creep.memory.role = 'Worker';
 
     source = spawn.room.find(FIND_ENERGY_ACTIVE)[0];
 
