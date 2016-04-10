@@ -16,7 +16,7 @@ module.exports.loop = function ()
         }
     }
     renew.renewCreep(storage, renew.findOldCreep(storage));
-    console.log(renew.FindOldCreep(storage));
+    console.log(renew.findOldCreep(storage));
     if(_(Game.creeps).size() < 10)
         worker.spawnWorker(Game.spawns.Spawn1);
 }
