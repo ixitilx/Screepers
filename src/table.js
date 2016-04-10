@@ -2,11 +2,6 @@ var tableRepo = new Array()
 
 function Table(defaultTask)
 {
-    this.Id = tableRepo.length
-    this.transitionTable = new Array()
-    this.transitionTable[-1] = defaultTask
-    this.AddStateTransition(defaultTask, ERR_BUSY, defaultTask)
-
     this.AddStateTransition = function(task, status, newTask)
     {
         if(this.transitionTable[task.Id] == undefined)
@@ -14,7 +9,7 @@ function Table(defaultTask)
         this.transitionTable[task.Id][status] = newTask
     }
 
-    this.addMoveTransition(task, moveTask)
+    this.addMoveTransition = function(task, moveTask)
     {
         this.AddStateTransition(task, ERR_NOT_IN_RANGE, moveTask)
         this.AddStateTransition(moveTask, DONE, task)
@@ -38,6 +33,11 @@ function Table(defaultTask)
         }
         return this.transitionTable[task.Id][status]
     }
+
+    this.Id = tableRepo.length
+    this.transitionTable = new Array()
+    this.transitionTable[-1] = defaultTask
+    this.AddStateTransition(defaultTask, ERR_BUSY, defaultTask)
 
     tableRepo.push(this)
 }
