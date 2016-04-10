@@ -128,10 +128,10 @@ function SpawnWorker(spawn)
 
     source = spawn.room.find(FIND_SOURCES_ACTIVE)[0];
 
-    mem.storageId = spawn.Id;
+    mem.storageId = spawn.id;
     mem.taskId = HarvestEnergyTask.Id;
     mem.tableId = workerTable.Id;
-    mem.sourceId = source.Id;
+    mem.sourceId = source.id;
 
     spawn.createCreep([WORK, CARRY, MOVE], null, mem);
 }
