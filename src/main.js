@@ -72,6 +72,13 @@ function mainLoop()
 
     // if(creepsByRole('harvester').length < 1)
     //     harvester.spawn(Game.spawns.Spawn1)
+
+    // Memory cleanup strategy
+    for(c in Memory.creeps)
+    {
+        if(Game.creeps[c] == undefined)
+            delete Memory.creeps[c]
+    }
 }
 
 exports.loop = mainLoop;
