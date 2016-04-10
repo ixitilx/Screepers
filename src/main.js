@@ -6,9 +6,8 @@ function getHarvesters()
     return _.filter(Game.creeps, function(c){ return c.memory.role=='harvester';})
 }
 
-
-
-module.exports.loop = function () 
+exports.getHarvesters = getHarvesters;
+exports.loop = function () 
 {
     var storage = Game.spawns.Spawn1
     for(var creepName in Game.creeps)
