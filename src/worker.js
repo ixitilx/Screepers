@@ -73,6 +73,7 @@ function StoreEnergy(creep)
 
 function UpgradeController(creep)
 {
+    console.log('Upgrading controller!');
     if(creep.carry.energy == 0)
         return DONE;
 
