@@ -20,5 +20,5 @@ module.exports.loop = function ()
         Game.spawns.Spawn1.createCreep([WORK,CARRY,MOVE], null, {role: 'harvester'});
 
     if(_(Game.creeps).filter({role: 'worker'}).size() < 1)
-        worker.SpawnWorker(Game.spawns.Spawn1);
+        worker.spawnWorker(Game.spawns.Spawn1);
 }
