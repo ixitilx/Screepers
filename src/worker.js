@@ -15,7 +15,7 @@ function onTick(creep)
 
     console.log(task.Name + ': ' + status + ' => ' + (newTask?newTask.Name:'undefined'));
 
-    if(task && task.Id != newTask.Id)
+    if(task && newTask && task.Id != newTask.Id)
         creep.memory.taskId = newTask.Id
 }
 
