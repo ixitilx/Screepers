@@ -119,19 +119,17 @@ var workerTable = WorkerTable()
 
 function SpawnWorker(spawn)
 {
-    creepName = spawn.createCreep([WORK, CARRY, MOVE]);
-
-    console.log('Spawned [' + creepName + ']');
-
-    creep = Game.creeps[creepName];
-    creep.memory.role = 'Worker';
+    var mem = new Object();
+    mem.role = 'Worker';
 
     source = spawn.room.find(FIND_ENERGY_ACTIVE)[0];
 
-    creep.memory.storageId = spawn.Id;
-    creep.memory.taskId = HarvestEnergyTask.Id;
-    creep.memory.tableId = workerTable.Id;
-    creep.memory.sourceId = source.Id;
+    mem.storageId = spawn.Id;
+    mem.taskId = HarvestEnergyTask.Id;
+    mem.tableId = workerTable.Id;
+    mem.sourceId = source.Id;
+
+    spawn.createCreep([WORK, CARRY, MOVE], null, mem);
 }
 
 exports.onTick = onTick;
