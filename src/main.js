@@ -32,11 +32,11 @@ function onTick()
         var sites = Game.spawns.Spawn1.room.find(FIND_MY_CONSTRUCTION_SITES)
         if(sites && sites.length > 0)
         {
-            sites.sort( function(a, b) {
-                return getProgress(a) - getProgress(b)
-            });
+            sites.sort(
+                function(a, b) { return getProgress(a) - getProgress(b) }
+            );
 
-            creepsByRole.forEach(
+            creepsByRole('worker').forEach(
                 function(c) { c.memory.siteId = sites[0].id }
             );
         }

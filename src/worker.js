@@ -125,6 +125,9 @@ function WorkerTable()
     table.addMoveTransition(BuildTask, MoveToSiteTask)
     table.addMoveTransition(UpgradeControllerTask, MoveToControllerTask)
 
+    // Errors
+    table.AddStateTransition(MoveToSiteTask, ERR_INVALID_TARGET, HarvestEnergyTask)
+
     return table
 }
 
