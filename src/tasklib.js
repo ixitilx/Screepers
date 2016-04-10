@@ -48,7 +48,7 @@ function StoreEnergy(creep)
         
         var mostFreeRoom = function(a, b) { return freeRoom(b) - freeRoom(a) }
 
-        var storages = creep.room.find(FIND_MY_STRUCTURE, {filter: isStorage})
+        var storages = creep.room.find(FIND_MY_STRUCTURES, {filter: isStorage})
         storages.sort(mostFreeRoom)
         if(freeRoom(storages[0]) == 0)
             return ERR_FULL
