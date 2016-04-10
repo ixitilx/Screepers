@@ -16,8 +16,8 @@ function createHarvesterTable()
     table.AddStateTransition(tasklib.StoreEnergyTask,       OK,                         tasklib.StoreEnergyTask)
 
     // Move around
-    table.addMoveTransition(tasklib.HarvestEnergyTask,  tasklib.MoveToSourceTask)
-    table.addMoveTransition(tasklib.StoreEnergyTask,    tasklib.MoveToStorageTask)
+    table.addMoveTransition(tasklib.HarvestEnergyTask,      tasklib.MoveToSourceTask)
+    table.addMoveTransition(tasklib.StoreEnergyTask,        tasklib.MoveToStorageTask)
 
     return table
 }

@@ -20,6 +20,7 @@ function onTick(creep)
     {
         creep.memory.taskId = newTask.Id
         creep.say(newTask.Name)
+        onTick(creep)
     }
 }
 
