@@ -72,7 +72,10 @@ function Build(creep)
     if(creep.memory.siteId == undefined)
         return DONE;
     site = Game.getObjectById(creep.memory.siteId);
-    return creep.build(site);
+    var ret = creep.build(site);
+    if(ret == ERR_INVALID_TARGET)
+        delete creep.memory.siteId;
+    return DONE;
 }
 
 MoveToSourceTask        = TaskFromDoFunc('MoveToSource',        MoveToSource);
