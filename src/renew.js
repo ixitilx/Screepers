@@ -16,7 +16,7 @@ function findOldCreep(storage)
 
 function renewCreep(storage, creep)
 {
-    if (creep.ticksToLive <= 500/creep.body.length)
+    if (creep.ticksToLive <= (1500 - (500/creep.body.length)))
     {
         console.log(creep.name + 'was renewed.')
         return storage.renewCreep(creep);
