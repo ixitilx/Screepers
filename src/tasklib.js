@@ -84,12 +84,12 @@ function Build(creep)
     return ret
 }
 
-exports.MoveToSourceTask        = task.TaskFromDoFunc('eHarv:move',     MoveToSource)
-exports.MoveToStorageTask       = task.TaskFromDoFunc('eStore:move',    MoveToStorage)
-exports.MoveToControllerTask    = task.TaskFromDoFunc('upgrade:move',   MoveToController)
-exports.MoveToSiteTask          = task.TaskFromDoFunc('build:move',     MoveToSite)
+exports.MoveToSourceTask        = task.TaskFromDoFunc('move:harvest',   MoveToSource)
+exports.MoveToStorageTask       = task.TaskFromDoFunc('move:store',     MoveToStorage)
+exports.MoveToControllerTask    = task.TaskFromDoFunc('move:upgrade',   MoveToController)
+exports.MoveToSiteTask          = task.TaskFromDoFunc('move:build',     MoveToSite)
 
-exports.HarvestEnergyTask       = task.TaskFromDoFunc('eHarv',   HarvestEnergy)
-exports.StoreEnergyTask         = task.TaskFromDoFunc('eStore',  StoreEnergy)
+exports.HarvestEnergyTask       = task.TaskFromDoFunc('harvest', HarvestEnergy)
+exports.StoreEnergyTask         = task.TaskFromDoFunc('store',   StoreEnergy)
 exports.UpgradeControllerTask   = task.TaskFromDoFunc('upgrade', UpgradeController)
 exports.BuildTask               = task.TaskFromDoFunc('build',   Build)

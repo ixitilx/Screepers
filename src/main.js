@@ -20,6 +20,9 @@ function getProgress(site)
 
 function creepLoop(creep)
 {
+    if(creep.memory.taskId == undefined)
+        return
+
     var task = taskModule.GetTaskById(creep.memory.taskId)
     var status = task.do(creep)
 
@@ -77,7 +80,10 @@ function mainLoop()
     for(c in Memory.creeps)
     {
         if(Game.creeps[c] == undefined)
+        {
+            console.log('Cleaning [' + c + ']\'s memory')
             delete Memory.creeps[c]
+        }
     }
 }
 
