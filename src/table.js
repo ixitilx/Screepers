@@ -18,7 +18,10 @@ function Table(defaultTask)
         if(this.transitionTable[task.Id] == undefined)
             throw "Task is not registered in this table. Use table.AddStateTransition(task, status, newTask) to register.";
         if(this.transitionTable[task.Id][status] == undefined)
-            throw "This task does not have transition from [" + status +"] status.";
+        {
+            console.log('Attempting to throw exception');
+            throw "This task does not have transition from [" + status + "] status.";
+        }
         return this.transitionTable[task.Id][status];
     }
 
