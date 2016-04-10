@@ -1,5 +1,5 @@
 var worker = require('worker');
-var renew = require('renew'); 
+var renew =  require('renew'); 
 
 
 module.exports.loop = function () 
@@ -15,7 +15,7 @@ module.exports.loop = function ()
             if(creep.memory.role == 'worker') worker.onTick(creep);
         }
     }
-    renew(storage, findOldCreep(storage));
+    renew.renewCreep(storage, findOldCreep(storage));
 
     if(_(Game.creeps).size() < 10)
         worker.spawnWorker(Game.spawns.Spawn1);
