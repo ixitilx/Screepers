@@ -2,6 +2,8 @@ var worker = require('worker')
 var harvester = require('harvester')
 var renew = require('renew')
 var taskModule = require('task')
+var tableModule = require('table')
+
 
 function creepsByRole(role)
 {
