@@ -10,16 +10,12 @@ function onTick(creep)
     var task = taskModule.GetTaskById(creep.memory.taskId);
     var status = task.do(creep);
 
-    console.log(task.Name + ': ' + status);
-
     var table = tableModule.GetTableById(creep.memory.tableId);
-
-    console.log(table);
     var newTask = table.Lookup(task, status)
 
-    console.log(newTask);
+    console.log(task.Name + ': ' + status + ' => ' + (newTask?newTask.Name:'undefined'));
 
-    if(task.Id != newTask.Id)
+    if(task && task.Id != newTask.Id)
         creep.memory.taskId = newTask.Id
 }
 
