@@ -94,14 +94,17 @@ function WorkerTable()
     table = new Table(HarvestEnergyTask);
 
     // Move tasks
-    table.AddStateTransition(MoveToSourceTask, OK,      MoveToSourceTask);
-    table.AddStateTransition(MoveToSourceTask, DONE,    HarvestEnergyTask);
+    table.AddStateTransition(MoveToSourceTask, OK,          MoveToSourceTask);
+    table.AddStateTransition(MoveToSourceTask, ERR_TIRED,   MoveToSourceTask);
+    table.AddStateTransition(MoveToSourceTask, DONE,        HarvestEnergyTask);
 
-    table.AddStateTransition(MoveToStorageTask, OK,     MoveToStorageTask);
-    table.AddStateTransition(MoveToStorageTask, DONE,   StoreEnergyTask);
+    table.AddStateTransition(MoveToStorageTask, OK,         MoveToStorageTask);
+    table.AddStateTransition(MoveToStorageTask, ERR_TIRED,  MoveToStorageTask);
+    table.AddStateTransition(MoveToStorageTask, DONE,       StoreEnergyTask);
 
-    table.AddStateTransition(MoveToControllerTask, OK,      MoveToControllerTask);
-    table.AddStateTransition(MoveToControllerTask, DONE,    UpgradeControllerTask);
+    table.AddStateTransition(MoveToControllerTask, OK,          MoveToControllerTask);
+    table.AddStateTransition(MoveToControllerTask, ERR_TIRED,   MoveToControllerTask);
+    table.AddStateTransition(MoveToControllerTask, DONE,        UpgradeControllerTask);
 
     // Action tasks
     table.AddStateTransition(HarvestEnergyTask, OK,                 HarvestEnergyTask);
