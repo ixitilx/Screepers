@@ -16,11 +16,14 @@ function Table(defaultTask)
     this.Lookup = function(task, status)
     {
         if(this.transitionTable[task.Id] == undefined)
-            throw "Task is not registered in this table. Use table.AddStateTransition(task, status, newTask) to register.";
+        {
+            console.log("Task is not registered in this table. Use table.AddStateTransition(task, status, newTask) to register.");
+            return undefined;
+        }
         if(this.transitionTable[task.Id][status] == undefined)
         {
-            console.log('Attempting to throw exception');
-            throw "This task does not have transition from [" + status + "] status.";
+            console.log("Task [" + task.Name + "] does not have transition from [" + status + "] status.");
+            return undefined;
         }
         return this.transitionTable[task.Id][status];
     }
