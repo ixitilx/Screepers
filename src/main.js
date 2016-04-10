@@ -1,5 +1,6 @@
 var harvester = require('role.harvester');
-var worker = require('worker')
+var worker = require('worker');
+var renew = renew('renew')
 
 module.exports.loop = function () 
 {
@@ -15,6 +16,7 @@ module.exports.loop = function ()
             if(creep.memory.role == 'worker') worker.onTick(creep);
         }
     }
+    renew(storage, findOldCreep(storage));
 
     if(_(Game.creeps).size() < 10)
         worker.spawnWorker(Game.spawns.Spawn1);
