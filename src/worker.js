@@ -56,6 +56,7 @@ function createWorkerTable()
 
 var workerTable = createWorkerTable()
 
+exports.spawn = function(spawn)
 {
     var source = spawn.room.find(FIND_SOURCES_ACTIVE)[0]
 
