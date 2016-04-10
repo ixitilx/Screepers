@@ -50,7 +50,7 @@ function MoveToId(creep, id)
 
 function MoveToSource(creep)        { return MoveToId(creep, creep.memory.sourceId); }
 function MoveToStorage(creep)       { return MoveToId(creep, creep.memory.storageId); }
-function MoveToController(creep)    { return MoveToId(creep, creep.room.controller); }
+function MoveToController(creep)    { return MoveTo(creep, creep.room.controller); }
 
 function HarvestEnergy(creep)
 {
