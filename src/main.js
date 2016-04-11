@@ -99,6 +99,7 @@ function mainLoop()
             var sourceHarvesters = creepsByMemory({role:'harvester', sourceId:source.id})
             var totalWork = getTotalWork(sourceHarvesters)
             var needWork = harvester.getWorkRequired(source)
+            console.log('totalWork='+totalWork+" and needWork="+needWork+" for sourceId:"+source.id)
 
             if(totalWork < needWork)
                 harvester.spawn(spawn, source)
