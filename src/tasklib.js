@@ -81,7 +81,7 @@ function Build(creep)
         var mostProgress = function(a, b)
         {
             var pa = 1000000 * a.progress/a.progressTotal
-            var pb = 1000000 * b.probress/b.progressTotal
+            var pb = 1000000 * b.progress/b.progressTotal
             return pb - pa // higher progress -> earlier in sorted sequence
         }
 
@@ -92,12 +92,12 @@ function Build(creep)
 
         var cmp = function(a, b)
         {
-            var cmp = bestType(a, b)
-            if(cmp)
-                return cmp
-            cmp = mostProgress(a, b)
-            if(cmp)
-                return cmp
+            var ret = bestType(a, b)
+            if(ret)
+                return ret
+            ret = mostProgress(a, b)
+            if(ret)
+                return ret
             return leastDistanceFromSpawn(a, b)
         }
 
