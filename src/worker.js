@@ -48,5 +48,5 @@ exports.spawn = function(spawn)
     mem.tableId = workerTable.Id
     mem.sourceId = source.id
 
-    spawn.createCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], null, mem)
+    spawn.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, mem)
 }
