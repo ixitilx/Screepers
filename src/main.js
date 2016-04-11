@@ -5,11 +5,17 @@ var taskModule = require('task')
 var tableModule = require('table')
 
 
-function creepsByRole(role)
+function creepsByMemory(memory)
 {
-    return _.filter(Game.creeps, function(c)
+    return _.filter(Game.creeps, function(creep)
     {
-        return c.memory.role == role;
+        for(prop in memory)
+        {
+            prop = creep.memory[prop]
+            if(prop == undefined || prop != memory[prop])
+                return false
+        }
+        return true
     });
 }
 
@@ -68,11 +74,36 @@ function mainLoop()
 
     
     // Spawning strategy
-    if(creepsByRole('worker').length < 4)
+    if(creepsByMemory({role:'worker'}).length < 4)
         worker.spawn(Game.spawns.Spawn1)
 
-    // if(creepsByRole('harvester').length < 1)
-    //     harvester.spawn(Game.spawns.Spawn1)
+
+    // Harvester spawning strategy
+    var getClosestSpawn = function(room)        { return Game.spawns.Spawn1 }  // or best spawn by other criteria
+    var getWork         = function(bodyPart)    { return bodyPart.type == WORK ? 1 : 0 }
+    var getCreepWork    = function(creep)       { return _.sum(creep.body.map(getWork)) }
+    var getTotalWork    = function(creepArray)  { return _.sum(creepArray.map(getCreepWork)) }
+    var getHarvestRooms = function()            { return [Game.spawn.Spawn1.room] }
+
+    var harvestRooms = getHarvestRooms()
+    for(var i=0; i<harvestRooms.length; ++i)
+    {
+        var room = harvestRooms[i]
+        var spawn = getClosestSpawn(room)
+
+        var sources = room.find(FIND_SOURCES)
+        for(var j=0; i<sources.length; ++j)
+        {
+            var source = sources[j]
+
+            var sourceHarvesters = creepsByMemory({role:'harvester', sourceId:source.id})
+            var totalWork = getTotalWork(sourceHarvesters)
+            var needWork = harvester.getWorkRequired(source)
+
+            if(totalWork < needWork)
+                harvester.spawn(spawn, source)
+        }
+    }
 }
 
 exports.loop = mainLoop;

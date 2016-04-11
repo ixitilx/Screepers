@@ -2,6 +2,11 @@ var constants   = require('constants')
 var tableModule = require('table')
 var tasklib     = require('tasklib')
 
+function getWorkRequired(source)
+{
+    return Math.ceil(source.energyCapacity/600)
+}
+
 function warnAboutSpawns(room)
 {
     var spawnCount = room.find(FIND_MY_STRUCTURES, {filter: function(s) { s.structureType == STRUCTURE_SPAWN }}).length
@@ -18,13 +23,13 @@ function buildBody(work, carry, move)
     return body
 }
 
-function getBestHarvesterBody(room)
+function getBody(spawn, source)
 {
     warnAboutSpawns(room)
     var maxEnergy = room.energyCapacityAvailable
     var carry = 1
     var move = 1
-    var work = Math.min(5, (maxEnergy - 50*(carry+move))/100)
+    var work = Math.min(getWorkRequired(source), (maxEnergy - 50*(carry+move))/100)
     return buildBody(work, carry, move)
 }
 
@@ -46,16 +51,17 @@ function createHarvesterTable()
 
 var harvesterTable = createHarvesterTable()
 
-exports.spawn = function(spawn)
+exports.spawn = function(spawn, source)
 {
     var mem = new Object()
     mem.role = 'harvester'
-
-    var source = spawn.room.find(FIND_SOURCES)[0]
 
     mem.taskId = tasklib.HarvestEnergyTask.Id
     mem.tableId = harvesterTable.Id
     mem.sourceId = source.id
 
-    spawn.createCreep(getBestHarvesterBody(spawn.room), null, mem)
+    return spawn.createCreep(getBody(spawn, source), null, mem)
 }
+
+exports.getBody = getBody
+exports.getWorkRequired = getWorkRequired
