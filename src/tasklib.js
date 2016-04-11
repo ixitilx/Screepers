@@ -98,7 +98,7 @@ function Build(creep)
             cmp = mostProgress(a, b)
             if(cmp)
                 return cmp
-            return distanceFromSpawn(a, b)
+            return leastDistanceFromSpawn(a, b)
         }
 
         var sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
