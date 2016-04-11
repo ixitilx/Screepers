@@ -107,4 +107,4 @@ function mainLoop()
 }
 
 exports.loop = mainLoop;
-exports.creepsByRole = creepsByRole;
+exports.creepsByMemory = creepsByMemory;
