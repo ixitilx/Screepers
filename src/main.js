@@ -83,7 +83,7 @@ function mainLoop()
     var getWork         = function(bodyPart)    { return bodyPart.type == WORK ? 1 : 0 }
     var getCreepWork    = function(creep)       { return _.sum(creep.body.map(getWork)) }
     var getTotalWork    = function(creepArray)  { return _.sum(creepArray.map(getCreepWork)) }
-    var getHarvestRooms = function()            { return [Game.spawn.Spawn1.room] }
+    var getHarvestRooms = function()            { return [Game.spawns.Spawn1.room] }
 
     var harvestRooms = getHarvestRooms()
     for(var i=0; i<harvestRooms.length; ++i)
