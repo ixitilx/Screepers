@@ -25,6 +25,7 @@ function buildBody(work, carry, move)
 
 function getBody(spawn, source)
 {
+    var room = spawn.room
     warnAboutSpawns(room)
     var maxEnergy = room.energyCapacityAvailable
     var carry = 1
