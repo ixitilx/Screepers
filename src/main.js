@@ -62,7 +62,7 @@ function mainLoop()
 
     
     // Spawning strategy
-    if(creepsByRole('worker').length < 8)
+    if(creepsByRole('worker').length < 7)
         worker.spawn(Game.spawns.Spawn1)
 
     // if(creepsByRole('harvester').length < 1)
