@@ -30,7 +30,8 @@ function Table(defaultTask)
         }
         if(this.transitionTable[task.Id][status] == undefined)
         {
-            console.log("Task [" + task.Name + "] does not have transition from [" + status + "] status.")
+            if(Memory.debug)
+                console.log("Task [" + task.Name + "] does not have transition from [" + status + "] status.")
             return undefined
         }
         return this.transitionTable[task.Id][status]
