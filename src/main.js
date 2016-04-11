@@ -18,10 +18,16 @@ function getProgress(site)
     return 1000000 * site.progress / site.progressTotal;
 }
 
-function creepLoop(creep)
+function creepLoop(creep, taskArray)
 {
     if(creep.memory.taskId == undefined)
         return
+
+    // stack overflow detection
+    var taskIndex = taskArray.indexOf(creep.memory.taskId)
+    if(taskIndex != -1)
+        return
+    taskArray.push(creep.memory.taskId)
 
     var task = taskModule.GetTaskById(creep.memory.taskId)
     var status = task.do(creep)
@@ -36,7 +42,7 @@ function creepLoop(creep)
     {
         creep.memory.taskId = newTask.Id
         creep.say(newTask.Name)
-        creepLoop(creep)
+        creepLoop(creep, taskArray)
     }
 }
 
@@ -54,7 +60,7 @@ function mainLoop()
 
     // Creep control strategy
     for(var creepName in Game.creeps)
-        creepLoop(Game.creeps[creepName])
+        creepLoop(Game.creeps[creepName], new Array())
 
     // Renew strategy
     //var storage = Game.spawns.Spawn1
