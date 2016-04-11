@@ -12,6 +12,7 @@ function createWorkerTable()
     table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_FULL,                   tasklib.BuildTask)
     table.AddStateTransition(tasklib.BuildTask,             constants.TASK_DONE,        tasklib.UpgradeControllerTask)
     
+    table.AddStateTransition(tasklib.HarvestEnergyTask,     ERR_NOT_ENOUGH_RESOURCES,   tasklib.MoveToSourceTask)
     table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
     table.AddStateTransition(tasklib.BuildTask,             ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
     table.AddStateTransition(tasklib.UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
@@ -47,5 +48,5 @@ exports.spawn = function(spawn)
     mem.tableId = workerTable.Id
     mem.sourceId = source.id
 
-    spawn.createCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], null, mem)
+    spawn.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, mem)
 }

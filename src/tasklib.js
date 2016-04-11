@@ -67,13 +67,48 @@ function UpgradeController(creep)
 
 function Build(creep)
 {
-    if(creep.memory.siteId == undefined)
+    var site = Game.getObjectById(creep.memory.siteId)
+    if(site == undefined)
     {
-        console.log('build:undef')
-        return constants.TASK_DONE
+        var bestType = function(a, b)
+        {
+            var typePriority = [STRUCTURE_ROAD, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_SPAWN]
+            var idx_a = typePriority.indexOf(a.structureType)
+            var idx_b = typePriority.indexOf(b.structureType)
+            return idx_b - idx_a // higher priority -> earlier in sorted sequence
+        }
+
+        var mostProgress = function(a, b)
+        {
+            var pa = 1000000 * a.progress/a.progressTotal
+            var pb = 1000000 * b.probress/b.progressTotal
+            return pb - pa // higher progress -> earlier in sorted sequence
+        }
+
+        var leastDistanceFromSpawn = function(a, b)
+        {
+            return 0
+        }
+
+        var cmp = function(a, b)
+        {
+            var cmp = bestType(a, b)
+            if(cmp)
+                return cmp
+            cmp = mostProgress(a, b)
+            if(cmp)
+                return cmp
+            return leastDistanceFromSpawn(a, b)
+        }
+
+        var sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
+        sites.sort(cmp)
+        if(sites==undefined || sites.length==0)
+            return constants.TASK_DONE
+        site = sites[0]
+        creep.memory.siteId = site.id
     }
 
-    var site = Game.getObjectById(creep.memory.siteId)
     var ret = creep.build(site)
     if(ret == ERR_INVALID_TARGET)
     {
