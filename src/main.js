@@ -86,7 +86,8 @@ function mainLoop()
     var getHarvestRooms = function()            { return [Game.spawns.Spawn1.room] }
 
     var harvestRooms = getHarvestRooms()
-    for(var i=0; i<harvestRooms.length; ++i)
+
+    for(var i=0; i<harvestRooms.length && Game.memory.hs==1; ++i)
     {
         var room = harvestRooms[i]
         var spawn = getClosestSpawn(room)
