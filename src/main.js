@@ -56,24 +56,6 @@ function mainLoop()
     for(var creepName in Game.creeps)
         creepLoop(Game.creeps[creepName])
 
-    
-    // Building strategy
-    if(Game.time % 100 == 0)
-    {
-        var sites = Game.spawns.Spawn1.room.find(FIND_MY_CONSTRUCTION_SITES)
-        if(sites && sites.length > 0)
-        {
-            sites.sort(
-                function(a, b) { return getProgress(b) - getProgress(a) }
-            );
-
-            creepsByRole('worker').forEach(
-                function(c) { c.memory.siteId = sites[0].id }
-            );
-        }
-    }
-    
-    
     // Renew strategy
     //var storage = Game.spawns.Spawn1
     // renew.renewCreep(storage, renew.findOldCreep(storage))
