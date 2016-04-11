@@ -4,7 +4,7 @@ var tasklib     = require('tasklib')
 
 function warnAboutSpawns(room)
 {
-    var spawnCount = creep.room.find(FIND_MY_STRUCTURES, {filter: function(s) { s.structureType == STRUCTURE_SPAWN }}).length
+    var spawnCount = room.find(FIND_MY_STRUCTURES, {filter: function(s) { s.structureType == STRUCTURE_SPAWN }}).length
     if(spawnCount > 1)
         console.log('MORE THAN ONE SPAWNS FOUND! Check if they contribute towards room energy capacity')
 }
