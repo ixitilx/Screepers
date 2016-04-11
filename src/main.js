@@ -92,7 +92,7 @@ function mainLoop()
         var spawn = getClosestSpawn(room)
 
         var sources = room.find(FIND_SOURCES)
-        for(var j=0; i<sources.length; ++j)
+        for(var j=0; j<sources.length; ++j)
         {
             var source = sources[j]
 
