@@ -11,17 +11,11 @@ function creepsByMemory(memory)
     {
         for(prop in memory)
         {
-            prop = creep.memory[prop]
-            if(prop == undefined || prop != memory[prop])
+            if(memory[prop] != creep.memory[prop])
                 return false
         }
         return true
     });
-}
-
-function getProgress(site)
-{
-    return 1000000 * site.progress / site.progressTotal;
 }
 
 function creepLoop(creep, taskArray)
