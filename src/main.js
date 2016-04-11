@@ -74,7 +74,7 @@ function mainLoop()
 
     // Harvester spawning strategy
     var getClosestSpawn = function(room)        { return Game.spawns.Spawn1 }  // or best spawn by other criteria
-    var getWork         = function(bodyPart)    { return bodyPart.type == WORK ? 1 : 0 }
+    var getWork         = function(bodyPart)    { return bodyPart.type == WORK }
     var getCreepWork    = function(creep)       { return _.sum(creep.body.map(getWork)) }
     var getTotalWork    = function(creepArray)  { return _.sum(creepArray.map(getCreepWork)) }
     var getHarvestRooms = function()            { return [Game.spawns.Spawn1.room] }
@@ -94,7 +94,6 @@ function mainLoop()
             var sourceHarvesters = creepsByMemory({role:'harvester', sourceId:source.id})
             var totalWork = getTotalWork(sourceHarvesters)
             var needWork = harvester.getWorkRequired(source)
-            console.log('totalWork='+totalWork+" and needWork="+needWork+" for sourceId:"+source.id)
 
             if(totalWork < needWork)
                 harvester.spawn(spawn, source)
