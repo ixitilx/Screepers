@@ -2,17 +2,14 @@ var taskRepo = new Array()
 
 function registerTask(task)
 {
-	var id = taskRepo.length
+	task.id = taskRepo.length
 	taskRepo.push(task)
-	return id
 }
 
 function Task(name)
 {
-    this.id = registerTask(this)
-    this.Name = name
-
-    taskRepo.push(this)
+    this.name = name
+    registerTask(this)
 }
 
 function TaskFromDoFunc(name, doFunc)

@@ -27,7 +27,6 @@ function Table(name, defaultTask)
     {
         if(this.transitionTable[task.id] == undefined)
         {
-
             console.log("Task [" + task.name + "] is not registered in table [" + this.name + "]. Use table.AddStateTransition(task, status, newTask) to register.")
             return undefined
         }
