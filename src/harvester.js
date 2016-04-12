@@ -1,6 +1,8 @@
-var constants   = require('constants')
-var tableModule = require('table')
-var tasklib     = require('tasklib')
+var imp_constants = require('constants')
+var imp_table     = require('table')
+var imp_tasklib   = require('tasklib')
+
+var TASK_DONE = imp_constants.TASK_DONE
 
 function getWorkRequired(source)
 {
@@ -36,16 +38,16 @@ function getBody(spawn, source)
 
 function createHarvesterTable()
 {
-    var table = new tableModule.Table(tasklib.HarvestEnergyTask)
+    var table = new imp_table.Table(imp_tasklib.HarvestEnergyTask)
 
     // Main logic
-    table.AddStateTransition(tasklib.HarvestEnergyTask,     OK,                         tasklib.StoreEnergyTask)
-    table.AddStateTransition(tasklib.HarvestEnergyTask,     constants.TASK_DONE,        tasklib.MoveToStorageTask)
-    table.AddStateTransition(tasklib.HarvestEnergyTask,     ERR_NOT_IN_RANGE,           tasklib.MoveToSourceTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_NOT_IN_RANGE,           tasklib.HarvestEnergyTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
-    table.AddStateTransition(tasklib.MoveToStorageTask,     constants.TASK_DONE,        tasklib.StoreEnergyTask)
-    table.AddStateTransition(tasklib.MoveToSourceTask,      constants.TASK_DONE,        tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     OK,                         imp_tasklib.StoreEnergyTask)
+    table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     TASK_DONE,                  imp_tasklib.MoveToStorageTask)
+    table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     ERR_NOT_IN_RANGE,           imp_tasklib.MoveToSourceTask)
+    table.AddStateTransition(imp_tasklib.StoreEnergyTask,       ERR_NOT_IN_RANGE,           imp_tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp_tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   imp_tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp_tasklib.MoveToStorageTask,     TASK_DONE,                  imp_tasklib.StoreEnergyTask)
+    table.AddStateTransition(imp_tasklib.MoveToSourceTask,      TASK_DONE,                  imp_tasklib.HarvestEnergyTask)
 
     return table
 }
@@ -57,7 +59,7 @@ exports.spawn = function(spawn, source)
     var mem = new Object()
     mem.role = 'harvester'
 
-    mem.taskId = tasklib.HarvestEnergyTask.Id
+    mem.taskId = imp_tasklib.HarvestEnergyTask.Id
     mem.tableId = harvesterTable.Id
     mem.sourceId = source.id
 

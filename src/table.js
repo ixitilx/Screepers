@@ -1,4 +1,6 @@
-var DONE = 100
+var imp_constants = require('constants')
+
+var TASK_DONE = imp_constants.TASK_DONE
 
 var tableRepo = new Array()
 
@@ -14,7 +16,7 @@ function Table(defaultTask)
     this.addMoveTransition = function(task, moveTask)
     {
         this.AddStateTransition(task, ERR_NOT_IN_RANGE, moveTask)
-        this.AddStateTransition(moveTask, DONE, task)
+        this.AddStateTransition(moveTask, TASK_DONE, task)
         
         this.AddStateTransition(moveTask, OK, moveTask)
         this.AddStateTransition(moveTask, ERR_TIRED, moveTask)

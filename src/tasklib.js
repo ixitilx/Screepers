@@ -1,5 +1,5 @@
-var constants = require('constants')
-var task = require('task')
+var imp_constants = require('constants')
+var imp_task = require('task')
 
 function MoveTo(creep, dst, range)
 {
@@ -114,12 +114,12 @@ function Build(creep)
     return ret
 }
 
-exports.MoveToSourceTask        = task.TaskFromDoFunc('move:harvest',   MoveToSource)
-exports.MoveToStorageTask       = task.TaskFromDoFunc('move:store',     MoveToStorage)
-exports.MoveToControllerTask    = task.TaskFromDoFunc('move:upgrade',   MoveToController)
-exports.MoveToSiteTask          = task.TaskFromDoFunc('move:build',     MoveToSite)
+exports.MoveToSourceTask        = imp_task.TaskFromDoFunc('move:harvest',   MoveToSource)
+exports.MoveToStorageTask       = imp_task.TaskFromDoFunc('move:store',     MoveToStorage)
+exports.MoveToControllerTask    = imp_task.TaskFromDoFunc('move:upgrade',   MoveToController)
+exports.MoveToSiteTask          = imp_task.TaskFromDoFunc('move:build',     MoveToSite)
 
-exports.HarvestEnergyTask       = task.TaskFromDoFunc('harvest', HarvestEnergy)
-exports.StoreEnergyTask         = task.TaskFromDoFunc('store',   StoreEnergy)
-exports.UpgradeControllerTask   = task.TaskFromDoFunc('upgrade', UpgradeController)
-exports.BuildTask               = task.TaskFromDoFunc('build',   Build)
+exports.HarvestEnergyTask       = imp_task.TaskFromDoFunc('harvest', HarvestEnergy)
+exports.StoreEnergyTask         = imp_task.TaskFromDoFunc('store',   StoreEnergy)
+exports.UpgradeControllerTask   = imp_task.TaskFromDoFunc('upgrade', UpgradeController)
+exports.BuildTask               = imp_task.TaskFromDoFunc('build',   Build)

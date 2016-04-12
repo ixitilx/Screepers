@@ -1,7 +1,5 @@
-var imp = {
-    task: require('task')
-    table: require('table')
-}
+var imp_task = require('task')
+var imp_table = require('table')
 
 function creepLoop(creep, taskArray)
 {
@@ -14,10 +12,10 @@ function creepLoop(creep, taskArray)
         return
     taskArray.push(creep.memory.taskId)
 
-    var task = imp.task.GetTaskById(creep.memory.taskId)
+    var task = imp_task.GetTaskById(creep.memory.taskId)
     var status = task.do(creep)
 
-    var table = imp.table.GetTableById(creep.memory.tableId)
+    var table = imp_table.GetTableById(creep.memory.tableId)
     var newTask = table.Lookup(task, status)
 
     if(Memory.debug && Memory.debug == 1)

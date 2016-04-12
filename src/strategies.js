@@ -1,32 +1,26 @@
-var memorySweep = require('strategy_memory_sweep')
-var creepLoop   = require('strategy_creep_loop')
-var harvesting  = require('strategy_harvesting')
+var imp_memorySweep = require('strategy_memory_sweep')
+var imp_creepLoop   = require('strategy_creep_loop')
+var imp_harvesting  = require('strategy_harvesting')
 
-var imp = 
-{
-    memorySweep: memorySweep,
-    creepLoop  : creepLoop,
-    harvesting : harvesting
-}
-
-for(strat in imp)
-    exports[strat] = imp[strat]
+var strategies = [imp_memorySweep, imp_creepLoop, imp_harvesting]
 
 exports.initialize = function()
 {
     if(Memory.strategies == undefined)
         Memory.strategies = new Object()
     
-    for(strategy in strategies)
+    strategies.forEach(function(strategy)
     {
-        var init = strategies[strategy].initialize
-        if(init)
-            init()
-    }
+        if(strategy.initialize)
+            strategy.initialize()
+    })
 }
 
 exports.run = function()
 {
-    for(strategy in strategies)
-        strategies[strategy].run()
+    strategies.forEach(function(strategy)
+    {
+        if(stragegy.run)
+            strategy.run()
+    })
 }
