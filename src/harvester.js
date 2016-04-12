@@ -37,7 +37,7 @@ function getBody(spawn, source)
     return buildBody(work, carry, move)
 }
 
-function getSourceInfo(creep) { return Memory.strategies.sources[creep.memory.sourceId] }
+function getSourceInfo(creep) { return Memory.strategies.harvesting.sources[creep.memory.sourceId] }
 function getSource(creep)     { return Game.getObjectById(creep.memory.sourceId)}
 function getContainer(creep)  { return Game.getObjectById(getSourceInfo(creep).containerId) }
 function getSite(creep)       { return Game.getObjectById(getSourceInfo(creep).siteId) }
@@ -61,11 +61,16 @@ function move(range)
     return moveFunction
 }
 
+function storeEnergy(creep, target) { return creep.transfer(target, RESOURCE_ENERGY) }
+function harvestEnergy(creep, target) { return _.sum(creep.carry) >= creep.carryCapacity ? TASK_DONE : creep.harvest(target) }
+
 var actions =
 {
     move0: move(0),
     move1: move(1),
-    move3: move(3)
+    move3: move(3),
+    store: storeEnergy,
+    harvest: harvestEnergy,
 }
 
 function getAction(actionName)
@@ -109,10 +114,10 @@ function makeTable(name, transitions, move_transitions)
 
 function createHarvesterTable()
 {
-    var harvest      = makeTask('harvest' , 'source')
-    var build        = makeTask('build'   , 'site')
-    var store        = makeTask('transfer', 'container')
-    var haul         = makeTask('transfer', 'storage')
+    var harvest      = makeTask('harvest', 'source')
+    var build        = makeTask('build', 'site')
+    var store        = makeTask('store', 'container')
+    var haul         = makeTask('store', 'storage')
     var move_harvest = makeTask('move1', 'source')
     var move_build   = makeTask('move3', 'site')
     var move_store   = makeTask('move0', 'container')
@@ -120,6 +125,7 @@ function createHarvesterTable()
 
     var transitions = [
         [harvest, OK,        store],
+        [harvest, ERR_NOT_ENOUGH_RESOURCES, move_harvest],
         [harvest, TASK_DONE, build],
 
         [store, ERR_NOT_ENOUGH_RESOURCES, harvest],
