@@ -80,7 +80,7 @@ function run()
 function initialize()
 {
     //disabled by default
-    if(Memory.strategies.harvesting == undefined)
+    if(!Memory.strategies.harvesting)
     {
         Memory.strategies.harvesting = {
             enabled: false,
