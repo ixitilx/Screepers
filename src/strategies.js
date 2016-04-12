@@ -1,7 +1,12 @@
-var imp = {
-    memorySweep: require('strategy/memorySweep')
-    creepLoop  : require('strategy/creepLoop'),
-    harvesting : require('strategy/harvesting'),
+var memorySweep = require('strategy/memorySweep')
+var creepLoop   = require('strategy/creepLoop')
+var harvesting  = require('strategy/harvesting')
+
+var imp = 
+{
+    memorySweep: memorySweep,
+    creepLoop: creepLoop,
+    harvesting: harvesting
 }
 
 for(strat in imp)
