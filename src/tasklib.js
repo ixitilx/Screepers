@@ -12,29 +12,29 @@ function MoveTo(creep, dst, range)
     return creep.moveTo(dst)
 }
 
-function MoveToId(creep, id, range)
+function MoveToid(creep, id, range)
 {
-    return MoveTo(creep, Game.getObjectById(id), range)
+    return MoveTo(creep, Game.getObjectByid(id), range)
 }
 
-function MoveToSource(creep)        { return MoveToId(creep, creep.memory.sourceId, 1) }
-function MoveToStorage(creep)       { return MoveToId(creep, creep.memory.storageId, 1) }
+function MoveToSource(creep)        { return MoveToid(creep, creep.memory.sourceid, 1) }
+function MoveToStorage(creep)       { return MoveToid(creep, creep.memory.storageid, 1) }
 function MoveToController(creep)    { return MoveTo(creep, creep.room.controller, 1) }
-function MoveToSite(creep)          { return (creep.memory.siteId) ? MoveToId(creep, creep.memory.siteId, 3) : TASK_DONE }
+function MoveToSite(creep)          { return (creep.memory.siteid) ? MoveToid(creep, creep.memory.siteid, 3) : TASK_DONE }
 
 function HarvestEnergy(creep)
 {
     if(_.sum(creep.carry) >= creep.carryCapacity)
         return TASK_DONE
 
-    var source = Game.getObjectById(creep.memory.sourceId)
+    var source = Game.getObjectByid(creep.memory.sourceid)
     return creep.harvest(source)
 }
 
 function StoreEnergy(creep)
 {
     var freeRoom = function(a) { return a.energyCapacity - a.energy }
-    var storage = Game.getObjectById(creep.memory.storageId)
+    var storage = Game.getObjectByid(creep.memory.storageid)
     if(storage==undefined || freeRoom(storage) == 0)
     {
         var isStorage = function(structure)
@@ -51,7 +51,7 @@ function StoreEnergy(creep)
             return ERR_FULL
 
         storage = storages[0]
-        creep.memory.storageId = storage.id
+        creep.memory.storageid = storage.id
     }
     return creep.transfer(storage, RESOURCE_ENERGY)
 }
@@ -64,7 +64,7 @@ function UpgradeController(creep)
 
 function Build(creep)
 {
-    var site = Game.getObjectById(creep.memory.siteId)
+    var site = Game.getObjectByid(creep.memory.siteid)
     if(site == undefined)
     {
         var bestType = function(a, b)
@@ -103,14 +103,14 @@ function Build(creep)
         if(sites==undefined || sites.length==0)
             return TASK_DONE
         site = sites[0]
-        creep.memory.siteId = site.id
+        creep.memory.siteid = site.id
     }
 
     var ret = creep.build(site)
     if(ret == ERR_INVALID_TARGET)
     {
         console.log('build:inval')
-        delete creep.memory.siteId
+        delete creep.memory.siteid
         return TASK_DONE
     }
     return ret

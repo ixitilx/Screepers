@@ -59,8 +59,8 @@ exports.spawn = function(spawn, source)
     var mem = new Object()
     mem.role = 'harvester'
 
-    mem.taskId = imp_tasklib.HarvestEnergyTask.Id
-    mem.tableId = harvesterTable.Id
+    mem.taskId = imp_tasklib.HarvestEnergyTask.id
+    mem.tableId = harvesterTable.id
     mem.sourceId = source.id
 
     return spawn.createCreep(getBody(spawn, source), null, mem)

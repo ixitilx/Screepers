@@ -21,9 +21,9 @@ function creepLoop(creep, taskArray)
     if(Memory.debug && Memory.debug == 1)
         console.log(creep.name + '.' + task.Name + '(' + status + ') => ' + (newTask?newTask.Name:'undefined'))
 
-    if(task && newTask && task.Id != newTask.Id)
+    if(task && newTask && task.id != newTask.id)
     {
-        creep.memory.taskId = newTask.Id
+        creep.memory.taskId = newTask.id
         creep.say(newTask.Name)
         creepLoop(creep, taskArray)
     }
