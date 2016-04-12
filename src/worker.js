@@ -1,36 +1,40 @@
-var constants   = require('constants')
-var tableModule = require('table')
-var tasklib     = require('tasklib')
+var imp = 
+{
+    constants: require('constants')
+    table    : require('table')
+    tasklib  : require('tasklib')
+}
 
+var TASK_DONE = imp.constants.TASK_DONE
 
 function createWorkerTable()
 {
-    var table = new tableModule.Table(tasklib.HarvestEnergyTask)
+    var table = new imp.table.Table(imp.tasklib.HarvestEnergyTask)
 
     // Main logic
-    table.AddStateTransition(tasklib.HarvestEnergyTask,     constants.TASK_DONE,        tasklib.StoreEnergyTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_FULL,                   tasklib.BuildTask)
-    table.AddStateTransition(tasklib.BuildTask,             constants.TASK_DONE,        tasklib.UpgradeControllerTask)
+    table.AddStateTransition(imp.tasklib.HarvestEnergyTask,     TASK_DONE,        imp.tasklib.StoreEnergyTask)
+    table.AddStateTransition(imp.tasklib.StoreEnergyTask,       ERR_FULL,         imp.tasklib.BuildTask)
+    table.AddStateTransition(imp.tasklib.BuildTask,             TASK_DONE,        imp.tasklib.UpgradeControllerTask)
     
-    //table.AddStateTransition(tasklib.HarvestEnergyTask,     ERR_NOT_ENOUGH_RESOURCES,   tasklib.MoveToSourceTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
-    table.AddStateTransition(tasklib.BuildTask,             ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
-    table.AddStateTransition(tasklib.UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES,   tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp.tasklib.HarvestEnergyTask,     ERR_NOT_ENOUGH_RESOURCES,   imp.tasklib.StoreEnergyTask)
+    table.AddStateTransition(imp.tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   imp.tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp.tasklib.BuildTask,             ERR_NOT_ENOUGH_RESOURCES,   imp.tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp.tasklib.UpgradeControllerTask, ERR_NOT_ENOUGH_RESOURCES,   imp.tasklib.HarvestEnergyTask)
 
     // Doing fine
-    table.AddStateTransition(tasklib.HarvestEnergyTask,     OK,                         tasklib.HarvestEnergyTask)
-    table.AddStateTransition(tasklib.StoreEnergyTask,       OK,                         tasklib.StoreEnergyTask)
-    table.AddStateTransition(tasklib.UpgradeControllerTask, OK,                         tasklib.UpgradeControllerTask)
-    table.AddStateTransition(tasklib.BuildTask,             OK,                         tasklib.BuildTask)
+    table.AddStateTransition(imp.tasklib.HarvestEnergyTask,     OK,                         imp.tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp.tasklib.StoreEnergyTask,       OK,                         imp.tasklib.StoreEnergyTask)
+    table.AddStateTransition(imp.tasklib.UpgradeControllerTask, OK,                         imp.tasklib.UpgradeControllerTask)
+    table.AddStateTransition(imp.tasklib.BuildTask,             OK,                         imp.tasklib.BuildTask)
 
     // Move around
-    table.addMoveTransition(tasklib.HarvestEnergyTask,      tasklib.MoveToSourceTask)
-    table.addMoveTransition(tasklib.StoreEnergyTask,        tasklib.MoveToStorageTask)
-    table.addMoveTransition(tasklib.BuildTask,              tasklib.MoveToSiteTask)
-    table.addMoveTransition(tasklib.UpgradeControllerTask,  tasklib.MoveToControllerTask)
+    table.addMoveTransition(imp.tasklib.HarvestEnergyTask,      imp.tasklib.MoveToSourceTask)
+    table.addMoveTransition(imp.tasklib.StoreEnergyTask,        imp.tasklib.MoveToStorageTask)
+    table.addMoveTransition(imp.tasklib.BuildTask,              imp.tasklib.MoveToSiteTask)
+    table.addMoveTransition(imp.tasklib.UpgradeControllerTask,  imp.tasklib.MoveToControllerTask)
 
     // Errors
-    table.AddStateTransition(tasklib.MoveToSiteTask, ERR_INVALID_TARGET, tasklib.HarvestEnergyTask)
+    table.AddStateTransition(imp.tasklib.MoveToSiteTask, ERR_INVALID_TARGET, imp.tasklib.HarvestEnergyTask)
 
     return table
 }
@@ -44,7 +48,7 @@ exports.spawn = function(spawn)
     var mem = new Object()
     mem.role = 'worker'
 
-    mem.taskId = tasklib.HarvestEnergyTask.Id
+    mem.taskId = imp.tasklib.HarvestEnergyTask.Id
     mem.tableId = workerTable.Id
     mem.sourceId = source.id
 
