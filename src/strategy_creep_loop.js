@@ -19,7 +19,7 @@ function creepLoop(creep, taskArray)
     var newTask = table.Lookup(task, status)
 
     if(Memory.debug && Memory.debug == 1)
-        console.log(creep.name + '.' + task.Name + '(' + status + ') => ' + (newTask?newTask.Name:'undefined'))
+        console.log(creep.name + '.' + task.name + '(' + status + ') => ' + (newTask?newTask.name:'undefined'))
 
     if(task && newTask && task.id != newTask.id)
     {
