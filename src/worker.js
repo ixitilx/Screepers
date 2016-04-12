@@ -38,16 +38,23 @@ function createWorkerTable()
 
 var workerTable = createWorkerTable()
 
-exports.spawn = function(spawn)
+function makeMemory(spawn)
 {
     var source = spawn.room.find(FIND_SOURCES)[0]
-
-    var mem = new Object()
-    mem.role = 'worker'
-
-    mem.taskId = imp_tasklib.HarvestEnergyTask.id
-    mem.tableId = workerTable.id
-    mem.sourceId = source.id
-
-    spawn.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, mem)
+    return 
+    {
+        role: 'worker',
+        taskId: imp_tasklib.HarvestEnergyTask.id,
+        tableId: workerTable.id,
+        sourceId: source.id
+    }
 }
+
+function spawn(spawn)
+{
+    var memory = makeMemory(spawn)
+    spawn.createCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], null, memory)
+}
+
+exports.spawn = spawn
+exports.makeMemory = makeMemory

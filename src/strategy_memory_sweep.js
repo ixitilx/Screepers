@@ -1,11 +1,19 @@
 exports.run = function()
 {
-    for(c in Memory.creeps)
+    for(creepName in Memory.creeps)
     {
-        if(Game.creeps[c] == undefined)
+        var found = false
+        for(var spawn in Game.spawns)
         {
-            console.log('Cleaning [' + c + ']\'s memory')
-            delete Memory.creeps[c]
+            var spawning = Game.spawns[spawn].spawning
+            if(spawning)
+                found = found || spawning.name == creepName
+        }
+
+        if(!found && Game.creeps[creepName] == undefined)
+        {
+            console.log('Cleaning [' + creepName + ']\'s memory')
+            delete Memory.creeps[creepName]
         }
     }
 }

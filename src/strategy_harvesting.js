@@ -2,7 +2,8 @@
 // Harvester spawning strategy
 //
 
-var imp_havester = require('harvester')
+var imp_harvester = require('harvester')
+var imp_utils = require('utils')
 
 var memory = null
 
@@ -41,18 +42,18 @@ function setupSourceInfo(source)
 
 function manageSource(source)
 {
-    var sourceHarvesters = creepsByMemory({
+    var sourceHarvesters = imp_utils.creepsByMemory({
         role    : 'harvester',
         sourceId: source.id
     })
 
     var totalWork = getTotalWork(sourceHarvesters)
-    var needWork = imp.harvester.getWorkRequired(source)
+    var needWork = imp_harvester.getWorkRequired(source)
 
     if(totalWork < needWork)
     {
         var spawn = findBestSpawn(source.room)
-        imp.harvester.spawn(spawn, source)
+        imp_harvester.spawn(spawn, source)
     }
     else
     {
