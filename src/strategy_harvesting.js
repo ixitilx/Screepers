@@ -2,9 +2,7 @@
 // Harvester spawning strategy
 //
 
-var imp = {
-    harvester: require('harvester')
-}
+var imp_havester = require('harvester')
 
 var memory = null
 

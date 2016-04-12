@@ -6,7 +6,7 @@ var strategies = [imp_memorySweep, imp_creepLoop, imp_harvesting]
 
 exports.initialize = function()
 {
-    if(Memory.strategies == undefined)
+    if(!Memory.strategies)
         Memory.strategies = new Object()
     
     strategies.forEach(function(strategy)
