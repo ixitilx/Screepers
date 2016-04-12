@@ -6,7 +6,7 @@ var TASK_DONE = imp_constants.TASK_DONE
 
 function createWorkerTable()
 {
-    var table = new imp_table.Table(imp_tasklib.HarvestEnergyTask)
+    var table = new imp_table.Table('worker_table', imp_tasklib.HarvestEnergyTask)
 
     // Main logic
     table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     TASK_DONE,        imp_tasklib.StoreEnergyTask)

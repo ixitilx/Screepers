@@ -38,7 +38,7 @@ function getBody(spawn, source)
 
 function createHarvesterTable()
 {
-    var table = new imp_table.Table(imp_tasklib.HarvestEnergyTask)
+    var table = new imp_table.Table('harvester_table', imp_tasklib.HarvestEnergyTask)
 
     // Main logic
     table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     OK,                         imp_tasklib.StoreEnergyTask)
