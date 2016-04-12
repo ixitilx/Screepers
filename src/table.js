@@ -48,4 +48,4 @@ function Table(name, defaultTask)
 }
 
 exports.Table = Table
-exports.GetTableByid = function(id) { return tableRepo[id]; }
+exports.GetTableById = function(id) { return tableRepo[id]; }
