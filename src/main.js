@@ -6,7 +6,7 @@ var utils = require('utils')
 function mainLoop()
 {
     // Renew strategy
-    renew.renewCreep(Game.spawns.Spawn1, renew.findOldCreep(storage))
+    renew.renewCreep(Game.spawns.Spawn1, renew.findOldCreep(Game.spawns.Spawn1))
 
     // Spawning strategy
     if(utils.creepsByMemory({role:'worker'}).length < 4)

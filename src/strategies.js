@@ -20,7 +20,7 @@ exports.run = function()
 {
     strategies.forEach(function(strategy)
     {
-        if(stragegy.run)
+        if(strategy.run)
             strategy.run()
     })
 }
