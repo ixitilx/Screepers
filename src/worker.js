@@ -54,7 +54,7 @@ function makeMemory(spawn)
 function spawn(spawn)
 {
     var memory = makeMemory(spawn)
-    return spawn.createCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], null, memory)
+    return spawn.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, memory)
 }
 
 exports.spawn = spawn

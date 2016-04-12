@@ -24,7 +24,7 @@ function creepLoop(creep, taskArray)
     if(task && newTask && task.id != newTask.id)
     {
         creep.memory.taskId = newTask.id
-        creep.say(newTask.Name)
+        creep.say(newTask.name)
         creepLoop(creep, taskArray)
     }
 }

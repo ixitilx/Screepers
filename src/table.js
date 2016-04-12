@@ -33,13 +33,14 @@ function Table(name, defaultTask)
         if(this.transitionTable[task.id][status] == undefined)
         {
             if(Memory.debug)
-                console.log("Task [" + task.Name + "] does not have transition from [" + status + "] status in table [" + this.name + "].")
+                console.log("Task [" + task.name + "] does not have transition from [" + status + "] status in table [" + this.name + "].")
             return undefined
         }
         return this.transitionTable[task.id][status]
     }
 
     this.id = tableRepo.length
+    this.name = name
     this.transitionTable = new Array()
     this.transitionTable[-1] = defaultTask
     this.AddStateTransition(defaultTask, ERR_BUSY, defaultTask)

@@ -8,11 +8,11 @@ function mainLoop()
     // Renew strategy
     renew.renewCreep(Game.spawns.Spawn1, renew.findOldCreep(Game.spawns.Spawn1))
 
+    strategies.run()
+
     // Spawning strategy
     if(utils.creepsByMemory({role:'worker'}).length < 4)
         worker.spawn(Game.spawns.Spawn1)
-
-    strategies.run()
 }
 
 exports.loop = mainLoop
