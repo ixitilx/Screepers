@@ -27,13 +27,14 @@ function Table(name, defaultTask)
     {
         if(this.transitionTable[task.id] == undefined)
         {
-            console.log("Task is not registered in this table. Use table.AddStateTransition(task, status, newTask) to register.")
+
+            console.log("Task [" + task.name + "] is not registered in table [" + this.name + "]. Use table.AddStateTransition(task, status, newTask) to register.")
             return undefined
         }
         if(this.transitionTable[task.id][status] == undefined)
         {
             if(Memory.debug)
-                console.log("Task [" + task.Name + "] does not have transition from [" + status + "] status.")
+                console.log("Task [" + task.Name + "] does not have transition from [" + status + "] status in table [" + this.name + "].")
             return undefined
         }
         return this.transitionTable[task.id][status]
