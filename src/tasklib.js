@@ -14,7 +14,7 @@ function MoveTo(creep, dst, range)
 
 function MoveToid(creep, id, range)
 {
-    return MoveTo(creep, Game.getObjectByid(id), range)
+    return MoveTo(creep, Game.getObjectById(id), range)
 }
 
 function MoveToSource(creep)        { return MoveToid(creep, creep.memory.sourceid, 1) }
@@ -27,14 +27,14 @@ function HarvestEnergy(creep)
     if(_.sum(creep.carry) >= creep.carryCapacity)
         return TASK_DONE
 
-    var source = Game.getObjectByid(creep.memory.sourceid)
+    var source = Game.getObjectById(creep.memory.sourceid)
     return creep.harvest(source)
 }
 
 function StoreEnergy(creep)
 {
     var freeRoom = function(a) { return a.energyCapacity - a.energy }
-    var storage = Game.getObjectByid(creep.memory.storageid)
+    var storage = Game.getObjectById(creep.memory.storageid)
     if(storage==undefined || freeRoom(storage) == 0)
     {
         var isStorage = function(structure)
@@ -64,7 +64,7 @@ function UpgradeController(creep)
 
 function Build(creep)
 {
-    var site = Game.getObjectByid(creep.memory.siteid)
+    var site = Game.getObjectById(creep.memory.siteid)
     if(site == undefined)
     {
         var bestType = function(a, b)
