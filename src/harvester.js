@@ -1,4 +1,5 @@
 var imp_constants = require('constants')
+var imp_task      = require('task')
 var imp_table     = require('table')
 var imp_tasklib   = require('tasklib')
 
@@ -36,20 +37,109 @@ function getBody(spawn, source)
     return buildBody(work, carry, move)
 }
 
-function createHarvesterTable()
-{
-    var table = new imp_table.Table('harvester_table', imp_tasklib.HarvestEnergyTask)
+function getSourceInfo(creep) { return Memory.strategies.sources[creep.memory.sourceId] }
+function getSource(creep)     { return Game.getObjectById(creep.memory.sourceId)}
+function getContainer(creep)  { return Game.getObjectById(getSourceInfo(creep).containerId) }
+function getSite(creep)       { return Game.getObjectById(getSourceInfo(creep).siteId) }
+function getStorage(creep)    { return Game.getObjectById(getSourceInfo(creep).storageId) }
 
-    // Main logic
-    table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     OK,                         imp_tasklib.StoreEnergyTask)
-    table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     TASK_DONE,                  imp_tasklib.MoveToStorageTask)
-    table.AddStateTransition(imp_tasklib.HarvestEnergyTask,     ERR_NOT_IN_RANGE,           imp_tasklib.MoveToSourceTask)
-    table.AddStateTransition(imp_tasklib.StoreEnergyTask,       ERR_NOT_IN_RANGE,           imp_tasklib.HarvestEnergyTask)
-    table.AddStateTransition(imp_tasklib.StoreEnergyTask,       ERR_NOT_ENOUGH_RESOURCES,   imp_tasklib.HarvestEnergyTask)
-    table.AddStateTransition(imp_tasklib.MoveToStorageTask,     TASK_DONE,                  imp_tasklib.StoreEnergyTask)
-    table.AddStateTransition(imp_tasklib.MoveToSourceTask,      TASK_DONE,                  imp_tasklib.HarvestEnergyTask)
+var targets =
+{
+    source:     getSource,
+    site:       getSite,
+    container:  getContainer,
+    storage:    getStorage
+}
+
+function move(range) 
+{
+    var moveFunction = function(creep, target)
+    {
+        return creep.pos.getRangeTo(target) <= range ? TASK_DONE : creep.moveTo(target)
+    }
+    
+    return moveFunction
+}
+
+var actions =
+{
+    move0: move(0),
+    move1: move(1),
+    move3: move(3)
+}
+
+function getAction(actionName)
+{
+    if(actions[actionName])
+        return actions[actionName]
+
+    var defaultAction = function(creep, target) { return creep[actionName](target) }
+    return defaultAction
+}
+
+function makeTask(actionName, targetName)
+{
+    var target = targets[targetName]
+    var action = getAction(actionName)
+    var taskName = actionName + '.' + targetName
+
+    function loop(creep)
+    {
+        return action(creep, target(creep))
+    }
+    return imp_task.TaskFromDoFunc(taskName, loop)
+}
+
+function makeTable(name, transitions, move_transitions)
+{
+    var table = new imp_table.Table(name, transitions[0][0])
+
+    function addTransition(t) { return table.AddStateTransition(t[0], t[1], t[2]) }
+    function addMoveTransition(t)
+    {
+        addTransition([t[0], ERR_NOT_IN_RANGE, t[1]])
+        addTransition([t[1], TASK_DONE,        t[0]])
+    }
+
+    transitions.forEach(addTransition)
+    move_transitions.forEach(addMoveTransition)
 
     return table
+}
+
+function createHarvesterTable()
+{
+    var harvest      = makeTask('harvest' , 'source')
+    var build        = makeTask('build'   , 'site')
+    var store        = makeTask('transfer', 'container')
+    var haul         = makeTask('transfer', 'storage')
+    var move_harvest = makeTask('move1', 'source')
+    var move_build   = makeTask('move3', 'site')
+    var move_store   = makeTask('move0', 'container')
+    var move_haul    = makeTask('move1', 'storage')
+
+    var transitions = [
+        [harvest, OK,        store],
+        [harvest, TASK_DONE, build],
+
+        [store, ERR_NOT_ENOUGH_RESOURCES, harvest],
+        [store, ERR_INVALID_TARGET,       harvest],
+        [store, ERR_FULL,                 haul],
+
+        [build, ERR_NOT_ENOUGH_RESOURCES, harvest],
+        [build, ERR_INVALID_TARGET,       haul],
+
+        [haul, ERR_NOT_ENOUGH_RESOURCES, harvest]
+    ]
+
+    var move_transitions = [
+        [harvest, move_harvest],
+        [store, move_store],
+        [build, move_build],
+        [haul, move_haul]
+    ]
+
+    return makeTable('harvester_table', transitions, move_transitions)
 }
 
 var harvesterTable = createHarvesterTable()

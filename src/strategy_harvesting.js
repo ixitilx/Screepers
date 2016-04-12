@@ -90,6 +90,9 @@ function initialize()
 
         memory = Memory.strategies.harvesting
     }
+
+    for(roomName in Game.rooms)
+        Game.rooms[roomName].find(FIND_SOURCES).forEach(setupSourceInfo)
 }
 
 //--------------------------------------------------------
