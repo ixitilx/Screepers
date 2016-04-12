@@ -50,11 +50,11 @@ function makeMemory(spawn)
     }
 }
 
-function spawn(spawn)
+function spawnWorker(spawn)
 {
     var memory = makeMemory(spawn)
-    spawn.createCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], null, memory)
+    return spawn.createCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], null, memory)
 }
 
-exports.spawn = spawn
+exports.spawn = spawnWorker
 exports.makeMemory = makeMemory
