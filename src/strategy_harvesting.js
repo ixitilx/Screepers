@@ -11,16 +11,6 @@ var getCreepWork    = function(creep)       { return _.sum(creep.body.map(getWor
 var getTotalWork    = function(creepArray)  { return _.sum(creepArray.map(getCreepWork)) }
 var getHarvestRooms = function()            { return [Game.spawns.Spawn1.room] }
 
-//------ SETUP SOURCE INFO ------
-var isContainer = function(s) { return s.structureType == STRUCTURE_CONTAINER }
-var containerFilter = { filter: function(s) { return isContainer(s) } }
-
-function findContainer(source, what)
-{
-    var results = source.pos.findInRange(what, 1, containerFilter)
-    return results[0]
-}
-
 function findContainerPos(source)
 {
     var spawn = findBestSpawn(source.room)
@@ -29,25 +19,58 @@ function findContainerPos(source)
     return pos
 }
 
-function setupSourceInfo(source)
-{
-    var storage   = findBestSpawn(source)
-    var container = findContainer(source, FIND_MY_STRUCTURES)
-    var site      = findContainer(source, FIND_MY_CONSTRUCTION_SITES)
+//------------------------------
 
-    var info = Memory.strategies.harvesting.sources[source.id] = new Object()
-    if(storage)   info.storageId   = storage.id
-    if(container) info.containerId = container.id
-    else if(site) info.siteId      = site.id
-    info.containerPos = findContainerPos(source)
+function samePos(a, b)
+{
+    return a.x == b.x && a.y == b.y  && a.roomName == b.roomName
+}
+
+function getObjectById(id, containerPos)
+{
+    var obj = Game.getObjectById(id)
+    var isValid = (obj && obj.structureType &&
+                   obj.structureType==STRUCTURE_CONTAINER &&
+                   obj.pos && samePos(obj.pos, containerPos))
+    return isValid ? obj : null
+}
+
+function findObjectAtPos(findConst, containerPos)
+{
+    var filter = { filter: function(s) {return s.structureType==STRUCTURE_CONTAINER} }
+    var objects = containerPos.findInRange(findConst, 0, filter)
+    return objects.length ? objects[0] : null
+}
+
+function manageObject(id, pos, findConst)
+{
+    var obj = id ? getObjectById(id, pos) : null
+    if(!obj) obj = findObjectAtPos(findConst, pos)
+    return obj
+}
+
+function readInfo(source)
+{
+    var info = Memory.strategies.harvesting.sources[source.id]
+    if(!info) info = {containerPos: null, siteId: null, containerId: null}
     return info
 }
 
-function getSourceInfo(source) { return Memory.strategies.harvesting.sources[source.id] }
-//------------------------------
-
 function manageSource(source)
 {
+    var info = readInfo(source)
+    if(!info.containerPos)
+        info.containerPos = findContainerPos(source)
+    
+    var pos = new RoomPosition(info.containerPos.x, info.containerPos.y, source.room.name)
+    var site = manageObject(info.siteId, pos, FIND_MY_CONSTRUCTION_SITES)
+    var cont = manageObject(info.containerId, pos, FIND_STRUCTURES)
+
+    info.siteId      = site ? site.id : null
+    info.containerId = cont ? cont.id : null
+
+    Memory.strategies.harvesting.sources[source.id] = info
+
     var sourceHarvesters = imp_utils.creepsByMemory({
         role    : 'harvester',
         sourceId: source.id
@@ -63,27 +86,8 @@ function manageSource(source)
     }
     else
     {
-        var info = getSourceInfo(source)
-        if(!info)
-            info = setupSourceInfo(source)
-
-        var pos = new RoomPosition(info.containerPos.x, info.containerPos.y, source.room.name)
-
-        if(info.siteId      && Game.getObjectById(info.siteId).pos      != pos) delete info.siteId
-        if(info.containerId && Game.getObjectById(info.containerId).pos != pos) delete info.containerId
-        if(!info.siteId && !info.containerId)
-        {
-            var filterContainer = { filter: function(s){ s.structureType==STRUCTURE_CONTAINER } }
-
-            var containers = pos.findInRange(FIND_STRUCTURES, 0, filterContainer)
-            var sites      = pos.findInRange(FIND_MY_CONSTRUCTION_SITES, 0, filterContainer)
-            if(containers.length)
-                info.containerId = containers[0].id
-            else if(sites.length)
-                info.siteId = sites[0].id
-            else
-                pos.createConstructionSite(STRUCTURE_CONTAINER)
-        }
+        if(!site && !cont)
+            pos.createConstructionSite(STRUCTURE_CONTAINER)
 
         // build container
         // build hauler
@@ -116,9 +120,6 @@ function initialize()
             sources: new Object()
         }
     }
-
-    for(roomName in Game.rooms)
-        Game.rooms[roomName].find(FIND_SOURCES).forEach(setupSourceInfo)
 }
 
 //--------------------------------------------------------

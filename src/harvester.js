@@ -61,8 +61,21 @@ function move(range)
     return moveFunction
 }
 
+var getWork      = function(bodyPart) { return bodyPart.type == WORK }
+var getCreepWork = function(creep)    { return _.sum(creep.body.map(getWork)) }
+
 function storeEnergy(creep, target) { return creep.transfer(target, RESOURCE_ENERGY) }
 function harvestEnergy(creep, target) { return _.sum(creep.carry) >= creep.carryCapacity ? TASK_DONE : creep.harvest(target) }
+function repairContainer(creep, target) 
+{
+    if(target)
+    {
+        var missingHits = target.hitsMax - target.hits
+        var repairHits = getCreepWork(creep) * 100
+        return (missingHits >= repairHits) ? creep.repair(target) : TASK_DONE
+    }
+    return TASK_DONE    
+}
 
 var actions =
 {
@@ -70,6 +83,7 @@ var actions =
     move1: move(1),
     move3: move(3),
     store: storeEnergy,
+    repair: repairContainer,
     harvest: harvestEnergy,
 }
 
@@ -118,24 +132,32 @@ function createHarvesterTable()
     var build        = makeTask('build', 'site')
     var store        = makeTask('store', 'container')
     var haul         = makeTask('store', 'storage')
+    var repair       = makeTask('repair', 'container')
     var move_harvest = makeTask('move1', 'source')
     var move_build   = makeTask('move3', 'site')
     var move_store   = makeTask('move0', 'container')
     var move_haul    = makeTask('move1', 'storage')
 
     var transitions = [
-        [harvest, OK,        store],
+        
+        [harvest, OK,                 repair ],
+        [repair,  OK,                 harvest],
+        [repair,  TASK_DONE,          store  ],
+        [store,   OK,                 harvest],
+
+        [store,   ERR_FULL,           harvest],
+        [store,   ERR_INVALID_TARGET, build  ],
+        [repair,  ERR_INVALID_TARGET, build  ],
+        [build,   ERR_INVALID_TARGET, harvest],
+
+        [harvest, TASK_DONE, haul],
+
+        [store,  ERR_NOT_ENOUGH_RESOURCES, harvest],
+        [build,  ERR_NOT_ENOUGH_RESOURCES, harvest],
+        [repair, ERR_NOT_ENOUGH_RESOURCES, harvest],
+        [haul,   ERR_NOT_ENOUGH_RESOURCES, harvest],
+        
         [harvest, ERR_NOT_ENOUGH_RESOURCES, move_harvest],
-        [harvest, TASK_DONE, build],
-
-        [store, ERR_NOT_ENOUGH_RESOURCES, harvest],
-        [store, ERR_INVALID_TARGET,       harvest],
-        [store, ERR_FULL,                 haul],
-
-        [build, ERR_NOT_ENOUGH_RESOURCES, harvest],
-        [build, ERR_INVALID_TARGET,       haul],
-
-        [haul, ERR_NOT_ENOUGH_RESOURCES, harvest]
     ]
 
     var move_transitions = [
