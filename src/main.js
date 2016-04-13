@@ -1,3 +1,6 @@
+require('extension_creep')
+require('extension_source')
+
 var strategies = require('strategies')
 var worker = require('worker')
 var renew = require('renew')
