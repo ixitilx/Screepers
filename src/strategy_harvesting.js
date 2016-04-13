@@ -77,7 +77,7 @@ function manageSource(source)
     })
 
     var totalWork = getTotalWork(sourceHarvesters)
-    var needWork = imp_harvester.getWorkRequired(source)
+    var needWork = source.getWorkRequired()
 
     if(totalWork < needWork)
     {

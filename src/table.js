@@ -1,38 +1,45 @@
 var imp_constants = require('constants')
+var imp_task = require('task')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
-var tableRepo = new Array()
+var tableRepo = new Object()
 
-function Table(name, defaultTask)
+function getTable(role)
 {
-    this.AddStateTransition = function(task, status, newTask)
+    return tableRepo[role]
+}
+
+function Table(role, transitions, move_transitions)
+{
+    this.addStateTransition = function(task, status, newTask)
     {
+        if(!this.defaultTask)
+        {
+            this.defaultTask = task
+            this.addStateTransition(task, ERR_BUSY, task)
+        }
+        
         if(this.transitionTable[task.id] == undefined)
             this.transitionTable[task.id] = new Array()
         this.transitionTable[task.id][status] = newTask
     }
 
-    this.addMoveTransition = function(task, moveTask)
+    this.lookup = function(task, status)
     {
-        this.AddStateTransition(task, ERR_NOT_IN_RANGE, moveTask)
-        this.AddStateTransition(moveTask, TASK_DONE, task)
-        
-        this.AddStateTransition(moveTask, OK, moveTask)
-        this.AddStateTransition(moveTask, ERR_TIRED, moveTask)
-        this.AddStateTransition(moveTask, ERR_NO_PATH, moveTask)
-    }
-
-    this.Lookup = function(task, status)
-    {
-        if(this.transitionTable[task.id] == undefined)
+        if(!task)
         {
-            console.log("Task [" + task.name + "] is not registered in table [" + this.name + "]. Use table.AddStateTransition(task, status, newTask) to register.")
-            for(c in this.transitionTable)
-                return c
-            return undefined
+            console.log("Invalid input: can not transition from [undefined] task. Reverting to default task.")
+            return this.defaultTask
         }
-        if(this.transitionTable[task.id][status] == undefined)
+
+        if(!this.transitionTable[task.id])
+        {
+            console.log("Task [" + task.name + "] is not registered in table [" + this.name + "]. Reverting to default task.")
+            return this.defaultTask
+        }
+
+        if(!this.transitionTable[task.id][status])
         {
             if(Memory.debug)
                 console.log("Task [" + task.name + "] does not have transition from [" + status + "] status in table [" + this.name + "].")
@@ -41,14 +48,33 @@ function Table(name, defaultTask)
         return this.transitionTable[task.id][status]
     }
 
-    this.id = tableRepo.length
-    this.name = name
+    this.role = role
+    this.name = role
     this.transitionTable = new Array()
-    this.transitionTable[-1] = defaultTask
-    this.AddStateTransition(defaultTask, ERR_BUSY, defaultTask)
+    tableRepo[role]=this
+}
 
-    tableRepo.push(this)
+function makeTable()
+{
+    var table = new Table(role)
+
+    function addTransition(t)
+    {
+        return table.AddStateTransition(t[0], t[1], t[2])
+    }
+
+    function addMoveTransition(t)
+    {
+        addTransition([t[0], ERR_NOT_IN_RANGE, t[1]])
+        addTransition([t[1], TASK_DONE,        t[0]])
+    }
+
+    transitions.forEach(addTransition)
+    move_transitions.forEach(addMoveTransition)
+
+    return table
 }
 
 exports.Table = Table
-exports.GetTableById = function(id) { return tableRepo[id]; }
+exports.makeTable = makeTable
+exports.getTable = getTable

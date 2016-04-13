@@ -1,14 +1,8 @@
 var imp_constants = require('constants')
 var imp_task      = require('task')
 var imp_table     = require('table')
-var imp_tasklib   = require('tasklib')
 
 var TASK_DONE = imp_constants.TASK_DONE
-
-function getWorkRequired(source)
-{
-    return Math.ceil(source.energyCapacity/600)
-}
 
 function warnAboutSpawns(room)
 {
@@ -17,129 +11,91 @@ function warnAboutSpawns(room)
         console.log('MORE THAN ONE SPAWNS FOUND! Check if they contribute towards room energy capacity')
 }
 
-function buildBody(work, carry, move)
+function buildBestHarvesterBody(source)
 {
-    var body = new Array()
-    for(var idx = 0; idx < work; ++idx)     body.push(WORK)
-    for(var idx = 0; idx < carry; ++idx)    body.push(CARRY)
-    for(var idx = 0; idx < move; ++idx)     body.push(MOVE)
-    return body
-}
-
-function getBody(spawn, source)
-{
-    var room = spawn.room
+    var room = source.room
     warnAboutSpawns(room)
+
     var maxEnergy = room.energyCapacityAvailable
-    var carry = 1
-    var move = 1
-    var work = Math.min(getWorkRequired(source), (maxEnergy - 50*(carry+move))/100)
-    return buildBody(work, carry, move)
-}
+    var bodyCost = Creep.prototype.bodyCost
 
-function getSourceInfo(creep) { return Memory.strategies.harvesting.sources[creep.memory.sourceId] }
-function getSource(creep)     { return Game.getObjectById(creep.memory.sourceId)}
-function getContainer(creep)  { return Game.getObjectById(getSourceInfo(creep).containerId) }
-function getSite(creep)       { return Game.getObjectById(getSourceInfo(creep).siteId) }
-function getStorage(creep)    { return Game.getObjectById(getSourceInfo(creep).storageId) }
+    var body = new Object()
+    var workReq = source.getWorkRequired()
+    var workEnergy = maxEnergy - (bodyCost[CARRY] + bodyCost[MOVE])
+    body[WORK] = Math.min(workReq, Math.floor(workEnergy/bodyCost[WORK]))
+    body[CARRY] = 1
+    body[MOVE] = 1
 
-var targets =
-{
-    source:     getSource,
-    site:       getSite,
-    container:  getContainer,
-    storage:    getStorage
+    return Creep.prototype.buildBodyArray(body)
 }
 
 function move(range) 
 {
     var moveFunction = function(creep, target)
     {
-        return creep.pos.getRangeTo(target) <= range ? TASK_DONE : creep.moveTo(target)
+        if(creep.pos.getRangeTo(target) <= range)
+            return TASK_DONE
+        return creep.moveTo(target)
     }
-    
     return moveFunction
 }
 
-var getWork      = function(bodyPart) { return bodyPart.type == WORK }
-var getCreepWork = function(creep)    { return _.sum(creep.body.map(getWork)) }
-
-function storeEnergy(creep, target) { return creep.transfer(target, RESOURCE_ENERGY) }
-function harvestEnergy(creep, target) { return _.sum(creep.carry) >= creep.carryCapacity ? TASK_DONE : creep.harvest(target) }
-function repairContainer(creep, target) 
+function storeEnergy(creep, target)
 {
-    if(target)
-    {
-        var missingHits = target.hitsMax - target.hits
-        var repairHits = getCreepWork(creep) * 100
-        return (missingHits >= repairHits) ? creep.repair(target) : TASK_DONE
-    }
-    return TASK_DONE    
+    return creep.transfer(target, RESOURCE_ENERGY)
+}
+
+function harvestEnergy(creep, target)
+{
+    if(creep.getCarry() >= creep.carryCapacity)
+        return TASK_DONE
+    return creep.harvest(target)
+}
+
+function repairContainer(creep, target)
+{
+    if(!target)
+        return TASK_DONE
+    var missingHits = target.hitsMax - target.hits
+    var repairHits = creep.getBody() * Creep.prototype.bodyCost[WORK]
+    if(repairHits > missingHits)
+        return TASK_DONE
+    return creep.repair(target)
 }
 
 var actions =
 {
-    move0: move(0),
-    move1: move(1),
-    move3: move(3),
-    store: storeEnergy,
-    repair: repairContainer,
-    harvest: harvestEnergy,
+    move0:      move(0),
+    move1:      move(1),
+    move3:      move(3),
+    store:      storeEnergy,
+    repair:     repairContainer,
+    harvest:    harvestEnergy,
 }
 
-function getAction(actionName)
+var targets =
 {
-    if(actions[actionName])
-        return actions[actionName]
-
-    var defaultAction = function(creep, target) { return creep[actionName](target) }
-    return defaultAction
-}
-
-function makeTask(actionName, targetName)
-{
-    var target = targets[targetName]
-    var action = getAction(actionName)
-    var taskName = actionName + '.' + targetName
-
-    function loop(creep)
-    {
-        return action(creep, target(creep))
-    }
-    return imp_task.TaskFromDoFunc(taskName, loop)
-}
-
-function makeTable(name, transitions, move_transitions)
-{
-    var table = new imp_table.Table(name, transitions[0][0])
-
-    function addTransition(t) { return table.AddStateTransition(t[0], t[1], t[2]) }
-    function addMoveTransition(t)
-    {
-        addTransition([t[0], ERR_NOT_IN_RANGE, t[1]])
-        addTransition([t[1], TASK_DONE,        t[0]])
-    }
-
-    transitions.forEach(addTransition)
-    move_transitions.forEach(addMoveTransition)
-
-    return table
+    source:     function(creep) { return creep.getSource() },
+    site:       function(creep) { return creep.getSource().getSite() },
+    container:  function(creep) { return creep.getSource().getContainer() },
+    storage:    function(creep) { return creep.getSource().getStorage() },
 }
 
 function createHarvesterTable()
 {
-    var harvest      = makeTask('harvest', 'source')
-    var build        = makeTask('build', 'site')
-    var store        = makeTask('store', 'container')
-    var haul         = makeTask('store', 'storage')
-    var repair       = makeTask('repair', 'container')
-    var move_harvest = makeTask('move1', 'source')
-    var move_build   = makeTask('move3', 'site')
-    var move_store   = makeTask('move0', 'container')
-    var move_haul    = makeTask('move1', 'storage')
+    var taskBuilder = new imp_task.TaskBuilder(actions, targets)
+
+    var harvest      = taskBuilder.makeTask('harvest', 'source')
+    var build        = taskBuilder.makeTask('build', 'site')
+    var store        = taskBuilder.makeTask('store', 'container')
+    var haul         = taskBuilder.makeTask('store', 'storage')
+    var repair       = taskBuilder.makeTask('repair', 'container')
+    var move_harvest = taskBuilder.makeTask('move1', 'source')
+    var move_build   = taskBuilder.makeTask('move3', 'site')
+    var move_store   = taskBuilder.makeTask('move0', 'container')
+    var move_haul    = taskBuilder.makeTask('move1', 'storage')
 
     var transitions = [
-        
         [harvest, OK,                 repair ],
         [repair,  OK,                 harvest],
         [repair,  TASK_DONE,          store  ],
@@ -167,7 +123,7 @@ function createHarvesterTable()
         [haul, move_haul]
     ]
 
-    return makeTable('harvester_table', transitions, move_transitions)
+    return imp_table.makeTable('harvester', transitions, move_transitions)
 }
 
 var harvesterTable = createHarvesterTable()
@@ -177,12 +133,8 @@ exports.spawn = function(spawn, source)
     var mem = new Object()
     mem.role = 'harvester'
 
-    mem.taskId = imp_tasklib.HarvestEnergyTask.id
     mem.tableId = harvesterTable.id
     mem.sourceId = source.id
 
-    return spawn.createCreep(getBody(spawn, source), null, mem)
+    return spawn.createCreep(buildBestHarvesterBody(source), null, mem)
 }
-
-exports.getBody = getBody
-exports.getWorkRequired = getWorkRequired
