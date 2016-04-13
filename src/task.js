@@ -1,3 +1,7 @@
+var imp_constants = require('constants')
+
+var TASK_DONE = imp_constants.TASK_DONE
+
 var taskRepo = new Array()
 
 function registerTask(task)
@@ -19,7 +23,7 @@ function taskFromDoFunc(name, doFunc)
     return task
 }
 
-function TaskBuilder(targets, actions)
+function TaskBuilder(actions, targets)
 {
     this.targets = targets
     this.actions = actions

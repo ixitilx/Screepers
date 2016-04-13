@@ -119,4 +119,5 @@ exports.spawn = function(spawn, source)
     mem.role = 'harvester'
     mem.sourceId = source.id
     return spawn.createCreep(buildBestHarvesterBody(source), null, mem)
+    // return spawn.createCreep([WORK,WORK,CARRY,MOVE], null, mem)
 }
