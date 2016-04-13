@@ -54,13 +54,13 @@ function Table(role, transitions, move_transitions)
     tableRepo[role]=this
 }
 
-function makeTable()
+function makeTable(role, transitions, move_transitions)
 {
     var table = new Table(role)
 
     function addTransition(t)
     {
-        return table.AddStateTransition(t[0], t[1], t[2])
+        return table.addStateTransition(t[0], t[1], t[2])
     }
 
     function addMoveTransition(t)

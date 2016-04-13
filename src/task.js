@@ -12,7 +12,7 @@ function Task(name)
     registerTask(this)
 }
 
-function TaskFromDoFunc(name, doFunc)
+function taskFromDoFunc(name, doFunc)
 {
     var task = new Task(name)
     task.do = doFunc
@@ -21,10 +21,13 @@ function TaskFromDoFunc(name, doFunc)
 
 function TaskBuilder(targets, actions)
 {
-    function getAction(actionName)
+    this.targets = targets
+    this.actions = actions
+    
+    this.getAction = function(actionName)
     {
-        if(actions[actionName])
-            return actions[actionName]
+        if(this.actions[actionName])
+            return this.actions[actionName]
 
         var defaultAction = function(creep, target) { return creep[actionName](target) }
         return defaultAction
@@ -32,19 +35,32 @@ function TaskBuilder(targets, actions)
 
     this.makeTask = function(actionName, targetName)
     {
-        var target = targets[targetName]
-        var action = getAction(actionName)
+        var target = this.targets[targetName]
+        // console.log(targetName, typeof target, target)
+        var action = this.getAction(actionName)
         var taskName = actionName + '.' + targetName
 
         function loop(creep)
         {
             return action(creep, target(creep))
         }
-        return TaskFromDoFunc(taskName, loop)
+        return taskFromDoFunc(taskName, loop)
     }
 }
 
+function makeMoveFunction(range)
+{
+    var moveFunction = function(creep, target)
+    {
+        if(creep.pos.getRangeTo(target) <= range)
+            return TASK_DONE
+        return creep.moveTo(target)
+    }
+    return moveFunction
+}
+
 exports.Task = Task
-exports.TaskFromDoFunc = TaskFromDoFunc
-exports.GetTaskById = function(id) { return taskRepo[id]; }
+exports.taskFromDoFunc = taskFromDoFunc
+exports.getTaskById = function(id) { return taskRepo[id] }
 exports.TaskBuilder = TaskBuilder
+exports.makeMoveFunction = makeMoveFunction

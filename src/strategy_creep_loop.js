@@ -12,10 +12,11 @@ function creepLoop(creep, taskArray)
         return
     taskArray.push(creep.memory.taskId)
 
-    var task = imp_task.GetTaskById(creep.memory.taskId)
+    console.log(creep.memory.role)
+    var task = imp_task.getTaskById(creep.memory.taskId)
     var status = task.do(creep)
 
-    var table = imp_table.GetTableById(creep.memory.tableId)
+    var table = imp_table.getTable(creep.memory.role)
     var newTask = table.Lookup(task, status)
 
     if(Memory.debug && Memory.debug == 1)
