@@ -1,5 +1,4 @@
 var imp_constants = require('constants')
-var imp_task = require('task')
 
 function makeMoveFunction(range)
 {
@@ -60,3 +59,5 @@ var targets =
     room_controller:    function(creep) { return creep.room.controller }
 }
 
+exports.actions = actions
+exports.targets = targets

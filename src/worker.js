@@ -4,7 +4,7 @@ var imp_table     = require('table')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
-var taskBuilder = new imp_task.TaskBuilder(actions, targets)
+var taskBuilder = new imp_task.TaskBuilder(null, null)
 
 var harvest      = taskBuilder.makeTask('harvest',      'source')
 var build        = taskBuilder.makeTask('build',        'source_site')

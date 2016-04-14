@@ -32,7 +32,7 @@ function TaskBuilder(actions, targets)
     
     this.getAction = function(actionName)
     {
-        if(this.actions[actionName])
+        if(this.actions && this.actions[actionName])
             return this.actions[actionName]
 
         if(imp_tasklib.actions[actionName])
@@ -44,7 +44,7 @@ function TaskBuilder(actions, targets)
 
     this.getTarget = function(targetName)
     {
-        if(this.targets[targetName])
+        if(this.targets && this.targets[targetName])
             return this.targets[targetName]
 
         return imp_tasklib.targets[targetName]
