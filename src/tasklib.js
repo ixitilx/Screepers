@@ -1,5 +1,8 @@
 var imp_constants = require('constants')
 
+var TASK_DONE = imp_constants.TASK_DONE
+
+
 function makeMoveFunction(range)
 {
     var moveFunction = function(creep, target)

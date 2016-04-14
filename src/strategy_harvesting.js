@@ -2,7 +2,7 @@
 // Harvester spawning strategy
 //
 
-var imp_harvester = require('harvester')
+var imp_harvester = require('role_harvester')
 var imp_utils = require('utils')
 
 var findBestSpawn   = function(room)        { return Game.spawns.Spawn1 }  // or best spawn by other criteria
