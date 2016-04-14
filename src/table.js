@@ -39,12 +39,6 @@ function Table(role, transitions, move_transitions)
             return this.defaultTask
         }
 
-        if(!this.transitionTable[task.id][status])
-        {
-            if(Memory.debug)
-                console.log("Task [" + task.name + "] does not have transition from [" + status + "] status in table [" + this.name + "].")
-            return undefined
-        }
         return this.transitionTable[task.id][status]
     }
 

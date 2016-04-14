@@ -1,19 +1,15 @@
 var imp_constants = require('constants')
+var imp_tasklib = require('tasklib')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
 var taskRepo = new Array()
 
-function registerTask(task)
-{
-    task.id = taskRepo.length
-    taskRepo.push(task)
-}
-
 function Task(name)
 {
     this.name = name
-    registerTask(this)
+    this.id = taskRepo.length
+    taskRepo.push(this)
 }
 
 function taskFromDoFunc(name, doFunc)
@@ -21,6 +17,12 @@ function taskFromDoFunc(name, doFunc)
     var task = new Task(name)
     task.do = doFunc
     return task
+}
+
+function formatName(str)
+{
+    return str
+    return str.replace(/[eyuioa]/gi, '').slice(0, 4)
 }
 
 function TaskBuilder(actions, targets)
@@ -33,16 +35,26 @@ function TaskBuilder(actions, targets)
         if(this.actions[actionName])
             return this.actions[actionName]
 
+        if(imp_tasklib.actions[actionName])
+            return imp_tasklib.actions[actionName]
+
         var defaultAction = function(creep, target) { return creep[actionName](target) }
         return defaultAction
     }
 
+    this.getTarget = function(targetName)
+    {
+        if(this.targets[targetName])
+            return this.targets[targetName]
+
+        return imp_tasklib.targets[targetName]
+    }
+
     this.makeTask = function(actionName, targetName)
     {
-        var target = this.targets[targetName]
-        // console.log(targetName, typeof target, target)
+        var target = this.getTarget(targetName)
         var action = this.getAction(actionName)
-        var taskName = actionName + '.' + targetName
+        var taskName = formatName(actionName) + '.' + formatName(targetName)
 
         function loop(creep)
         {
@@ -52,19 +64,7 @@ function TaskBuilder(actions, targets)
     }
 }
 
-function makeMoveFunction(range)
-{
-    var moveFunction = function(creep, target)
-    {
-        if(creep.pos.getRangeTo(target) <= range)
-            return TASK_DONE
-        return creep.moveTo(target)
-    }
-    return moveFunction
-}
-
 exports.Task = Task
 exports.taskFromDoFunc = taskFromDoFunc
 exports.getTaskById = function(id) { return taskRepo[id] }
 exports.TaskBuilder = TaskBuilder
-exports.makeMoveFunction = makeMoveFunction

@@ -4,68 +4,20 @@ var imp_table     = require('table')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
-function storeEnergy(creep, target)
-{
-    return creep.transfer(target, RESOURCE_ENERGY)
-}
+var taskBuilder = new imp_task.TaskBuilder(actions, targets)
 
-function harvestEnergy(creep, target)
-{
-    if(creep.getCarry() >= creep.carryCapacity)
-        return TASK_DONE
-    return creep.harvest(target)
-}
+var harvest      = taskBuilder.makeTask('harvest',      'source')
+var build        = taskBuilder.makeTask('build',        'source_site')
+var store        = taskBuilder.makeTask('store_energy', 'source_container')
+var haul         = taskBuilder.makeTask('store_energy', 'source_storage')
+var repair       = taskBuilder.makeTask('repair',       'source_container')
+var move_harvest = taskBuilder.makeTask('move1',        'source')
+var move_build   = taskBuilder.makeTask('move3',        'source_site')
+var move_store   = taskBuilder.makeTask('move0',        'source_container')
+var move_haul    = taskBuilder.makeTask('move1',        'source_storage')
 
-function repair(creep, target)
-{
-    if(!target)
-        return TASK_DONE
-    var missingHits = target.hitsMax - target.hits
-    var repairHits = creep.getBody() * Creep.prototype.bodyCost[WORK]
-    if(repairHits > missingHits)
-        return TASK_DONE
-    return creep.repair(target)
-}
-
-function upgrade(creep, target)
-{
-    return creep.upgradeController(target)
-}
-
-var actions =
-{
-    move0:      imp_task.makeMoveFunction(0),
-    move1:      imp_task.makeMoveFunction(1),
-    move3:      imp_task.makeMoveFunction(3),
-    store:      storeEnergy,
-    repair:     repair,
-    harvest:    harvestEnergy,
-    upgrade:    upgrade,
-}
-
-var targets =
-{
-    source:     function(creep) { return creep.getSource() },
-    site:       function(creep) { return creep.getSource().getSite() },
-    container:  function(creep) { return creep.getSource().getContainer() },
-    storage:    function(creep) { return creep.getSource().getStorage() },
-    controller: function(creep) { return creep.room.controller }
-}
-
-var taskBuilder = new imp_task.TaskBuilder(targets, actions)
-
-var harvest      = taskBuilder.makeTask('harvest',  'source')
-var build        = taskBuilder.makeTask('build',    'site')
-var store        = taskBuilder.makeTask('store',    'container')
-var haul         = taskBuilder.makeTask('store',    'storage')
-var repair       = taskBuilder.makeTask('repair',   'container')
-var upgrade      = taskBuilder.makeTask('upgrade',  'controller')
-
-var move_harvest = taskBuilder.makeTask('move1',    'source')
-var move_build   = taskBuilder.makeTask('move3',    'site')
-var move_store   = taskBuilder.makeTask('move0',    'container')
-var move_haul    = taskBuilder.makeTask('move1',    'storage')
-var move_upgrade = taskBuilder.makeTask('move3',    'controller')
+var upgrade      = taskBuilder.makeTask('upgrade',      'room_controller')
+var move_upgrade = taskBuilder.makeTask('move3',        'room_controller')
 
 var transitions = [
     [harvest, OK,                 repair ],
