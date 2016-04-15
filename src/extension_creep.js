@@ -42,7 +42,17 @@ Creep.prototype.getSource = function()
     return this.memory.sourceId ? Game.getObjectById(this.memory.sourceId) : null
 }
 
+Creep.prototype.getSpawn = function()
+{
+    return this.memory.spawnId ? Game.getObjectById(this.memory.spawnId) : null
+}
+
 Creep.prototype.getCarry = function()
 {
     return _.sum(this.carry)
+}
+
+Creep.prototype.getExtension = function()
+{
+    return this.memory.extensionId ? Game.getObjectById(this.memory.extensionId) : null
 }

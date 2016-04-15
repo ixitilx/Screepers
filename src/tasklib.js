@@ -16,6 +16,8 @@ function makeMoveFunction(range)
 
 function storeEnergy(creep, target)
 {
+    // if(target.energy == target.energyCapacity)
+    //     return ERR_FULL
     return creep.transfer(target, RESOURCE_ENERGY)
 }
 

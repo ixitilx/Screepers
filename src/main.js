@@ -3,6 +3,7 @@ require('extension_source')
 
 var strategies = require('strategies')
 var worker = require('role_worker')
+var imp_spawn_mgr = require('role_spawn_manager')
 var renew = require('renew')
 var utils = require('utils')
 
@@ -16,6 +17,9 @@ function mainLoop()
     // Spawning strategy
     if(utils.creepsByMemory({role:'worker'}).length < 4)
         worker.spawn(Game.spawns.Spawn1)
+
+    if(utils.creepsByMemory({role:'spawn_manager'}).length < 1)
+    	imp_spawn_mgr.spawn(Game.spawns.Spawn1)
 }
 
 exports.loop = mainLoop
