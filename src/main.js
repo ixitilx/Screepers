@@ -1,5 +1,6 @@
 require('extension_creep')
 require('extension_source')
+require('extension_spawn')
 
 var strategies = require('strategies')
 var worker = require('role_worker')

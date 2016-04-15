@@ -1,3 +1,6 @@
+if(!Memory.spawns)
+    Memory.spawns = new Object()
+
 Spawn.prototype.getInfo = function() { return Memory.spawns[this.id] }
 
 Spawn.prototype.getExtensions = function()

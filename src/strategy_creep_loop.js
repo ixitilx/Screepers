@@ -38,6 +38,8 @@ function creepLoop(creep, taskArray)
         return
     }
 
+    //console.log(creep.name, task.name)
+
     var status = task.do(creep)
     taskArray.push({id:creep.memory.taskId, name:task.name, status:status})
 

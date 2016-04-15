@@ -60,7 +60,13 @@ function TaskBuilder(actions, targets)
         {
             return action(creep, target(creep))
         }
-        return taskFromDoFunc(taskName, loop)
+
+        function loop_notarget(creep)
+        {
+            return action(creep)
+        }
+
+        return taskFromDoFunc(taskName, target ? loop : loop_notarget)
     }
 }
 

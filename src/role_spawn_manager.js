@@ -18,7 +18,7 @@ function findExtension(creep, target)
     {
         var id = creep.memory.extensionId
         var currentIdx = extensions.indexOf(id)
-        for(var idx = currentIdx+1; idx != currentIdx; idx = (idx+1) % extension.length)
+        for(var idx = currentIdx+1; idx != currentIdx; idx = ((idx + 1) % extensions.length))
         {
             var ext = Game.getObjectById(extensions[idx])
             if(ext.energy < ext.energyCapacity)
@@ -34,6 +34,8 @@ function findExtension(creep, target)
 
 function takeEnergy(creep, target)
 {
+    if(!target)
+        return ERR_INVALID_TARGET
     return target.transferEnergy(creep)
     // var freeRoom = creep.carryCapacity - creep.getCarry()
     // return target.transferEnergy(creep, freeRoom)
@@ -42,15 +44,15 @@ function takeEnergy(creep, target)
 var actions =
 {
     take_energy: takeEnergy,
-    find_extension: find_extension
+    find_extension: findExtension
 }
 
 var targets =
 {
-    spawn:           function(creep) { return creep.getSpawn() }
-    spawn_container: function(creep) { return creep.getSpawn().getContainer() }
-    spawn_storage:   function(creep) { return creep.getSpawn().getStorage() }
-    spawn_extension: function(creep) { return creep.getExtension() }
+    spawn:           function(creep) { return creep.getSpawn() },
+    spawn_container: function(creep) { return creep.getSpawn().getContainer() },
+    spawn_storage:   function(creep) { return creep.getSpawn().getStorage() },
+    spawn_extension: function(creep) { return creep.getExtension() },
 }
 
 
@@ -106,7 +108,7 @@ function spawn(spawn)
 {
     function findExtensionIds(spawn)
     {
-        var exts = spawn.room.find(FIND_MY_STRUCTURES, {filter:{structureType:STURCTURE_EXTENSION}})
+        var exts = spawn.room.find(FIND_MY_STRUCTURES, {filter:{structureType:STRUCTURE_EXTENSION}})
         return exts.map(function(ext) { return ext.id })
     }
 
@@ -118,7 +120,7 @@ function spawn(spawn)
     }
 
     var memory = makeMemory(spawn)
-    return spawn.createCreep([CARRY, CARRY, MOVE], null, memory)
+    return spawn.createCreep([CARRY, MOVE], null, memory)
 }
 
 exports.spawn = spawn
