@@ -11,7 +11,7 @@ var TASK_DONE = imp_constants.TASK_DONE
 //
 //////////
 
-function findExtension(creep)
+function findExtension(creep, target)
 {
     var extensions = creep.getSpawn().getInfo().extensionIds
     if(extensions)
@@ -42,7 +42,7 @@ function takeEnergy(creep, target)
 var actions =
 {
     take_energy: takeEnergy,
-    find_extension: 
+    find_extension: find_extension
 }
 
 var targets =
