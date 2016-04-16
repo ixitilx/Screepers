@@ -1,4 +1,4 @@
-require('extension_all').extend(Creep.prototype)
+require('extension_all').extend('Creep', Creep.prototype)
 
 Creep.prototype.getSource       = function() { return this.getObjectByName('source') }
 Creep.prototype.getSpawn        = function() { return this.getObjectByName('spawn') }

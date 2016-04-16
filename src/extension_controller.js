@@ -1,4 +1,4 @@
-require('extension_all').extend(Controller.prototype)
+require('extension_all').extend('Controller', Controller.prototype)
 
 Controller.prototype.getExtensionCapacity = function()
 {

@@ -1,4 +1,4 @@
-require('extension_all').extend(Source.prototype)
+require('extension_all').extend('Source', Source.prototype)
 var imp_utils = require('utils')
 
 Source.prototype.getContainer = function() { return this.getObjectByName('container') }

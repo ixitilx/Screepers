@@ -1,4 +1,4 @@
-require('extension_all').extend(Source.prototype)
+require('extension_all').extend('Spawn', Spawn.prototype)
 
 Spawn.prototype.getContainer = function() { return this.getObjectByName('container') }
 Spawn.prototype.getLink      = function() { return this.getObjectByName('link') }
