@@ -18,14 +18,15 @@ function manageSpawn(spawn, structures)
         return cmp(a.id, b.id)
     }
 
-    var getId = function(ext) {return getId}
+    var getId = function(ext) {return ext.id}
 
-    spawn.memory.extensionIds = structures[STRUCTURE_EXTENSION].sort(less).map(getId)
+    var extIds = structures[STRUCTURE_EXTENSION].sort(less).map(getId)
+
+    spawn.memory.extensionIds = extIds
     return TASK_DONE
 }
 
-//--------------------------------------------------------
-function run()
+function cacheStructuresByRoom()
 {
     var rooms = new Object()
 
@@ -39,8 +40,25 @@ function run()
             rooms[roomId][type] = new Array()
         rooms[roomId][type].push(structure)
     }
+    
+    for(s in Game.structures)
+        hashByRoom(Game.structures[s])
 
-    _.filter(spawns, {my: true}).forEach(function(spawn){manageSpawn(spawn, rooms[spawn.room.id])})
+    return rooms
+}
+
+function run()
+{
+    var cache = cacheStructuresByRoom()
+
+    var spawns = new Array()
+    for(name in Game.spawns)
+        spawns.push(Game.spawns[name])
+
+    _.filter(spawns, {my:true}).forEach(function(spawn)
+    {
+        manageSpawn(spawn, cache[spawn.room.id])
+    })
 }
 
 function initialize()

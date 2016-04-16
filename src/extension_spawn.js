@@ -1,10 +1,22 @@
 require('extension_all').extend('Spawn', Spawn.prototype)
 
+var imp_utils = require('utils')
+
 Spawn.prototype.getContainer = function() { return this.getObjectByName('container') }
 Spawn.prototype.getLink      = function() { return this.getObjectByName('link') }
 Spawn.prototype.getStorage   = function() { return this.getObjectByName('storage') }
 Spawn.prototype.getTerminal  = function() { return this.getObjectByName('terminal') }
-Spawn.prototype.getManager   = function() { return this.getObjectByName('manager') }
+
+Spawn.prototype.getManager = function()
+{
+    var managers = imp_utils.creepsByMemory({
+        role: 'spawn_manager',
+        spawnId: this.id,
+    })
+    if(managers.length)
+        return managers[0]
+}
+
 
 Spawn.prototype.getBestStorage = function()
 {
@@ -40,5 +52,6 @@ Spawn.prototype.getTotalEnergyCapacity = function()
     var capacity = this.energyCapacity
     if(this.getManager())
         capacity += _.sum(this.getExtensions().map(getCapacity))
+    console.log(capacity)
     return Math.max(capacity, this.getTotalEnergy())
 }

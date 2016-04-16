@@ -70,7 +70,7 @@ function spawnHauler(source)
     var spawn = source.getBestSpawn()
     var capacity = spawn.getTotalEnergyCapacity()
     var haulerBody = getHaulerBody(capacity)
-    var memory = {role:'hauler', ferryFrom:source.id, ferryTo:spawn.id}
+    var memory = {role:'hauler', ferryFromId:source.id, ferryToId:spawn.id}
     return spawn.createCreep(haulerBody, null, memory)
 }
 

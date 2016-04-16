@@ -1,8 +1,12 @@
+for(name in Game.creeps)
+    delete Game.creeps[name].memory.taskId
+
 require('extension_creep')
 require('extension_source')
 require('extension_spawn')
 
 require('role_harvester')
+require('role_hauler')
 
 var strategies = require('strategies')
 var worker = require('role_worker')
@@ -18,11 +22,11 @@ function mainLoop()
     strategies.run()
 
     // Spawning strategy
-    if(utils.creepsByMemory({role:'worker'}).length < 4)
-        worker.spawn(Game.spawns.Spawn1)
+    // if(utils.creepsByMemory({role:'worker'}).length < 4)
+    //     worker.spawn(Game.spawns.Spawn1)
 
     if(utils.creepsByMemory({role:'spawn_manager'}).length < 1)
-    	imp_spawn_mgr.spawn(Game.spawns.Spawn1)
+        imp_spawn_mgr.spawn(Game.spawns.Spawn1)
 }
 
 exports.loop = mainLoop

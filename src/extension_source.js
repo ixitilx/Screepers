@@ -51,7 +51,7 @@ Source.prototype.getHauler = function()
 {
     var haulers = imp_utils.creepsByMemory({
         role: 'hauler',
-        ferryFrom: this.id,
+        ferryFromId: this.id,
     })
     if(haulers.length)
         return haulers[0]

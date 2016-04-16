@@ -13,13 +13,13 @@ var TASK_DONE = imp_constants.TASK_DONE
 
 function findExtension(creep)
 {
-    var extensions = creep.getSpawn().extensionIds
+    var extensionIds = creep.getSpawn().getExtensionIds()
     var id = creep.memory.extensionId
-    var currentIdx = extensions.indexOf(id)
+    var currentIdx = extensionIds.indexOf(id)
     for(var idx = 0; idx < extensions.length; idx++)
     {
-        var i = (idx + currentIdx) % extensions.length
-        var ext = Game.getObjectById(extensions[i])
+        var i = (idx + currentIdx) % extensionIds.length
+        var ext = Game.getObjectById(extensionIds[i])
         if(ext && ext.energy < ext.energyCapacity)
         {
             creep.memory.extensionId = ext.id

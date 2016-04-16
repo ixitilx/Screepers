@@ -3,7 +3,7 @@ var imp_creepLoop   = require('strategy_creep_loop')
 var imp_harvesting  = require('strategy_harvesting')
 var imp_manageSpawns = require('strategy_manage_spawns')
 
-var strategies = [imp_memorySweep, imp_creepLoop, imp_manageSpawns, imp_harvesting]
+var strategies = [imp_memorySweep, imp_manageSpawns, imp_harvesting, imp_creepLoop]
 
 exports.initialize = function()
 {
