@@ -59,6 +59,7 @@ var transitions = [
     [build,  ERR_NOT_ENOUGH_RESOURCES, harvest],
     [repair, ERR_NOT_ENOUGH_RESOURCES, harvest],
     [haul,   ERR_NOT_ENOUGH_RESOURCES, harvest],
+    [drop,   ERR_NOT_ENOUGH_RESOURCES, harvest],
     
     [harvest, ERR_NOT_ENOUGH_RESOURCES, move_harvest],
 ]

@@ -16,7 +16,7 @@ function findExtension(creep)
     var extensionIds = creep.getSpawn().getExtensionIds()
     var id = creep.memory.extensionId
     var currentIdx = extensionIds.indexOf(id)
-    for(var idx = 0; idx < extensions.length; idx++)
+    for(var idx = 0; idx < extensionIds.length; idx++)
     {
         var i = (idx + currentIdx) % extensionIds.length
         var ext = Game.getObjectById(extensionIds[i])

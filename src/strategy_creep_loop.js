@@ -27,7 +27,7 @@ function isLogged(taskArray, taskId)
 
 function getCreepTask(creep, table)
 {
-    if(!creep.memory.taskId)
+    if(typeof(creep.memory.taskId)==typeof(undefined) || creep.memory.taskId==null)
         return table.defaultTask
 
     var task = imp_task.getTaskById(creep.memory.taskId)
