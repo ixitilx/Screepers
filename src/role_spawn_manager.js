@@ -13,7 +13,7 @@ var TASK_DONE = imp_constants.TASK_DONE
 
 function findExtension(creep, target)
 {
-    var extensions = creep.getSpawn().getInfo().extensionIds
+    var extensions = creep.getSpawn().extensionIds
     if(extensions)
     {
         var id = creep.memory.extensionId

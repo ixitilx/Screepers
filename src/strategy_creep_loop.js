@@ -37,7 +37,7 @@ function getCreepTask(creep, table)
 function creepLoop(creep, taskArray)
 {
     var table = imp_table.getTable(creep.memory.role)
-    var task  = creep.memory.taskId ? imp_task.getTaskById(creep.memory.taskId) : table.defaultTask
+    var task  = getCreepTask(creep, table)
 
     // stack overflow detection
     if(isLogged(taskArray, task.id))

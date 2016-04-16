@@ -34,7 +34,7 @@ Source.prototype.getHarvesters = function()
 {
     return imp_utils.creepsByMemory({
         role    : 'harvester',
-        sourceId: source.id
+        sourceId: this.id
     })
 }
 

@@ -23,27 +23,22 @@ Spawn.prototype.getExtensionIds = function()
     return this.memory.extensionIds
 }
 
+Spawn.prototype.getExtensions = function()
+{
+    return this.getExtensionIds().map(getCachedObjectById)
+}
+
 Spawn.prototype.getTotalEnergy = function()
 {
-    var energy = this.energy
-    var extIds = this.getExtensionIds()
-    if(extIds)
-    {
-        var exts = extIds.map(function(id){return this.getCachedObjectById(id)})
-        var extEnergy = exts.map(function(ext){return ext ? ext.energy : 0})
-        energy += _.sum(extEnergy)
-    }
-    return energy
+    function getEnergy(ext) { return ext.energy }
+    return this.energy + _.sum(this.getExtensions().map(getEnergy))
 }
 
 Spawn.prototype.getTotalEnergyCapacity = function()
 {
+    function getCapacity(ext) { return ext.energyCapacity }
     var capacity = this.energyCapacity
     if(this.getManager())
-    {
-        var extIds = this.getExtensionIds()
-        if(extIds)
-            capacity += this.room.controller.getExtensionCapacity() * extIds.length
-    }
+        capacity += _.sum(this.getExtensions().map(getCapacity))
     return Math.max(capacity, this.getTotalEnergy())
 }

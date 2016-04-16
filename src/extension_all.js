@@ -47,3 +47,5 @@ function extend(name, externalPrototype)
         }
     }
 }
+
+exports.extend = extend

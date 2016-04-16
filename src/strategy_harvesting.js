@@ -34,7 +34,7 @@ function getHaulerBody(energyCapacity)
 
 function spawnHarvesters(source)
 {
-    var totalWork = getTotalWork(sourceHarvesters)
+    var totalWork = getTotalWork(source.getHarvesters())
     var needWork = source.getWorkRequired()
 
     var shouldSpawn = totalWork < needWork
