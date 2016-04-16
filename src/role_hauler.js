@@ -15,7 +15,10 @@ function ferryFrom(creep)
 {
     var obj = creep.getObjectByName('ferryFrom')
     if(obj && obj['getBestStorage'])
-        return obj.getBestStorage()
+        obj = obj.getBestStorage()
+    var res = obj.pos.findInRange(FIND_DROPPED_RESOURCE, 0)
+    if(res)
+        return res[0]
     return obj
 }
 
@@ -26,7 +29,6 @@ function ferryTo(creep)
         return obj.getBestStorage()
     return obj
 }
-
 
 var actions =
 {
@@ -43,17 +45,23 @@ var targets =
 var taskBuilder = new imp_task.TaskBuilder(actions, targets)
 
 var load = taskBuilder.makeTask('take_energy', 'ferry_from')
+var pickup = taskBuilder.makeTask('pickup', 'ferry_from')
 var unload = taskBuilder.makeTask('store_energy', 'ferry_to')
 
 var move_load = taskBuilder.makeTask('move1', 'ferry_from')
+var move_pickup = taskBuilder.makeTask('move1', 'ferry_from')
 var move_unload = taskBuilder.makeTask('move1', 'ferry_to')
 
 var transitions = [
-    [load,   ERR_FULL,                 unload],
-    [unload, ERR_NOT_ENOUGH_RESOURCES, load],
+    [pickup, OK, load],
+    [pickup, ERR_INVALID_TARGET, load],
+    [pickup, ERR_FULL, unload],
+    [load,   ERR_FULL, unload],
+    [unload, ERR_NOT_ENOUGH_RESOURCES, pickup],
 ]
 
 var move_transitions = [
+    [pickup, move_pickup],
     [load,   move_load],
     [unload, move_unload]
 ]
