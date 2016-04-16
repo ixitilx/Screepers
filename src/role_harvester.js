@@ -53,7 +53,7 @@ var transitions = [
 
     [harvest, TASK_DONE, has_hauler],
     [has_hauler, OK, move_drop],
-    [has_hauler, ERR_INVALID_TARGET, haul]
+    [has_hauler, ERR_INVALID_TARGET, haul],
 
     [store,  ERR_NOT_ENOUGH_RESOURCES, harvest],
     [build,  ERR_NOT_ENOUGH_RESOURCES, harvest],

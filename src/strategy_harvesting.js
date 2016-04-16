@@ -1,6 +1,4 @@
 var imp_constants = require('constants')
-var imp_harvester = require('role_harvester')
-var imp_hauler = require('role_hauler')
 var imp_utils = require('utils')
 
 var TASK_DONE = imp_constants.TASK_DONE

@@ -25,6 +25,15 @@ function isLogged(taskArray, taskId)
     return false
 }
 
+function getCreepTask(creep, table)
+{
+    if(!creep.memory.taskId)
+        return table.defaultTask
+
+    var task = imp_task.getTaskById(creep.memory.taskId)
+    return task ? task : table.defaultTask
+}
+
 function creepLoop(creep, taskArray)
 {
     var table = imp_table.getTable(creep.memory.role)

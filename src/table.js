@@ -21,7 +21,7 @@ function Table(role, transitions, move_transitions)
         }
         
         if(this.transitionTable[task.id] == undefined)
-            this.transitionTable[task.id] = new Array()
+            this.transitionTable[task.id] = new Object()
         this.transitionTable[task.id][status] = newTask
     }
 
@@ -44,7 +44,7 @@ function Table(role, transitions, move_transitions)
 
     this.role = role
     this.name = role
-    this.transitionTable = new Array()
+    this.transitionTable = new Object()
     tableRepo[role]=this
 }
 
