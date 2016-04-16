@@ -9,12 +9,10 @@ var getHarvestRooms = function()            { return [Game.spawns.Spawn1.room] }
 
 function getHarvesterBody(workUnits, energyCapacity)
 {
-    var maxEnergy = room.energyCapacityAvailable
     var bodyCost = Creep.prototype.bodyCost
-
     var body = new Object()
     var workEnergy = energyCapacity - (bodyCost[CARRY] + bodyCost[MOVE])
-    body[WORK] = Math.min(workUnits, Math.floor(energyCapacity/bodyCost[WORK]))
+    body[WORK] = Math.min(workUnits, Math.floor(workEnergy/bodyCost[WORK]))
     body[CARRY] = 1
     body[MOVE] = 1
 
@@ -42,10 +40,11 @@ function spawnHarvesters(source)
         return TASK_DONE
 
     var spawn = source.getBestSpawn()
-
     var capacity = spawn.getTotalEnergyCapacity()
     var harvesterBody = getHarvesterBody(needWork, capacity)
     var memory = {role:'harvester', sourceId:source.id}
+
+    console.log(harvesterBody)
 
     return spawn.createCreep(harvesterBody, null, memory)
 }

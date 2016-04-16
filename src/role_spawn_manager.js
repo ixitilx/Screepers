@@ -11,26 +11,22 @@ var TASK_DONE = imp_constants.TASK_DONE
 //
 //////////
 
-function findExtension(creep, target)
+function findExtension(creep)
 {
     var extensions = creep.getSpawn().extensionIds
-    if(extensions)
+    var id = creep.memory.extensionId
+    var currentIdx = extensions.indexOf(id)
+    for(var idx = 0; idx < extensions.length; idx++)
     {
-        var id = creep.memory.extensionId
-        var currentIdx = extensions.indexOf(id)
-        for(var idx = 0; idx < extensions.length; idx++)
+        var i = (idx + currentIdx) % extensions.length
+        var ext = Game.getObjectById(extensions[i])
+        if(ext && ext.energy < ext.energyCapacity)
         {
-            var i = (idx + currentIdx) % extensions.length
-            var ext = Game.getObjectById(extensions[i])
-            if(ext && ext.energy < ext.energyCapacity)
-            {
-                creep.memory.extensionId = ext.id
-                return OK
-            }
+            creep.memory.extensionId = ext.id
+            return OK
         }
-        return ERR_FULL
     }
-    return ERR_INVALID_TARGET
+    return ERR_FULL
 }
 
 function takeEnergy(creep, target)
@@ -50,9 +46,7 @@ var actions =
 
 var targets =
 {
-    spawn:           function(creep) { return creep.getSpawn() },
-    spawn_container: function(creep) { return creep.getSpawn().getContainer() },
-    spawn_storage:   function(creep) { return creep.getSpawn().getStorage() },
+    spawn_storage:   function(creep) { return creep.getSpawn().getBestStorage() },
     spawn_extension: function(creep) { return creep.getExtension() },
 }
 
@@ -60,26 +54,16 @@ var targets =
 var taskBuilder = new imp_task.TaskBuilder(actions, targets)
 
 var take_storage    = taskBuilder.makeTask('take_energy',  'spawn_storage')
-var take_container  = taskBuilder.makeTask('take_energy',  'spawn_container')
-var take_spawn      = taskBuilder.makeTask('take_energy',  'spawn')
-var find_extension  = taskBuilder.makeTask('find_extension', null)
+var find_extension  = taskBuilder.makeTask('find_extension')
 var store_extension = taskBuilder.makeTask('store_energy', 'spawn_extension')
 
 var move_storage    = taskBuilder.makeTask('move1', 'spawn_storage')
-var move_container  = taskBuilder.makeTask('move1', 'spawn_container')
-var move_spawn      = taskBuilder.makeTask('move1', 'spawn')
 var move_extension  = taskBuilder.makeTask('move1', 'spawn_extension')
 
 var transitions = [
-    [take_storage,      ERR_INVALID_TARGET, take_container],
-    [take_container,    ERR_INVALID_TARGET, take_spawn],
-
     [take_storage,      ERR_FULL,           find_extension],
-    [take_container,    ERR_FULL,           find_extension],
-    [take_spawn,        ERR_FULL,           find_extension],
 
     [find_extension,    OK,                 store_extension],
-    [find_extension,    ERR_INVALID_TARGET, take_storage],
     [find_extension,    ERR_FULL,           take_storage],
 
     [store_extension,   ERR_FULL,           find_extension],
@@ -88,8 +72,6 @@ var transitions = [
 
 var move_transitions = [
     [take_storage,      move_storage],
-    [take_container,    move_container],
-    [take_spawn,        move_spawn],
     [store_extension,   move_extension]
 ]
 

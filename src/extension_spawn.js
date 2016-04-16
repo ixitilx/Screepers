@@ -25,7 +25,7 @@ Spawn.prototype.getExtensionIds = function()
 
 Spawn.prototype.getExtensions = function()
 {
-    return this.getExtensionIds().map(getCachedObjectById)
+    return this.getExtensionIds().map(this.getCachedObjectById)
 }
 
 Spawn.prototype.getTotalEnergy = function()

@@ -11,7 +11,7 @@ Source.prototype.getDropPos   = function()
     return this.memory.dropPos
 }
 
-Source.prototype.getBestSpawn = function() { for(spawn in Game.spawns) return spawn }
+Source.prototype.getBestSpawn = function() { for(spawn in Game.spawns) return Game.spawns[spawn] }
 Source.prototype.getWorkRequired = function() {return Math.ceil(this.energyCapacity/600)}
 
 Source.prototype.updatePositions = function()
