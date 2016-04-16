@@ -15,15 +15,16 @@ function getCachedObjectById(id)
     return cache[id]
 }
 
-function getObjectByName(name)
+function getObjectByName(name, memory=null)
 {
     var id = name + 'Id'
-    if(this.memory[id])
+    var m = memory ? memory : this.memory
+    if(m[id])
     {
-        var obj = getCachedObjectById(this.memory[id])
+        var obj = getCachedObjectById(m[id])
         if(obj)
             return obj
-        delete this.memory[id]
+        delete m[id]
     }
 }
 

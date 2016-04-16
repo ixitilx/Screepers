@@ -1,14 +1,23 @@
 require('extension_all').extend('Source', Source.prototype)
 var imp_utils = require('utils')
 
-Source.prototype.getContainer = function() { return this.getObjectByName('container') }
-Source.prototype.getLink      = function() { return this.getObjectByName('link') }
-Source.prototype.getSite      = function() { return this.getObjectByName('site') }
+Source.prototype.getMemory    = function()
+{
+    if(!Memory.sources)
+        Memory.sources = new Object()
+    if(!Memory.sources[this.id])
+        Memory.sources[this.id] = new Object()
+    return Memory.sources[this.id]
+}
+
+Source.prototype.getContainer = function() { return this.getObjectByName('container', this.getMemory()) }
+Source.prototype.getLink      = function() { return this.getObjectByName('link', this.getMemory()) }
+Source.prototype.getSite      = function() { return this.getObjectByName('site', this.getMemory()) }
 Source.prototype.getDropPos   = function()
 {
-    if(!this.memory.dropPos)
+    if(!this.getMemory().dropPos)
         this.updatePositions()
-    return this.memory.dropPos
+    return this.getMemory().dropPos
 }
 
 Source.prototype.getBestSpawn = function() { for(spawn in Game.spawns) return Game.spawns[spawn] }
@@ -18,8 +27,8 @@ Source.prototype.updatePositions = function()
 {
     var storage = this.getBestSpawn().getBestStorage()
     var path = source.pos.findPathTo(storage, {ignoreCreeps: true})
-    this.memory.dropPos = { x:path[0].x, y:path[0].y }
-    this.memory.storagePath = Room.serializePath(path)
+    this.getMemory().dropPos = { x:path[0].x, y:path[0].y }
+    this.getMemory().storagePath = Room.serializePath(path)
 }
 
 Source.prototype.getBestStorage = function()
