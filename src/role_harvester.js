@@ -51,9 +51,10 @@ var transitions = [
     [repair,  ERR_INVALID_TARGET, build  ],
     [build,   ERR_INVALID_TARGET, harvest],
 
-    [harvest, TASK_DONE, has_hauler],
-    [has_hauler, OK, move_drop],
-    [has_hauler, ERR_INVALID_TARGET, haul],
+    [harvest,       TASK_DONE,  has_hauler],
+    [has_hauler,    OK,         move_drop],
+    [has_hauler,    ERR_INVALID_TARGET, haul],
+    [drop,          OK,         harvest],
 
     [store,  ERR_NOT_ENOUGH_RESOURCES, harvest],
     [build,  ERR_NOT_ENOUGH_RESOURCES, harvest],

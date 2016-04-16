@@ -16,7 +16,7 @@ function ferryFrom(creep)
     var obj = creep.getObjectByName('ferryFrom')
     if(obj && obj['getBestStorage'])
         obj = obj.getBestStorage()
-    var res = obj.pos.findInRange(FIND_DROPPED_RESOURCE, 0)
+    var res = obj.pos.findInRange(FIND_DROPPED_RESOURCES, 0)
     if(res)
         return res[0]
     return obj
