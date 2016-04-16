@@ -26,7 +26,7 @@ Source.prototype.getWorkRequired = function() {return Math.ceil(this.energyCapac
 Source.prototype.updatePositions = function()
 {
     var storage = this.getBestSpawn().getBestStorage()
-    var path = source.pos.findPathTo(storage, {ignoreCreeps: true})
+    var path = this.pos.findPathTo(storage, {ignoreCreeps: true})
     this.getMemory().dropPos = { x:path[0].x, y:path[0].y }
     this.getMemory().storagePath = Room.serializePath(path)
 }

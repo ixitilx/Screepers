@@ -36,6 +36,17 @@ Creep.prototype.getCarry = function()
     return _.sum(this.carry)
 }
 
+Creep.prototype.loginfo = function()
+{
+    var role = this.memory.role
+    var taskId = this.memory.taskId
+    var taskName = imp_task.GetTaskById(taskId).name
+    var tableId = this.memory.tableId
+    var tableName = imp_table.GetTableById(tableId).name
+
+    console.log('Role [' + role + '], Table [' + tableName + '](' + tableId + '), Task [' + taskName + '](' + taskId + ')');
+}
+
 var bodyCost = new Object()
 bodyCost[MOVE]          = 50
 bodyCost[WORK]          = 100
