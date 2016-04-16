@@ -94,20 +94,11 @@ function manageRoom(room)
 //--------------------------------------------------------
 function run()
 {
-    if(Memory.strategies.harvesting.enabled == true)
-        getHarvestRooms().forEach(manageRoom)
+    getHarvestRooms().forEach(manageRoom)
 }
 
 function initialize()
 {
-    //disabled by default
-    if(!Memory.strategies.harvesting)
-    {
-        Memory.strategies.harvesting = {
-            enabled: false,
-            sources: new Object()
-        }
-    }
 }
 
 //--------------------------------------------------------

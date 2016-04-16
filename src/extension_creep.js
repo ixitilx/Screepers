@@ -1,5 +1,8 @@
 require('extension_all').extend('Creep', Creep.prototype)
 
+var imp_task = require('task')
+var imp_table = require('table')
+
 Creep.prototype.getSource       = function() { return this.getObjectByName('source') }
 Creep.prototype.getSpawn        = function() { return this.getObjectByName('spawn') }
 Creep.prototype.getExtension    = function() { return this.getObjectByName('extension') }
@@ -36,13 +39,13 @@ Creep.prototype.getCarry = function()
     return _.sum(this.carry)
 }
 
-Creep.prototype.loginfo = function()
+Creep.prototype.logInfo = function()
 {
     var role = this.memory.role
     var taskId = this.memory.taskId
-    var taskName = imp_task.GetTaskById(taskId).name
+    var taskName = imp_task.getTaskById(taskId).name
     var tableId = this.memory.tableId
-    var tableName = imp_table.GetTableById(tableId).name
+    var tableName = imp_table.getTable(role).name
 
     console.log('Role [' + role + '], Table [' + tableName + '](' + tableId + '), Task [' + taskName + '](' + taskId + ')');
 }

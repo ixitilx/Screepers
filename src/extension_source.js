@@ -49,8 +49,10 @@ Source.prototype.getHarvesters = function()
 
 Source.prototype.getHauler = function()
 {
-    return imp_utils.creepsByMemory({
+    var haulers = imp_utils.creepsByMemory({
         role: 'hauler',
         ferryFrom: this.id,
     })
+    if(haulers.length)
+        return haulers[0]
 }
