@@ -1,14 +1,8 @@
-var bodyCost = new Object()
-bodyCost[MOVE]          = 50
-bodyCost[WORK]          = 100
-bodyCost[CARRY]         = 50
-bodyCost[ATTACK]        = 80
-bodyCost[RANGED_ATTACK] = 150
-bodyCost[HEAL]          = 250
-bodyCost[CLAIM]         = 600
-bodyCost[TOUGH]         = 10
+require('extension_all').extend(Creep.prototype)
 
-Creep.prototype.bodyCost = bodyCost
+Creep.prototype.getSource       = function() { return this.getObjectByName('source') }
+Creep.prototype.getSpawn        = function() { return this.getObjectByName('spawn') }
+Creep.prototype.getExtension    = function() { return this.getObjectByName('extension') }
 
 Creep.prototype.buildBodyArray = function(body)
 {
@@ -32,19 +26,9 @@ Creep.prototype.getBodyCost = function(body)
 {
     var cost = new Object()
     for(var partName in body)
-        if(bodyCost[partName])
+        if(this.bodyCost[partName])
             cost[partName] = bodyCost[partName]
     return cost
-}
-
-Creep.prototype.getSource = function()
-{
-    return this.memory.sourceId ? Game.getObjectById(this.memory.sourceId) : null
-}
-
-Creep.prototype.getSpawn = function()
-{
-    return this.memory.spawnId ? Game.getObjectById(this.memory.spawnId) : null
 }
 
 Creep.prototype.getCarry = function()
@@ -52,7 +36,14 @@ Creep.prototype.getCarry = function()
     return _.sum(this.carry)
 }
 
-Creep.prototype.getExtension = function()
-{
-    return this.memory.extensionId ? Game.getObjectById(this.memory.extensionId) : null
-}
+var bodyCost = new Object()
+bodyCost[MOVE]          = 50
+bodyCost[WORK]          = 100
+bodyCost[CARRY]         = 50
+bodyCost[ATTACK]        = 80
+bodyCost[RANGED_ATTACK] = 150
+bodyCost[HEAL]          = 250
+bodyCost[CLAIM]         = 600
+bodyCost[TOUGH]         = 10
+
+Creep.prototype.bodyCost = bodyCost

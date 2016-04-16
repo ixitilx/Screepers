@@ -44,6 +44,13 @@ function upgrade(creep, target)
     return creep.upgradeController(target)
 }
 
+function source_drop_pos(creep)
+{
+    var source = creep.getSource()
+    var pos = source.getDropPos()
+    return new RoomPosition(pos.x, pos.y, source.room.name)
+}
+
 var actions = 
 {
     move0:  makeMoveFunction(0),
@@ -60,8 +67,10 @@ var targets =
     source:             function(creep) { return creep.getSource() },
     source_site:        function(creep) { return creep.getSource().getSite() },
     source_container:   function(creep) { return creep.getSource().getContainer() },
-    source_storage:     function(creep) { return creep.getSource().getStorage() },
-    room_controller:    function(creep) { return creep.room.controller }
+    source_storage:     function(creep) { return creep.getSource().getBestSpawn().getBestStorage() },
+    source_drop_pos:    source_drop_pos,
+    source_best_storage:    function(creep) { return creep.getSource().getBestStorage() },
+    room_controller:    function(creep) { return creep.room.controller },
 }
 
 exports.actions = actions

@@ -50,6 +50,11 @@ function TaskBuilder(actions, targets)
         return imp_tasklib.targets[targetName]
     }
 
+    this.makeTask = function(actionName)
+    {
+        return this.makeTask(actionName, null)
+    }
+
     this.makeTask = function(actionName, targetName)
     {
         var target = this.getTarget(targetName)

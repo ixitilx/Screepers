@@ -18,10 +18,11 @@ function findExtension(creep, target)
     {
         var id = creep.memory.extensionId
         var currentIdx = extensions.indexOf(id)
-        for(var idx = currentIdx+1; idx != currentIdx; idx = ((idx + 1) % extensions.length))
+        for(var idx = 0; idx < extensions.length; idx++)
         {
-            var ext = Game.getObjectById(extensions[idx])
-            if(ext.energy < ext.energyCapacity)
+            var i = (idx + currentIdx) % extensions.length
+            var ext = Game.getObjectById(extensions[i])
+            if(ext && ext.energy < ext.energyCapacity)
             {
                 creep.memory.extensionId = ext.id
                 return OK

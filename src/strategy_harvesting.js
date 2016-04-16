@@ -1,101 +1,92 @@
-//
-// Harvester spawning strategy
-//
-
+var imp_constants = require('constants')
 var imp_harvester = require('role_harvester')
+var imp_hauler = require('role_hauler')
 var imp_utils = require('utils')
 
-var findBestSpawn   = function(room)        { return Game.spawns.Spawn1 }  // or best spawn by other criteria
-var getWork         = function(bodyPart)    { return bodyPart.type == WORK }
-var getCreepWork    = function(creep)       { return _.sum(creep.body.map(getWork)) }
+var TASK_DONE = imp_constants.TASK_DONE
+
+var getCreepWork    = function(creep)       { return creep.getBody()[WORK] }
 var getTotalWork    = function(creepArray)  { return _.sum(creepArray.map(getCreepWork)) }
 var getHarvestRooms = function()            { return [Game.spawns.Spawn1.room] }
 
-function findContainerPos(source)
+function getHarvesterBody(workUnits, energyCapacity)
 {
-    var spawn = findBestSpawn(source.room)
-    var path = source.pos.findPathTo(spawn, {ignoreCreeps: true})
-    var pos = { x:path[0].x, y:path[0].y }
-    return pos
+    var maxEnergy = room.energyCapacityAvailable
+    var bodyCost = Creep.prototype.bodyCost
+
+    var body = new Object()
+    var workEnergy = energyCapacity - (bodyCost[CARRY] + bodyCost[MOVE])
+    body[WORK] = Math.min(workUnits, Math.floor(energyCapacity/bodyCost[WORK]))
+    body[CARRY] = 1
+    body[MOVE] = 1
+
+    return Creep.prototype.buildBodyArray(body)
 }
 
-//------------------------------
-
-function samePos(a, b)
+function getHaulerBody(energyCapacity)
 {
-    return a.x == b.x && a.y == b.y  && a.roomName == b.roomName
+    var bodyCost = Creep.prototype.bodyCost
+    var unitCost = 2*bodyCost[CARRY] + bodyCost[MOVE]
+    var unitCount = Math.floor(energyCapacity / unitCost)
+    var body = new Object()
+    body[CARRY] = 2*unitCount
+    body[MOVE] = unitCount
+    return Creep.prototype.buildBodyArray(body)
 }
 
-function getObjectById(id, containerPos)
+function spawnHarvesters(source)
 {
-    var obj = Game.getObjectById(id)
-    var isValid = (obj && obj.structureType &&
-                   obj.structureType==STRUCTURE_CONTAINER &&
-                   obj.pos && samePos(obj.pos, containerPos))
-    return isValid ? obj : null
+    var totalWork = getTotalWork(sourceHarvesters)
+    var needWork = source.getWorkRequired()
+
+    var shouldSpawn = totalWork < needWork
+    if(!shouldSpawn)
+        return TASK_DONE
+
+    var spawn = source.getBestSpawn()
+
+    var capacity = spawn.getTotalEnergyCapacity()
+    var harvesterBody = getHarvesterBody(needWork, capacity)
+    var memory = {role:'harvester', sourceId:source.id}
+
+    return spawn.createCreep(harvesterBody, null, memory)
 }
 
-function findObjectAtPos(findConst, containerPos)
+function buildContainer(source)
 {
-    var filter = { filter: function(s) {return s.structureType==STRUCTURE_CONTAINER} }
-    var objects = containerPos.findInRange(findConst, 0, filter)
-    return objects.length ? objects[0] : null
+    var cont = source.getBestStorage()
+    if(cont)
+        return TASK_DONE
+    var site = source.getSite()
+    if(site)
+        return TASK_DONE
+    var pos = source.getDropPos()
+    var roomPos = new RoomPosition(pos.x, pos.y, source.room.name)
+    return roomPos.createConstructionSite(STRUCTURE_CONTAINER)
 }
 
-function manageObject(id, pos, findConst)
+function spawnHauler(source)
 {
-    var obj = id ? getObjectById(id, pos) : null
-    if(!obj) obj = findObjectAtPos(findConst, pos)
-    return obj
-}
-
-function readInfo(source)
-{
-    var info = Memory.strategies.harvesting.sources[source.id]
-    if(!info) info = {containerPos: null, siteId: null, containerId: null}
-    return info
+    var hauler = source.getHauler()
+    if(hauler)
+        return TASK_DONE
+    var spawn = source.getBestSpawn()
+    var capacity = spawn.getTotalEnergyCapacity()
+    var haulerBody = getHaulerBody(capacity)
+    var memory = {role:'hauler', ferryFrom:source.id, ferryTo:spawn.id}
+    return spawn.createCreep(haulerBody, null, memory)
 }
 
 function manageSource(source)
 {
-    var info = readInfo(source)
-    if(!info.containerPos)
-        info.containerPos = findContainerPos(source)
-    
-    var pos = new RoomPosition(info.containerPos.x, info.containerPos.y, source.room.name)
-    var site = manageObject(info.siteId, pos, FIND_MY_CONSTRUCTION_SITES)
-    var cont = manageObject(info.containerId, pos, FIND_STRUCTURES)
-
-    info.siteId      = site ? site.id : null
-    info.containerId = cont ? cont.id : null
-
-    Memory.strategies.harvesting.sources[source.id] = info
-
-    var sourceHarvesters = imp_utils.creepsByMemory({
-        role    : 'harvester',
-        sourceId: source.id
-    })
-
-    var totalWork = getTotalWork(sourceHarvesters)
-    var needWork = source.getWorkRequired()
-
-    if(totalWork < needWork)
+    var progression = [spawnHarvesters, buildContainer, spawnHauler]
+    for(var idx=0; idx<progression.length; ++idx)
     {
-        var spawn = findBestSpawn(source.room)
-        imp_harvester.spawn(spawn, source)
+        var ret = progression[idx](source)
+        if(ret != TASK_DONE)
+            return ret
     }
-    else
-    {
-        if(!site && !cont)
-            pos.createConstructionSite(STRUCTURE_CONTAINER)
-
-        // build container
-        // build hauler
-        // update storage for harvesters
-        // update 'from' for hauler
-        // build link
-        // destroy container
-    }
+    return TASK_DONE
 }
 
 function manageRoom(room)
