@@ -2,6 +2,8 @@ require('extension_creep')
 require('extension_source')
 require('extension_spawn')
 
+require('role_harvester')
+
 var strategies = require('strategies')
 var worker = require('role_worker')
 var imp_spawn_mgr = require('role_spawn_manager')

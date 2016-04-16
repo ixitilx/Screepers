@@ -89,19 +89,6 @@ function makeMemory(spawn)
 
 function spawn(spawn)
 {
-    function findExtensionIds(spawn)
-    {
-        var exts = spawn.room.find(FIND_MY_STRUCTURES, {filter:{structureType:STRUCTURE_EXTENSION}})
-        return exts.map(function(ext) { return ext.id })
-    }
-
-    if(!spawn.getInfo())
-    {
-        Memory.spawns[spawn.id] = {
-            extensionIds: findExtensionIds(spawn)
-        }
-    }
-
     var memory = makeMemory(spawn)
     return spawn.createCreep([CARRY, MOVE], null, memory)
 }

@@ -15,7 +15,7 @@ function getCachedObjectById(id)
     return cache[id]
 }
 
-function getObjectByName(name, memory=null)
+function getObjectByName(name, memory)
 {
     var id = name + 'Id'
     var m = memory ? memory : this.memory
