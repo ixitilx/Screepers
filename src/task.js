@@ -59,7 +59,9 @@ function TaskBuilder(actions, targets)
     {
         var target = this.getTarget(targetName)
         var action = this.getAction(actionName)
-        var taskName = formatName(actionName) + '.' + formatName(targetName)
+        var taskName = formatName(actionName)
+        if(targetName)
+            taskName += '.' + formatName(targetName)
 
         function loop(creep)
         {
