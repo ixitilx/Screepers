@@ -19,5 +19,25 @@ function cleanupDeadCreepMemory(cache)
     return OK
 }
 
+function cleanupSpawnsMemory()
+{
+    if(!Memory.spawns)
+        return
+
+    for(var spawnName in Memory.spawns)
+    {
+        if(!Game.spawns[spawnName])
+        {
+            console.log('Cleaning spawn [' + spawnName + '] memory')
+            delete Memory.spawns[spawnName]
+        }
+    }
+}
+
+function cleanupSourcesMemory()
+{
+    
+}
 
 exports.cleanupDeadCreepMemory = cleanupDeadCreepMemory
+exports.cleanupSpawnsMemory = cleanupSpawnsMemory

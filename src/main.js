@@ -30,5 +30,3 @@ function mainLoop()
 }
 
 exports.loop = mainLoop
-
-strategies.initialize()

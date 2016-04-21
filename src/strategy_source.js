@@ -65,7 +65,24 @@ function buildContainer(source)
 
 function manageSource(source)
 {
-    
+    /*
+        consider free room (slots) around source
+        calculate paths to/from slots
+        priorities:
+            update info
+                slots
+                site
+                container
+            build harvesters    // keep harvesting stats
+                at most 5 work
+                at most [freeroom] units
+            build haulers       // if there is pile of energy - build more
+            build container
+            build road          // involves builder (or maintenance bot)
+                                // should hauler have work module and do maintenance?
+                                // should routes be kept by maintenance module?
+            if(hasSpawn) build link
+    */
 }
 
 function manageSpawnRoom(spawn)
@@ -87,5 +104,5 @@ function manage(cache)
     spawnRooms.map(spawnHauler)
 }
 
-exports.updateRoomSourceCache = updateRoomSourceCache
+// exports.updateRoomSourceCache = updateRoomSourceCache
 exports.buildContainer = buildContainer

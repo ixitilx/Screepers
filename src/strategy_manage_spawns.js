@@ -36,7 +36,9 @@ function updateSpawnExtensions(cache)
 {
     var update = function(spawn)
     {
-        var extensions = _.filter(cache.room_structures[spawn.room.id], imp_utils.filters.isExtension)
+        var roomStructures = cache.room_structures[spawn.room.id]
+        var isExtension = imp_utils.filters.isExtension
+        var extensions = _(roomStructures).filter(isExtension)
         return updateSpawnExtensions_(spawn, extensions)
     }
 

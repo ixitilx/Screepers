@@ -5,6 +5,7 @@ var imp_creepLoop   = require('strategy_creep_loop')
 var imp_manageSpawns = require('strategy_manage_spawns')
 
 var imp_source = require('strategy_source')
+var imp_harvesting = require('strategy_harvesting')
 var imp_spawnSourceHarvesters = require('strategy_source_spawn_harvesters')
 var imp_buildSourceContainer = require('strategy_source_build_containers')
 
@@ -16,8 +17,8 @@ function buildCache()
     var rooms = imp_utils.serializeValues(Game.rooms)
     var spawns = imp_utils.serializeValues(Game.spawns)
     var structures = imp_utils.serializeValues(Game.structures)
-    var room_creeps = imp_utils.indexArray(all_creeps, getRoomId)
-    var room_structures = imp_utils.indexArray(all_structures, getRoomId)
+    var room_creeps = imp_utils.indexArray(creeps, getRoomId)
+    var room_structures = imp_utils.indexArray(structures, getRoomId)
 
     var cache =
     {
@@ -37,13 +38,19 @@ exports.run = function()
 {
     var cache = buildCache()
 
-    var ret = OK
-    ret = imp_memorySweep.cleanupDeadCreepMemory(cache)
+    imp_memorySweep.cleanupDeadCreepMemory(cache)
+    imp_memorySweep.cleanupSpawnsMemory(cache)
+
+    
+
+
+
+/*
     ret = imp_manageSpawns.updateSpawnExtensions(cache)
     ret = imp_harvesting.updateSourceCache(cache)
     ret = imp_spawnSourceHarvesters.spawnHarvesters(cache)
     ret = imp_buildSourceContainer.buildContainer(cache)
-
+*/
     strategies.forEach(function(strategy)
     {
         if(strategy.run)
