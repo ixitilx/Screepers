@@ -1,70 +1,48 @@
 var imp_constants = require('constants')
 var imp_utils = require('utils')
 
-var TASK_DONE = imp_constants.TASK_DONE
-
-function manageSpawn(spawn, structures)
+function updateSpawnExtensions_(spawn, extensions)
 {
+    var distanceCache = new Object
+    
     function sqr(a) {return a*a}
-    function distanceSqr(a,b) {return sqr(b.pos.x-a.pos.x) + sqr(b.pos.y-a.pos.y) }
-    function cmp(a, b) {return a==b ? 0 : (a<b?-1:1)}
+    function distanceSqr(a, b) {return sqr(b.pos.x-a.pos.x) + sqr(b.pos.y-a.pos.y) }
+    function spawnDistanceSqr(a) {return distanceSqr(spawn, a)}
+    function cachedSpawnDistanceSqr(a)
+    {
+        var cached = distanceCache[a.id]
+        if(!cached)
+            cached = distanceCache[a.id] = spawnDistanceSqr(a)
+        return cached
+    }
+    function cmp(a,b) {return a==b ? 0 : (a<b?-1:1)}
     function less(a,b)
     {
-        var sda = distanceSqr(spawn,a)
-        var sdb = distanceSqr(spawn,b)
-        var sdc = cmp(sda, sdb)
-        if(sdc!=0)
-            return sdc
+        var full_a = a.energy==a.energyCapacity
+        var full_b = b.energy==b.energyCapacity
+        var full_cmp = cmp(full_a, full_b)
+        if(full_cmp != 0) return full_cmp
+        
+        var dist_a = cachedSpawnDistanceSqr(a)
+        var dist_b = cachedSpawnDistanceSqr(b)
+        var dist_cmp = cmp(dist_a, dist_b)
+        if(dist_cmp != 0) return dist_cmp
+
         return cmp(a.id, b.id)
     }
-
-    var getId = function(ext) {return ext.id}
-
-    var extIds = structures[STRUCTURE_EXTENSION].sort(less).map(getId)
-
-    spawn.memory.extensionIds = extIds
-    return TASK_DONE
 }
 
-function cacheStructuresByRoom()
+function updateSpawnExtensions(cache)
 {
-    var rooms = new Object()
-
-    function hashByRoom(structure)
+    var update = function(spawn)
     {
-        var roomId = structure.room.id
-        var type = structure.structureType
-        if(!rooms[roomId])
-            rooms[roomId] = new Object()
-        if(!rooms[roomId][type])
-            rooms[roomId][type] = new Array()
-        rooms[roomId][type].push(structure)
+        var extensions = _.filter(cache.room_structures[spawn.room.id], imp_utils.filters.isExtension)
+        return updateSpawnExtensions_(spawn, extensions)
     }
-    
-    for(s in Game.structures)
-        hashByRoom(Game.structures[s])
 
-    return rooms
+    _.filter(cache.structures, imp_utils.filters.isSpawn).forEach(update)
+
+    return OK
 }
 
-function run()
-{
-    var cache = cacheStructuresByRoom()
-
-    var spawns = new Array()
-    for(name in Game.spawns)
-        spawns.push(Game.spawns[name])
-
-    _.filter(spawns, {my:true}).forEach(function(spawn)
-    {
-        manageSpawn(spawn, cache[spawn.room.id])
-    })
-}
-
-function initialize()
-{
-}
-
-//--------------------------------------------------------
-exports.run = run
-exports.initialize = initialize
+exports.updateSpawnExtensions = updateSpawnExtensions

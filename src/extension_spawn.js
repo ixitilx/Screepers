@@ -52,6 +52,6 @@ Spawn.prototype.getTotalEnergyCapacity = function()
     var capacity = this.energyCapacity
     if(this.getManager())
         capacity += _.sum(this.getExtensions().map(getCapacity))
-    console.log(capacity)
+    // console.log(capacity)
     return Math.max(capacity, this.getTotalEnergy())
 }

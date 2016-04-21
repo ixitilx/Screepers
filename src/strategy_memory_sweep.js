@@ -1,19 +1,23 @@
-exports.run = function()
+function cleanupDeadCreepMemory(cache)
 {
-    for(creepName in Memory.creeps)
-    {
-        var found = false
-        for(var spawn in Game.spawns)
-        {
-            var spawning = Game.spawns[spawn].spawning
-            if(spawning)
-                found = found || spawning.name == creepName
-        }
+    var creepByName = Object
 
-        if(!found && Game.creeps[creepName] == undefined)
+    cache.creeps.forEach(function(creep)
+    {
+        creepByName[creep.name] = creep
+    })
+
+    for(var creepName in Memory.creeps)
+    {
+        if(!creepByName[creepName])
         {
-            console.log('Cleaning [' + creepName + ']\'s memory')
+            console.log('Cleaning [' + creepName + '] memory')
             delete Memory.creeps[creepName]
         }
     }
+
+    return OK
 }
+
+
+exports.cleanupDeadCreepMemory = cleanupDeadCreepMemory
