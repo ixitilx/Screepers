@@ -42,9 +42,7 @@ function updateSpawnExtensions(cache)
         return updateSpawnExtensions_(spawn, extensions)
     }
 
-    _.filter(cache.structures, imp_utils.filters.isSpawn).forEach(update)
-
-    return OK
+    cache.spawns.forEach(update)
 }
 
 exports.updateSpawnExtensions = updateSpawnExtensions

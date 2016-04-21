@@ -4,10 +4,12 @@ var imp_memorySweep = require('strategy_memory_sweep')
 var imp_creepLoop   = require('strategy_creep_loop')
 var imp_manageSpawns = require('strategy_manage_spawns')
 
-var imp_source = require('strategy_source')
+var imp_strategy_source = require('strategy_source')
 var imp_harvesting = require('strategy_harvesting')
 var imp_spawnSourceHarvesters = require('strategy_source_spawn_harvesters')
 var imp_buildSourceContainer = require('strategy_source_build_containers')
+
+var imp_spawn_mgr = require('role_spawn_manager')
 
 function getRoomId(item) { return item.room.id }
 
@@ -41,19 +43,37 @@ exports.run = function()
     imp_memorySweep.cleanupDeadCreepMemory(cache)
     imp_memorySweep.cleanupSpawnsMemory(cache)
 
-    
+    imp_manageSpawns.updateSpawnExtensions(cache)
 
-
-
-/*
-    ret = imp_manageSpawns.updateSpawnExtensions(cache)
-    ret = imp_harvesting.updateSourceCache(cache)
-    ret = imp_spawnSourceHarvesters.spawnHarvesters(cache)
-    ret = imp_buildSourceContainer.buildContainer(cache)
-*/
-    strategies.forEach(function(strategy)
+    for(var i=0; i<cache.spawns.length; ++i)
     {
-        if(strategy.run)
-            strategy.run()
-    })
+        var spawn = cache.spawns[i]
+        var room = spawn.room
+        imp_strategy_source.updateSourceCache(room)
+
+        var spawnStatus = true
+
+        for(var j=0; j<room.memory.sources.length; ++j)
+        {
+            var source = room.memory.sources[j]
+
+            var ret = OK
+            if(spawnStatus && (ret==OK||ret==TASK_DONE))
+                ret = imp_spawnSourceHarvesters.spawnHarvesters(source)
+
+            if(spawnStatus && (ret==OK||ret==TASK_DONE))
+                ret = imp_strategy_source.spawnHauler(source)
+
+            spawnStatus = ret==OK||ret==TASK_DONE
+
+            imp_strategy_source.buildContainer(source)
+        }
+
+        if(spawnStatus && !spawn.getManager())
+        {
+            imp_spawn_mgr.spawn(spawn)
+        }
+    }
+
+    imp_creepLoop.run()
 }

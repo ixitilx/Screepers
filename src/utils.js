@@ -19,10 +19,10 @@ function indexArray(array, indexer)
     var cache = new Object
     function indexItem(item)
     {
-        var roomId = indexer(item)
-        if(!cache[roomId])
-            cache[roomId] = new Array()
-        cache[roomId].push(item)
+        var index = indexer(item)
+        if(!cache[index])
+            cache[index] = new Array()
+        cache[index].push(item)
     }
 
     array.forEach(indexItem)

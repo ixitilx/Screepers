@@ -44,7 +44,7 @@ function manageRoom(room)
     room.memory.sources.forEach(manageSource)
 }
 
-function updateSourceCache(room)
+function updateSourceCache(cache)
 {
     if(!room.memory.sources)
         room.memory.sources = room.find(FIND_SOURCES)
