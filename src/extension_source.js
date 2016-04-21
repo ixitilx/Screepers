@@ -12,7 +12,23 @@ Source.prototype.getMemory    = function()
 
 Source.prototype.getContainer = function() { return this.getObjectByName('container', this.getMemory()) }
 Source.prototype.getLink      = function() { return this.getObjectByName('link', this.getMemory()) }
-Source.prototype.getSite      = function() { return this.getObjectByName('site', this.getMemory()) }
+Source.prototype.getSite      = function()
+{
+    var site = this.getObjectByName('site', this.getMemory())
+    if(!site)
+    {
+        var dropPos = this.getDropPos()
+        var pos = new RoomPosition(dropPos.x, dropPos.y, this.room.name)
+        var sites = pos.findInRange(FIND_CONSTRUCTION_SITES, 0)
+        if(sites && sites.length)
+        {
+            site = sites[0]
+            this.getMemory().siteId = site.id
+        }
+    }
+    return site
+}
+
 Source.prototype.getDropPos   = function()
 {
     if(!this.getMemory().dropPos)
@@ -36,6 +52,12 @@ Source.prototype.getBestStorage = function()
     var storage = this.getLink()
     if(!storage)
         storage = this.getContainer()
+    if(!storage)
+    {
+        var res = this.pos.findInRange(FIND_DROPPED_RESOURCES, 1)
+        if(res && res.length)
+            storage = res[0]
+    }
     return storage
 }
 

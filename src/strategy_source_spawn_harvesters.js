@@ -1,4 +1,7 @@
+var imp_constants = require('constants')
 var imp_utils = require('utils')
+
+var TASK_DONE = imp_constants.TASK_DONE
 
 function getCreepWork(creep)       { return creep.getBody()[WORK] }
 function getTotalWork(creepArray)  { return _.sum(creepArray.map(getCreepWork)) }

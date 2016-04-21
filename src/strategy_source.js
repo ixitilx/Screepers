@@ -39,15 +39,9 @@ function manageSource(source)
     return TASK_DONE
 }
 
-function manageRoom(room)
+function updateSourceCache(room)
 {
-    room.memory.sources.forEach(manageSource)
-}
-
-function updateSourceCache(cache)
-{
-    if(!room.memory.sources)
-        room.memory.sources = room.find(FIND_SOURCES)
+    room.memory.sources = room.find(FIND_SOURCES)
 }
 
 function buildContainer(source)
@@ -85,24 +79,7 @@ function manageSource(source)
     */
 }
 
-function manageSpawnRoom(spawn)
-{
-    spawn.room.memory.sources.forEach
-    imp_spawnHarvesters.spawnHarvesters()
-}
-
-function manage(cache)
-{
-    function getRoom(spawn) {return spawn.room}
-    function notSuccess(code) {return code!=OK && code!=TASK_DONE}
-
-    cache.rooms.forEach(updateSourceCache)
-
-    var spawnRooms = cache.spawns.map(getRoom)
-    spawnRooms.map(spawnRoomHarvesters)
-    spawnRooms.map(buildContainer)
-    spawnRooms.map(spawnHauler)
-}
-
 // exports.updateRoomSourceCache = updateRoomSourceCache
 exports.buildContainer = buildContainer
+exports.updateSourceCache = updateSourceCache
+exports.spawnHauler = spawnHauler
