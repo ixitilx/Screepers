@@ -18,8 +18,8 @@ var actions =
 
 var targets =
 {
-    controller: function(creep) { return creep.room.controller }
-    controller_storage: function(creep) { return creep.room.controller.controller.getBestStorage() }
+    controller: function(creep) { return creep.room.controller },
+    controller_storage: function(creep) { return creep.room.controller.controller.getBestStorage() },
 }
 
 var taskBuilder = new imp_task.TaskBuilder(actions, null)

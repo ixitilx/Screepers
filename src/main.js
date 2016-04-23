@@ -15,6 +15,8 @@ require('role_spawn_manager')
 
 require('utils')
 
+var strategies = require('strategies')
+
 
 function mainLoop()
 {
