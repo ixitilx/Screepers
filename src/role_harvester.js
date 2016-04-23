@@ -9,7 +9,6 @@ var hasHauler = function(creep) { return creep.getSource().getHauler() ? OK : ER
 var actions =
 {
     has_hauler: hasHauler,
-    build: buildSite,
 }
 
 function source_drop_pos(creep)
