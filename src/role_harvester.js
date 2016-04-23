@@ -31,7 +31,6 @@ var build        = taskBuilder.makeTask('build',        'source_site')
 var store        = taskBuilder.makeTask('store_energy', 'source_container')
 var haul         = taskBuilder.makeTask('store_energy', 'source_storage')
 var repair       = taskBuilder.makeTask('repair',       'source_container')
-// var move_drop    = taskBuilder.makeTask('move0',        'source_drop_pos')
 var move_harvest = taskBuilder.makeTask('move1',        'source')
 var move_build   = taskBuilder.makeTask('move3',        'source_site')
 var move_store   = taskBuilder.makeTask('move1',        'source_container')
@@ -80,7 +79,6 @@ var move_transitions = [
     [store, move_store],
     [build, move_build],
     [haul, move_haul],
-    // [drop, move_drop],
 ]
 
 imp_table.makeTable('harvester', transitions, move_transitions)
