@@ -10,8 +10,6 @@ var imp_harvesting = require('strategy_harvesting')
 var imp_spawnSourceHarvesters = require('strategy_source_spawn_harvesters')
 var imp_buildSourceContainer = require('strategy_source_build_containers')
 
-var imp_spawn_mgr = require('role_spawn_manager')
-
 var TASK_DONE = imp_constants.TASK_DONE
 
 function getRoomId(item) { return item.room.id }
@@ -49,6 +47,78 @@ function buildCache()
     return cache
 }
 
+var spawnManagerSpawningStrategy =
+{
+    function makeMemory(spawn)
+    {
+        var memory =
+        {
+            role: 'spawn_manager',
+            spawnId: spawn.id
+        }
+        return memory
+    }
+
+    function spawn(spawn)
+    {
+        var memory = makeMemory(spawn)
+        return spawn.createCreep([CARRY, MOVE], null, memory)
+    }
+}
+
+var upgraderSpawningStrategy =
+{
+    function makeMemory(spawn)
+    {
+        var memory =
+        {
+            role: 'upgrader',
+            controllerId: spawn.room.controller.id,
+        }
+    }
+
+    function getUpgraderBody(cap)
+    {
+        var bodyCost = Creep.prototype.bodyCost
+        var workEnergy = cap - (bodyCost[MOVE] + bodyCost[CARRY])
+        var body = new Object
+        body[WORK] = Math.floor(workEnergy/bodyCost[WORK])
+        body[CARRY] = 1
+        body[MOVE] = 1
+        return Creep.prototype.buildBodyArray(body)
+    }
+
+    function spawn(spawn)
+    {
+        var cap = spawn.getTotalEnergyCapacity()
+        var body = getUpgraderBody(cap)
+        var memory = makeMemory(spawn)
+        return spawn.createCreep(body, null, memory)
+    }
+}
+
+var haulerSpawningStrategy = 
+{
+    function getHaulerBody(energyCapacity)
+    {
+        var bodyCost = Creep.prototype.bodyCost
+        var unitCost = 2*bodyCost[CARRY] + bodyCost[MOVE]
+        var unitCount = Math.floor(energyCapacity / unitCost)
+        var body = new Object()
+        body[CARRY] = 2*unitCount
+        body[MOVE] = unitCount
+        return Creep.prototype.buildBodyArray(body)
+    }
+
+    function spawnHauler(spawn, from, to)
+    {
+        var capacity = spawn.getTotalEnergyCapacity()
+        var haulerBody = getHaulerBody(capacity)
+        var memory = {role:'hauler', ferryFromId:from.id, ferryToId:to.id}
+        return spawn.createCreep(haulerBody, null, memory)
+    }
+}
+
 exports.run = function()
 {
     var cache = buildCache()
@@ -83,9 +153,19 @@ exports.run = function()
                 imp_strategy_source.buildContainer(source)
         }
 
+        if(spawnStatus && room.controller && !room.controller.controller.getUpgrader())
+        {
+            ret = upgraderSpawningStrategy.spawn(spawn)
+        }
+
+        if(spawnStatus && room.controller && !room.controller.controller.getHauler())
+        {
+            ret = haulerSpawningStrategy.spawnHauler(spawn, spawn, room.controller)
+        }
+
         if(spawnStatus && !spawn.getManager())
         {
-            imp_spawn_mgr.spawn(spawn)
+            spawnManagerSpawningStrategy.spawn(spawn)
         }
     }
 

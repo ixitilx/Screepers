@@ -76,22 +76,3 @@ var move_transitions = [
 ]
 
 imp_table.makeTable('spawn_manager', transitions, move_transitions)
-
-function makeMemory(spawn)
-{
-    var memory =
-    {
-        role: 'spawn_manager',
-        spawnId: spawn.id
-    }
-    return memory
-}
-
-function spawn(spawn)
-{
-    var memory = makeMemory(spawn)
-    return spawn.createCreep([CARRY, MOVE], null, memory)
-}
-
-exports.spawn = spawn
-exports.makeMemory = makeMemory

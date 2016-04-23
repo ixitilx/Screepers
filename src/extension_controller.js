@@ -1,7 +1,18 @@
-require('extension_all').extend('Controller', Controller.prototype)
+require('extension_all').extend('Structure', Structure.prototype)
 var imp_utils = require('utils')
 
-Controller.prototype.getMemory = function()
+
+/*
+    controller
+    storage
+        energy pile
+        container
+        link
+*/
+
+var proto = new Object
+
+proto.getMemory = function()
 {
     if(!Memory.controllers)
         Memory.controllers = new Object()
@@ -10,7 +21,7 @@ Controller.prototype.getMemory = function()
     return Memory.controllers[this.id]
 }
 
-Controller.prototype.getExtensionCapacity = function()
+proto.getExtensionCapacity = function()
 {
     switch(this.level)
     {
@@ -20,20 +31,20 @@ Controller.prototype.getExtensionCapacity = function()
     }
 }
 
-Source.prototype.getDropPos = function()
+proto.getDropPos = function()
 {
     if(!this.getMemory().dropPos)
         this.updatePositions()
     return this.getMemory().dropPos
 }
 
-Source.prototype.getBestSpawn = function()
+proto.getBestSpawn = function()
 {
     for(spawn in Game.spawns)
         return Game.spawns[spawn]
 }
 
-Source.prototype.updatePositions = function()
+proto.updatePositions = function()
 {
     var storage = this.getBestSpawn().getBestStorage()
     var path = this.pos.findPathTo(storage, {ignoreCreeps: true})
@@ -41,7 +52,7 @@ Source.prototype.updatePositions = function()
     this.getMemory().storagePath = Room.serializePath(path)
 }
 
-Source.prototype.getBestStorage = function()
+proto.getBestStorage = function()
 {
     var storage = this.getLink()
     if(!storage)
@@ -55,15 +66,17 @@ Source.prototype.getBestStorage = function()
     return storage
 }
 
-Source.prototype.getUpgraders = function()
+proto.getUpgrader = function()
 {
-    return imp_utils.creepsByMemory({
+    var upgraders = imp_utils.creepsByMemory({
         role    : 'upgrader',
         controllerId: this.id
     })
+    if(upgraders.length)
+        return upgraders[0]
 }
 
-Source.prototype.getHauler = function()
+proto.getHauler = function()
 {
     var haulers = imp_utils.creepsByMemory({
         role: 'hauler',
@@ -72,3 +85,5 @@ Source.prototype.getHauler = function()
     if(haulers.length)
         return haulers[0]
 }
+
+Structure.prototype.controller = proto

@@ -9,17 +9,16 @@ require('extension_controller')
 
 require('role_harvester')
 require('role_hauler')
+require('role_upgrader')
+require('role_worker')
+require('role_spawn_manager')
 
-var strategies = require('strategies')
-var worker = require('role_worker')
-var renew = require('renew')
-var utils = require('utils')
+require('utils')
+
 
 function mainLoop()
 {
-    // Renew strategy
-	// renew.renewCreep(Game.spawns.Spawn1, renew.findOldCreep(Game.spawns.Spawn1))
-
+    // rst, move renew logic to a strategy script and trigger from strategies.js
     strategies.run()
 }
 
