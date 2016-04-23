@@ -4,7 +4,7 @@ var imp_table     = require('table')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
-var hasHauler = function(creep) { return creep.getSource().getHauler() ? OK : ERR_INVALID_TARGET }
+var hasHauler = function(creep) { return creep.getSource().getHaulers().size() ? OK : ERR_INVALID_TARGET }
 
 var actions =
 {
@@ -23,7 +23,7 @@ var targets =
     source:             function(creep) { return creep.getSource() },
     source_site:        function(creep) { return creep.getSource().getSite() },
     source_container:   function(creep) { return creep.getSource().getContainer() },
-    source_storage:     function(creep) { return creep.getSource().getBestSpawn().getBestStorage() },
+    source_storage:     function(creep) { return creep.getSource().getSpawn().getBestStorage() },
     source_drop_pos:    source_drop_pos,
     source_best_storage:function(creep) { return creep.getSource().getBestStorage() },
     room_controller:    function(creep) { return creep.room.controller },

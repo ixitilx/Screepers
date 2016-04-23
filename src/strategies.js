@@ -12,24 +12,29 @@ var imp_buildSourceContainer = require('strategy_source_build_containers')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
-function getRoomId(item) { return item.room.id }
+function getRoomName(item) { return item.room.name }
 
 function buildCache()
 {
-    function findSites(room)
-    {
-        return room.find(FIND_CONSTRUCTION_SITES)
-    }
+    function findSites(room) { return room.find(FIND_CONSTRUCTION_SITES) }
+    function findResources(room) { return room.find(FIND_DROPPED_RESOURCES) }
+    function findSources(room) { return room.find(FIND_SOURCES) }
+    function findStructures(room) { return room.find(FIND_STRUCTURES) }
 
-    var creeps = imp_utils.serializeValues(Game.creeps)
     var rooms = imp_utils.serializeValues(Game.rooms)
     var spawns = imp_utils.serializeValues(Game.spawns)
-    var structures = imp_utils.serializeValues(Game.structures)
+
+    var creeps = imp_utils.serializeValues(Game.creeps)
+    var structures = Array.prototype.concat.apply([], rooms.map(findStructures))
     var sites = Array.prototype.concat.apply([], rooms.map(findSites))
+    var resources = Array.prototype.concat.apply([], rooms.map(findResources))
+    var sources = Array.prototype.concat.apply([], rooms.map(findSources))
     
-    var room_creeps = imp_utils.indexArray(creeps, getRoomId)
-    var room_structures = imp_utils.indexArray(structures, getRoomId)
-    var room_sites = imp_utils.indexArray(sites, getRoomId)
+    var room_creeps = imp_utils.indexArray(creeps, getRoomName)
+    var room_structures = imp_utils.indexArray(structures, getRoomName)
+    var room_sites = imp_utils.indexArray(sites, getRoomName)
+    var room_resources = imp_utils.indexArray(resources, getRoomName)
+    var room_sources = imp_utils.indexArray(sources, getRoomName)
 
     var cache =
     {
@@ -39,10 +44,14 @@ function buildCache()
         creeps:             creeps,
         structures:         structures,
         sites:              sites,
+        resources:          resources,
+        sources:            sources,
 
         room_creeps:        room_creeps,
         room_structures:    room_structures,
         room_sites:         room_sites,
+        room_resources:     room_resources,
+        room_sources:       room_sources,
     }
     return cache
 }
@@ -61,7 +70,7 @@ var spawnManagerSpawningStrategy =
 
     spawnManager: function(spawn)
     {
-        var memory = makeMemory(spawn)
+        var memory = this.makeMemory(spawn)
         return spawn.createCreep([CARRY, MOVE], null, memory)
     },
 }
@@ -133,13 +142,13 @@ exports.run = function()
     {
         var spawn = cache.spawns[i]
         var room = spawn.room
-        imp_strategy_source.updateSourceCache(room)
-
         var spawnStatus = true
+        var roomSources = cache.room_sources[room.name]
 
-        for(var j=0; j<room.memory.sources.length; ++j)
+        for(var j=0; j<roomSources.length; ++j)
         {
-            var source = room.memory.sources[j]
+            var source = roomSources[j]
+            var info = source.extractTickInfo(cache)
 
             var ret = OK
             if(spawnStatus && (ret==OK||ret==TASK_DONE))
@@ -167,7 +176,7 @@ exports.run = function()
 */
         if(spawnStatus && !spawn.getManager())
         {
-            spawnManagerSpawningStrategy.spawn(spawn)
+            spawnManagerSpawningStrategy.spawnManager(spawn)
         }
     }
 

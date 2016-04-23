@@ -28,7 +28,7 @@ function spawnHarvesters(source)
     if(!shouldSpawn)
         return TASK_DONE
 
-    var spawn = source.getBestSpawn()
+    var spawn = source.getSpawn()
     var capacity = spawn.getTotalEnergyCapacity()
     var harvesterBody = getHarvesterBody(needWork, capacity)
     var memory = {role:'harvester', sourceId:source.id}

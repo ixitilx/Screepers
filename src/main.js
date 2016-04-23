@@ -21,7 +21,15 @@ var strategies = require('strategies')
 function mainLoop()
 {
     // rst, move renew logic to a strategy script and trigger from strategies.js
-    strategies.run()
+    if(typeof(Memory.paused) != typeof(undefined) && !Memory.paused)
+    {
+        strategies.run()
+    }
+    else
+    {
+        if((Game.tick % 100) == 0)
+            console.log('Script is paused. Type [Memory.paused = false] to resume.')
+    }
 }
 
 exports.loop = mainLoop

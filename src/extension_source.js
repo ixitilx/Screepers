@@ -1,6 +1,88 @@
 require('extension_all').extend('Source', Source.prototype)
 var imp_utils = require('utils')
 
+/*
+    slots
+    harvesters
+    spawn
+
+        drop position
+        construction site
+        container
+        link
+
+    hauler
+        path
+*/
+
+Source.prototype.findSlots = function()
+{
+    var x = this.pos.x
+    var y = this.pos.y
+
+    var t = y - 1
+    var l = x - 1
+    var b = y + 1
+    var r = x + 1
+
+    var slots = [[l,t], [x,t], [r,t],
+                 [l,y],        [r,y],
+                 [l,b], [x,b], [r,b]]
+
+    function isNotWall(pt)
+    {
+        return 'wall' != this.room.getPositionAt(pt[0],pt[1]).lookFor('terrain')
+    }
+
+    slots = _(slots).filter(isNotWall)
+    return slots
+}
+
+Source.prototype.extractTickInfo = function(tickCache)
+{
+    var pos = this.pos
+    function isAdjacent(obj) {return imp_utils.distanceSq(pos, obj.pos) <= 2}
+    function distance(obj) {return imp_utils.distanceSq(pos, obj.pos)}
+
+    var tick_info = new Object()
+
+    var creeps = tickCache.creeps
+    var room_creeps = tickCache.room_creeps[this.room.name]
+    var room_sites = tickCache.room_sites[this.room.name]
+    var room_structures = tickCache.room_structures[this.room.name]
+    var room_resources = tickCache.room_resources[this.room.name]
+
+    // update harvesters
+    var myHarvesterFilter = {my:true, memory:{role:'harvester', sourceId: this.id}}
+    tick_info.harvesters = _(room_creeps).filter(myHarvesterFilter)
+
+    // update haulers
+    var myHaulersFilter = {my:true, memory:{role:'hauler', ferryFromId: this.id}}
+    tick_info.haulers = _(creeps).filter(myHaulersFilter)
+
+    // update sites
+    var site = _(room_sites).filter({my:true}).filter(isAdjacent).head()
+
+    // update containers
+    var contFilter = {structureType:STRUCTURE_CONTAINER}
+    tick_info.container = _(room_structures).filter(isAdjacent).filter(contFilter).head()
+
+    // update links
+    var linkFilter = {my:true, structureType:STRUCTURE_LINK}
+    tick_info.link = _(room_structures).filter(isAdjacent).filter(linkFilter).head()
+
+    // update spawns
+    tick_info.spawn = _(room_structures).filter({my:true, structureType:STRUCTURE_SPAWN}).head()
+
+    // update resource piles
+    var energyFilter = {resourceType:RESOURCE_ENERGY}
+    tick_info.pile = _(room_resources).filter(isAdjacent).filter(energyFilter).sortBy('amount').tail()
+
+    this.getMemory().tick_info = tick_info
+
+    return tick_info
+}
+
 Source.prototype.getMemory = function()
 {
     if(!Memory.sources)
@@ -10,45 +92,30 @@ Source.prototype.getMemory = function()
     return Memory.sources[this.id]
 }
 
-Source.prototype.getContainer = function()
+Source.prototype.getHarvesters  = function() { return this.getMemory().tick_info.harvesters }
+Source.prototype.getHaulers     = function() { return this.getMemory().tick_info.haulers }
+
+Source.prototype.getSite        = function() { return this.getMemory().tick_info.site }
+Source.prototype.getContainer   = function() { return this.getMemory().tick_info.container }
+Source.prototype.getLink        = function() { return this.getMemory().tick_info.link }
+Source.prototype.getSpawn       = function() { return this.getMemory().tick_info.spawn }
+Source.prototype.getPile        = function() { return this.getMemory().tick_info.pile }
+
+Source.prototype.getStoreEnergyTarget = function()
 {
-    var cont = this.getObjectByName('container', this.getMemory())
-    if(!cont)
-    {
-        cont = this.findContainer()
-        if(cont)
-            this.setObjectByName(cont, 'container', this.getMemory())
-    }
-    return cont
+    var store = this.getLink()
+    if(!store || store.energy==store.energyCapacity) store = this.getContainer()
+    if(!store || store.energy==store.energyCapacity) store = this.getPile()
+    if(!store) store = this.getDropPos()
+    return store
 }
 
-Source.prototype.findContainer = function()
+Source.prototype.getTakeEnergyTarget = function()
 {
-    var dropPos = this.getDropPos()
-    var pos = new RoomPosition(dropPos.x, dropPos.y, this.room.name)
-    var conts = pos.findInRange(FIND_STRUCTURES, 0, {structureType:STRUCTURE_CONTAINER, my:true})
-    if(conts && conts.length)
-        return conts[0]
-}
-
-Source.prototype.getLink = function() { return this.getObjectByName('link', this.getMemory()) }
-Source.prototype.getSite = function()
-{
-    var site = this.getObjectByName('site', this.getMemory())
-    if(!site)
-    {
-        var dropPos = this.getDropPos()
-        var pos = new RoomPosition(dropPos.x, dropPos.y, this.room.name)
-
-        // site can be of any type so structureType is not included in filter condition
-        var sites = pos.findInRange(FIND_CONSTRUCTION_SITES, 0, {my:true})
-        if(sites && sites.length)
-        {
-            site = sites[0]
-            this.getMemory().siteId = site.id
-        }
-    }
-    return site
+    var take = this.getPile()
+    if(!take) take = this.getContainer()
+    if(!take || take.energy==take.energyCapacity) take = this.getLink()
+    return take
 }
 
 Source.prototype.getDropPos = function()
@@ -58,9 +125,6 @@ Source.prototype.getDropPos = function()
     return this.getMemory().dropPos
 }
 
-Source.prototype.getBestSpawn = function() { for(spawn in Game.spawns) return Game.spawns[spawn] }
-Source.prototype.getWorkRequired = function() {return Math.ceil(this.energyCapacity/600)}
-
 Source.prototype.updatePositions = function()
 {
     var storage = this.getBestSpawn().getBestStorage()
@@ -69,34 +133,13 @@ Source.prototype.updatePositions = function()
     this.getMemory().storagePath = Room.serializePath(path)
 }
 
-Source.prototype.getBestStorage = function()
+Source.prototype.getWorkRequired = function()
 {
-    var storage = this.getLink()
-    if(!storage)
-        storage = this.getContainer()
-    if(!storage)
-    {
-        var res = this.pos.findInRange(FIND_DROPPED_RESOURCES, 1)
-        if(res && res.length)
-            storage = res[0]
-    }
-    return storage
-}
+    var regenerationCycle = 300
+    var harvestPerWork = 2
+    var cap = this.energyCapacity
 
-Source.prototype.getHarvesters = function()
-{
-    return imp_utils.creepsByMemory({
-        role    : 'harvester',
-        sourceId: this.id
-    })
-}
+    var workNeed = cap / (regenerationCycle * harvestPerWork)
 
-Source.prototype.getHauler = function()
-{
-    var haulers = imp_utils.creepsByMemory({
-        role: 'hauler',
-        ferryFromId: this.id,
-    })
-    if(haulers.length)
-        return haulers[0]
+    return Math.ceil(workNeed)
 }
