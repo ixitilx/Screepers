@@ -12,13 +12,17 @@ function getCachedObjectById(id)
 
     if(!cache[id])
         cache[id] = Game.getObjectById(id)
+    
     return cache[id]
 }
 
 function getObjectByName(name, memory)
 {
-    var id = name + 'Id'
     var m = memory ? memory : this.memory
+    if(m[name])
+        return m[name]
+
+    var id = name + 'Id'
     if(m[id])
     {
         var obj = getCachedObjectById(m[id])
@@ -28,10 +32,29 @@ function getObjectByName(name, memory)
     }
 }
 
+function setObjectByName(object, name, memory)
+{
+    var m = memory ? memory : this.memory
+
+    if(object.id)
+    {
+        var id = name + 'Id'
+        m[id] = object.id
+    }
+    else
+    {
+        m[name] = object
+    }
+}
+
+
+
 var prototype = 
 {
-    getObjectByName: getObjectByName,
     getCachedObjectById: getCachedObjectById,
+
+    getObjectByName: getObjectByName,
+    setObjectByName: setObjectByName,
 }
 
 function extend(name, externalPrototype)

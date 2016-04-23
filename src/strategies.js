@@ -1,3 +1,4 @@
+var imp_constants = require('constants')
 var imp_utils = require('utils')
 
 var imp_memorySweep = require('strategy_memory_sweep')
@@ -11,30 +12,42 @@ var imp_buildSourceContainer = require('strategy_source_build_containers')
 
 var imp_spawn_mgr = require('role_spawn_manager')
 
+var TASK_DONE = imp_constants.TASK_DONE
+
 function getRoomId(item) { return item.room.id }
 
 function buildCache()
 {
+    function findSites(room)
+    {
+        return room.find(FIND_CONSTRUCTION_SITES)
+    }
+
     var creeps = imp_utils.serializeValues(Game.creeps)
     var rooms = imp_utils.serializeValues(Game.rooms)
     var spawns = imp_utils.serializeValues(Game.spawns)
     var structures = imp_utils.serializeValues(Game.structures)
+    var sites = Array.prototype.concat.apply([], rooms.map(findSites))
+    
     var room_creeps = imp_utils.indexArray(creeps, getRoomId)
     var room_structures = imp_utils.indexArray(structures, getRoomId)
+    var room_sites = imp_utils.indexArray(sites, getRoomId)
 
     var cache =
     {
-        creeps:             creeps,
         rooms:              rooms,
         spawns:             spawns,
+
+        creeps:             creeps,
         structures:         structures,
+        sites:              sites,
+
         room_creeps:        room_creeps,
         room_structures:    room_structures,
+        room_sites:         room_sites,
     }
     return cache
 }
-
-var strategies = [imp_harvesting, imp_creepLoop]
 
 exports.run = function()
 {
@@ -66,7 +79,8 @@ exports.run = function()
 
             spawnStatus = ret==OK||ret==TASK_DONE
 
-            imp_strategy_source.buildContainer(source)
+            if(spawnStatus)
+                imp_strategy_source.buildContainer(source)
         }
 
         if(spawnStatus && !spawn.getManager())

@@ -4,6 +4,7 @@ for(name in Game.creeps)
 require('extension_creep')
 require('extension_source')
 require('extension_spawn')
+require('extension_resource')
 
 require('role_harvester')
 require('role_hauler')

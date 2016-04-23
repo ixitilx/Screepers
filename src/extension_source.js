@@ -1,7 +1,7 @@
 require('extension_all').extend('Source', Source.prototype)
 var imp_utils = require('utils')
 
-Source.prototype.getMemory    = function()
+Source.prototype.getMemory = function()
 {
     if(!Memory.sources)
         Memory.sources = new Object()
@@ -10,16 +10,38 @@ Source.prototype.getMemory    = function()
     return Memory.sources[this.id]
 }
 
-Source.prototype.getContainer = function() { return this.getObjectByName('container', this.getMemory()) }
-Source.prototype.getLink      = function() { return this.getObjectByName('link', this.getMemory()) }
-Source.prototype.getSite      = function()
+Source.prototype.getContainer = function()
+{
+    var cont = this.getObjectByName('container', this.getMemory())
+    if(!cont)
+    {
+        cont = this.findContainer()
+        if(cont)
+            this.setObjectByName(cont, 'container', this.getMemory())
+    }
+    return cont
+}
+
+Source.prototype.findContainer = function()
+{
+    var dropPos = this.getDropPos()
+    var pos = new RoomPosition(dropPos.x, dropPos.y, this.room.name)
+    var conts = pos.findInRange(FIND_STRUCTURES, 0, {structureType:STRUCTURE_CONTAINER, my:true})
+    if(conts && conts.length)
+        return conts[0]
+}
+
+Source.prototype.getLink = function() { return this.getObjectByName('link', this.getMemory()) }
+Source.prototype.getSite = function()
 {
     var site = this.getObjectByName('site', this.getMemory())
     if(!site)
     {
         var dropPos = this.getDropPos()
         var pos = new RoomPosition(dropPos.x, dropPos.y, this.room.name)
-        var sites = pos.findInRange(FIND_CONSTRUCTION_SITES, 0)
+
+        // site can be of any type so structureType is not included in filter condition
+        var sites = pos.findInRange(FIND_CONSTRUCTION_SITES, 0, {my:true})
         if(sites && sites.length)
         {
             site = sites[0]
@@ -29,7 +51,7 @@ Source.prototype.getSite      = function()
     return site
 }
 
-Source.prototype.getDropPos   = function()
+Source.prototype.getDropPos = function()
 {
     if(!this.getMemory().dropPos)
         this.updatePositions()

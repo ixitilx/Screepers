@@ -31,7 +31,7 @@ function harvest(creep, target)
 function repair(creep, target)
 {
     if(!target)
-        return TASK_DONE
+        return ERR_INVALID_TARGET
     var missingHits = target.hitsMax - target.hits
     var repairHits = creep.getBody()[WORK] * 100
     if(repairHits > missingHits)
