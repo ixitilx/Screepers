@@ -4,30 +4,38 @@ var imp_table     = require('table')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
-var dropEnergy = function(creep) { return creep.drop(RESOURCE_ENERGY) }
 var hasHauler = function(creep) { return creep.getSource().getHauler() ? OK : ERR_INVALID_TARGET }
-var buildSite = function(creep, target)
-{
-    var work = creep.getBody()[WORK]
-    var maxBuildEnergy = work * 5
-    if(creep.carry.energy < maxBuildEnergy)
-        return ERR_NOT_ENOUGH_RESOURCES
-    return creep.build(target)
-}
 
 var actions =
 {
-    drop: dropEnergy,
     has_hauler: hasHauler,
     build: buildSite,
 }
 
-var taskBuilder = new imp_task.TaskBuilder(actions, null)
+function source_drop_pos(creep)
+{
+    var source = creep.getSource()
+    var pos = source.getDropPos()
+    return new RoomPosition(pos.x, pos.y, source.room.name)
+}
 
-var drop         = taskBuilder.makeTask('drop')
+var targets =
+{
+    source:             function(creep) { return creep.getSource() },
+    source_site:        function(creep) { return creep.getSource().getSite() },
+    source_container:   function(creep) { return creep.getSource().getContainer() },
+    source_storage:     function(creep) { return creep.getSource().getBestSpawn().getBestStorage() },
+    source_drop_pos:    source_drop_pos,
+    source_best_storage:function(creep) { return creep.getSource().getBestStorage() },
+    room_controller:    function(creep) { return creep.room.controller },
+}
+
+var taskBuilder = new imp_task.TaskBuilder(actions, targets)
+
+var drop         = taskBuilder.makeTask('drop_energy')
 var has_hauler   = taskBuilder.makeTask('has_hauler')
 var harvest      = taskBuilder.makeTask('harvest',      'source')
-var build        = taskBuilder.makeTask('build',        'source_site')
+var build        = taskBuilder.makeTask('build_safe',   'source_site')
 var store        = taskBuilder.makeTask('store_energy', 'source_container')
 var haul         = taskBuilder.makeTask('store_energy', 'source_storage')
 var repair       = taskBuilder.makeTask('repair',       'source_container')

@@ -21,6 +21,11 @@ function storeEnergy(creep, target)
     return creep.transfer(target, RESOURCE_ENERGY)
 }
 
+function dropEnergy(creep)
+{
+    return creep.drop(RESOURCE_ENERGY)
+}
+
 function harvest(creep, target)
 {
     if(creep.getCarry() >= creep.carryCapacity)
@@ -44,11 +49,24 @@ function upgrade(creep, target)
     return creep.upgradeController(target)
 }
 
-function source_drop_pos(creep)
+function buildSafe(creep, target)
 {
-    var source = creep.getSource()
-    var pos = source.getDropPos()
-    return new RoomPosition(pos.x, pos.y, source.room.name)
+    if(!target)
+        return ERR_INVALID_TARGET
+    var work = creep.getBody()[WORK]
+    var maxBuildEnergy = work * 5
+    if(creep.carry.energy < maxBuildEnergy)
+        return ERR_NOT_ENOUGH_RESOURCES
+    return creep.build(target)
+}
+
+function takeEnergy(creep, target)
+{
+    if(!target)
+        return ERR_INVALID_TARGET
+    return target.transferEnergy(creep)
+    // var freeRoom = creep.carryCapacity - creep.getCarry()
+    // return target.transferEnergy(creep, freeRoom)
 }
 
 var actions = 
@@ -56,22 +74,19 @@ var actions =
     move0:  makeMoveFunction(0),
     move1:  makeMoveFunction(1),
     move3:  makeMoveFunction(3),
-    repair:     repair,
-    harvest:    harvest,
-    upgrade:    upgrade,
-    store_energy:   storeEnergy,
+    
+    build_safe: buildSafe,
+    
+    repair: repair,
+    harvest: harvest,
+    upgrade: upgrade,
+    
+    take_energy: takeEnergy,
+    store_energy: storeEnergy,
+    drop_energy: dropEnergy,
 }
 
-var targets =
-{
-    source:             function(creep) { return creep.getSource() },
-    source_site:        function(creep) { return creep.getSource().getSite() },
-    source_container:   function(creep) { return creep.getSource().getContainer() },
-    source_storage:     function(creep) { return creep.getSource().getBestSpawn().getBestStorage() },
-    source_drop_pos:    source_drop_pos,
-    source_best_storage:    function(creep) { return creep.getSource().getBestStorage() },
-    room_controller:    function(creep) { return creep.room.controller },
-}
+var targets = {}
 
 exports.actions = actions
 exports.targets = targets
