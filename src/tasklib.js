@@ -50,10 +50,17 @@ function buildSafe(creep, target)
 
 function takeEnergy(creep, target)
 {
-    function hasFunction(name) { return target[name] && typeof(target[name])=='function' }
-
     if(!target)
         return ERR_INVALID_TARGET
+        
+    if(target.structureType == STRUCTURE_CONTAINER)
+    {
+        return target.transfer(creep, RESOURCE_ENERGY)
+    }
+    
+    
+    function hasFunction(name) { return target[name] && typeof(target[name])=='function' }
+
 
     if(hasFunction('transferEnergy'))
         return target.transferEnergy(creep)
@@ -66,8 +73,8 @@ function takeEnergy(creep, target)
     
     console.log('--------------------------')
     console.log(creep.name, 'can not take energy from', target)
-    console.log(target, 'transfer', undefined == target['transfer'], typeof(target['transfer']))
-    console.log(target, 'transferEnergy', undefined == target['transferEnergy'], typeof(target['transferEnergy']), hasFunction('transferEnergy'))
+    console.log(target, 'transfer', target['transfer'], typeof(target['transfer']))
+    console.log(target, 'transferEnergy', target['transferEnergy'], typeof(target['transferEnergy']), hasFunction('transferEnergy'))
     
     return ERR_INVALID_TARGET
 }

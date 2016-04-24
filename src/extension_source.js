@@ -60,7 +60,7 @@ Source.prototype.extractTickInfo = function(tickCache)
     tick_info.haulers = _(creeps).filter(myHaulersFilter)
 
     // update sites
-    var site = _(room_sites).filter({my:true}).filter(isAdjacent).head()
+    tick_info.site = _(room_sites).filter({my:true}).filter(isAdjacent).head()
 
     // update containers
     var contFilter = {structureType:STRUCTURE_CONTAINER}
@@ -126,7 +126,7 @@ Source.prototype.getDropPos = function()
 
 Source.prototype.updatePositions = function()
 {
-    var storage = this.getSpawn().getBestStorage()
+    var storage = this.getSpawn().getTakeEnergyTarget()
     var path = this.pos.findPathTo(storage, {ignoreCreeps: true})
     this.getMemory().dropPos = { x:path[0].x, y:path[0].y }
     this.getMemory().storagePath = Room.serializePath(path)

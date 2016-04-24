@@ -23,7 +23,7 @@ var targets =
     source:             function(creep) { return creep.getSource() },
     source_site:        function(creep) { return creep.getSource().getSite() },
     source_container:   function(creep) { return creep.getSource().getContainer() },
-    source_storage:     function(creep) { return creep.getSource().getSpawn().getBestStorage() },
+    source_storage:     function(creep) { return creep.getSource().getSpawn().getStoreEnergyTarget() },
     source_drop_pos:    source_drop_pos,
     source_best_storage:function(creep) { return creep.getSource().getBestStorage() },
     room_controller:    function(creep) { return creep.room.controller },
