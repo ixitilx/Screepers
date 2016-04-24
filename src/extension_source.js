@@ -42,7 +42,6 @@ Source.prototype.extractTickInfo = function(tickCache)
 {
     var pos = this.pos
     function isAdjacent(obj) {return imp_utils.distanceSq(pos, obj.pos) <= 2}
-    function distance(obj) {return imp_utils.distanceSq(pos, obj.pos)}
 
     var tick_info = new Object()
 
@@ -76,7 +75,7 @@ Source.prototype.extractTickInfo = function(tickCache)
 
     // update resource piles
     var energyFilter = {resourceType:RESOURCE_ENERGY}
-    tick_info.pile = _(room_resources).filter(isAdjacent).filter(energyFilter).sortBy('amount').tail()
+    tick_info.pile = _(room_resources).filter(isAdjacent).filter(energyFilter).sortBy('amount').last()
 
     this.getMemory().tick_info = tick_info
 
@@ -112,10 +111,10 @@ Source.prototype.getStoreEnergyTarget = function()
 
 Source.prototype.getTakeEnergyTarget = function()
 {
-    var take = this.getPile()
-    if(!take) take = this.getContainer()
-    if(!take || take.energy==take.energyCapacity) take = this.getLink()
-    return take
+    var pile = this.getPile()
+    if(pile) return pile
+    var cont = this.getContainer()
+    return cont ? cont : this.getLink()
 }
 
 Source.prototype.getDropPos = function()
@@ -127,7 +126,7 @@ Source.prototype.getDropPos = function()
 
 Source.prototype.updatePositions = function()
 {
-    var storage = this.getBestSpawn().getBestStorage()
+    var storage = this.getSpawn().getBestStorage()
     var path = this.pos.findPathTo(storage, {ignoreCreeps: true})
     this.getMemory().dropPos = { x:path[0].x, y:path[0].y }
     this.getMemory().storagePath = Room.serializePath(path)

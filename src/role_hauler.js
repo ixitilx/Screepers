@@ -14,16 +14,16 @@ function takeEnergy(creep, target)
 function ferryFrom(creep)
 {
     var obj = creep.getObjectByName('ferryFrom')
-    if(obj && obj['getBestStorage'])
-        obj = obj.getBestStorage()
+    if(obj && obj['getTakeEnergyTarget'])
+        obj = obj.getTakeEnergyTarget()
     return obj
 }
 
 function ferryTo(creep)
 {
     var obj = creep.getObjectByName('ferryTo')
-    if(obj && obj['getBestStorage'])
-        return obj.getBestStorage()
+    if(obj && obj['getStoreEnergyTarget'])
+        return obj.getStoreEnergyTarget()
     return obj
 }
 

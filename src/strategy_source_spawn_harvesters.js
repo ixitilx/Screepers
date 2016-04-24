@@ -4,7 +4,6 @@ var imp_utils = require('utils')
 var TASK_DONE = imp_constants.TASK_DONE
 
 function getCreepWork(creep)       { return creep.getBody()[WORK] }
-function getTotalWork(creepArray)  { return _.sum(creepArray.map(getCreepWork)) }
 function getHarvestRooms()         { return [Game.spawns.Spawn1.room] }
 
 function getHarvesterBody(workUnits, energyCapacity)
@@ -21,9 +20,9 @@ function getHarvesterBody(workUnits, energyCapacity)
 
 function spawnHarvesters(source)
 {
-    var totalWork = getTotalWork(source.getHarvesters())
+    var totalWork = source.getHarvesters().map(getCreepWork).sum()
     var needWork = source.getWorkRequired()
-
+    
     var shouldSpawn = totalWork < needWork
     if(!shouldSpawn)
         return TASK_DONE

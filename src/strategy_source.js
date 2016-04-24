@@ -17,10 +17,9 @@ function getHaulerBody(energyCapacity)
 
 function spawnHauler(source)
 {
-    var hauler = source.getHauler()
-    if(hauler)
+    if(source.getHaulers().size())
         return TASK_DONE
-    var spawn = source.getBestSpawn()
+    var spawn = source.getSpawn()
     var capacity = spawn.getTotalEnergyCapacity()
     var haulerBody = getHaulerBody(capacity)
     var memory = {role:'hauler', ferryFromId:source.id, ferryToId:spawn.id}
@@ -46,8 +45,8 @@ function updateSourceCache(room)
 
 function buildContainer(source)
 {
-    var cont = source.getBestStorage()
-    if(cont)
+    var cont = source.getStoreEnergyTarget()
+    if(cont && cont.id)
         return TASK_DONE
     var site = source.getSite()
     if(site)

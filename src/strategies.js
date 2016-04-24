@@ -136,11 +136,11 @@ exports.run = function()
     imp_memorySweep.cleanupDeadCreepMemory(cache)
     imp_memorySweep.cleanupSpawnsMemory(cache)
 
-    imp_manageSpawns.updateSpawnExtensions(cache)
-
     for(var i=0; i<cache.spawns.length; ++i)
     {
         var spawn = cache.spawns[i]
+        spawn.extractTickInfo(cache)
+        
         var room = spawn.room
         var spawnStatus = true
         var roomSources = cache.room_sources[room.name]
@@ -176,7 +176,7 @@ exports.run = function()
 */
         if(spawnStatus && !spawn.getManager())
         {
-            spawnManagerSpawningStrategy.spawnManager(spawn)
+            haulerSpawningStrategy.spawnHauler(spawn, spawn, spawn)
         }
     }
 

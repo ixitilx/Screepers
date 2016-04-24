@@ -14,18 +14,6 @@ function makeMoveFunction(range)
     return moveFunction
 }
 
-function storeEnergy(creep, target)
-{
-    // if(target.energy == target.energyCapacity)
-    //     return ERR_FULL
-    return creep.transfer(target, RESOURCE_ENERGY)
-}
-
-function dropEnergy(creep)
-{
-    return creep.drop(RESOURCE_ENERGY)
-}
-
 function harvest(creep, target)
 {
     if(creep.getCarry() >= creep.carryCapacity)
@@ -62,18 +50,58 @@ function buildSafe(creep, target)
 
 function takeEnergy(creep, target)
 {
+    function hasFunction(name) { return target[name] && typeof(target[name])=='function' }
+
     if(!target)
         return ERR_INVALID_TARGET
-    return target.transferEnergy(creep)
-    // var freeRoom = creep.carryCapacity - creep.getCarry()
-    // return target.transferEnergy(creep, freeRoom)
+
+    if(hasFunction('transferEnergy'))
+        return target.transferEnergy(creep)
+
+    if(hasFunction('transfer'))
+        return target.transfer(RESOURCE_ENERGY, creep)
+
+    if(target.amount > 0)
+        return creep.pickup(target)
+    
+    console.log('--------------------------')
+    console.log(creep.name, 'can not take energy from', target)
+    console.log(target, 'transfer', undefined == target['transfer'], typeof(target['transfer']))
+    console.log(target, 'transferEnergy', undefined == target['transferEnergy'], typeof(target['transferEnergy']), hasFunction('transferEnergy'))
+    
+    return ERR_INVALID_TARGET
+}
+
+function storeEnergy(creep, target)
+{
+    function hasFunction(name) { return target[name] && typeof(target[name])=='function' }
+
+    if(!target)
+        return ERR_INVALID_TARGET
+
+    if(target.x != undefined && target.y != undefined)
+    {
+        var dx = creep.pos.x - target.x
+        var dy = creep.pos.y - target.y
+        var dd = (dx*dx)+(dy*dy)
+        if(dd <= 2)
+            return creep.drop(RESOURCE_ENERGY)
+        return ERR_NOT_IN_RANGE
+    }
+
+    return creep.transfer(target, RESOURCE_ENERGY)
+}
+
+function dropEnergy(creep)
+{
+    return creep.drop(RESOURCE_ENERGY)
 }
 
 var actions = 
 {
-    move0:  makeMoveFunction(0),
-    move1:  makeMoveFunction(1),
-    move3:  makeMoveFunction(3),
+    move0: makeMoveFunction(0),
+    move1: makeMoveFunction(1),
+    move3: makeMoveFunction(3),
     
     build_safe: buildSafe,
     

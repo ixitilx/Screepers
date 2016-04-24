@@ -4,75 +4,45 @@ var imp_table     = require('table')
 
 var TASK_DONE = imp_constants.TASK_DONE
 
-//////////
-//
-//  take energy from storage/container/spawn and store it in extensions
-//  top up container hp
-//
-//////////
-
-function findExtension(creep)
-{
-    var extensionIds = creep.getSpawn().getExtensionIds()
-    var id = creep.memory.extensionId
-    var currentIdx = extensionIds.indexOf(id)
-    for(var idx = 0; idx < extensionIds.length; idx++)
-    {
-        var i = (idx + currentIdx) % extensionIds.length
-        var ext = Game.getObjectById(extensionIds[i])
-        if(ext && ext.energy < ext.energyCapacity)
-        {
-            creep.memory.extensionId = ext.id
-            return OK
-        }
-    }
-    return ERR_FULL
-}
+/*
+    Obsolete, to be replaced with hauler
+*/
 
 function takeEnergy(creep, target)
 {
     if(!target)
         return ERR_INVALID_TARGET
     return target.transferEnergy(creep)
-    // var freeRoom = creep.carryCapacity - creep.getCarry()
-    // return target.transferEnergy(creep, freeRoom)
 }
 
 var actions =
 {
     take_energy: takeEnergy,
-    find_extension: findExtension
 }
 
 var targets =
 {
-    spawn_storage:   function(creep) { return creep.getSpawn().getBestStorage() },
-    spawn_extension: function(creep) { return creep.getExtension() },
+    spawn_nrg_get: function(creep) { return creep.getSpawn().getTakeEnergyTarget() },
+    spawn_nrg_put: function(creep) { return creep.getSpawn().getStoreEnergyTarget() },
 }
 
 
 var taskBuilder = new imp_task.TaskBuilder(actions, targets)
 
-var take_storage    = taskBuilder.makeTask('take_energy',  'spawn_storage')
-var find_extension  = taskBuilder.makeTask('find_extension')
-var store_extension = taskBuilder.makeTask('store_energy', 'spawn_extension')
+var load   = taskBuilder.makeTask('take_energy',  'spawn_nrg_get')
+var unload = taskBuilder.makeTask('store_energy', 'spawn_nrg_put')
 
-var move_storage    = taskBuilder.makeTask('move1', 'spawn_storage')
-var move_extension  = taskBuilder.makeTask('move1', 'spawn_extension')
+var move_load   = taskBuilder.makeTask('move1', 'spawn_nrg_get')
+var move_unload = taskBuilder.makeTask('move1', 'spawn_nrg_put')
 
 var transitions = [
-    [take_storage,      ERR_FULL,           find_extension],
-
-    [find_extension,    OK,                 store_extension],
-    [find_extension,    ERR_FULL,           take_storage],
-
-    [store_extension,   ERR_FULL,           find_extension],
-    [store_extension,   ERR_NOT_ENOUGH_RESOURCES, take_storage],
+    [load, ERR_FULL, unload],
+    [unload, ERR_NOT_ENOUGH_RESOURCES, load],
 ]
 
 var move_transitions = [
-    [take_storage,      move_storage],
-    [store_extension,   move_extension]
+    [load,   move_load],
+    [unload, move_unload],
 ]
 
 imp_table.makeTable('spawn_manager', transitions, move_transitions)
