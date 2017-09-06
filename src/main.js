@@ -1,35 +1,62 @@
-for(name in Game.creeps)
-    delete Game.creeps[name].memory.taskId
+'use strict';
 
-require('extension_creep')
-require('extension_source')
-require('extension_spawn')
-require('extension_resource')
-require('extension_controller')
+require('prototype')
 
-require('role_harvester')
-require('role_hauler')
-require('role_upgrader')
-require('role_worker')
-require('role_spawn_manager')
+const logger = require('logger')
 
-require('utils')
+updateRespawnTime()
 
-var strategies = require('strategies')
+logger.debug('### Fresh start')
 
-
-function mainLoop()
+function loop()
 {
-    // rst, move renew logic to a strategy script and trigger from strategies.js
-    if(typeof(Memory.paused) != typeof(undefined) && !Memory.paused)
+    try
     {
-        strategies.run()
+        const start = Game.cpu.getUsed()
+
+        _.each(Game.creeps, c => c.manage())
+        _(Game.rooms).sortBy('energyCapacityAvailable')
+                     .reverse()
+                     .map(r => r.manage())
+                     .value()
+        _.each(Game.spawns, s => s.manage())
+
+        // sources_update_known.run()
+        // _.each(sources_prioritize.run(), source_manage.run)
+        // spawns_manage.run()
+        
+        stats(start)
+        logger.restoreLoglevel()
     }
-    else
+    catch(e)
     {
-        if((Game.tick % 100) == 0)
-            console.log('Script is paused. Type [Memory.paused = false] to resume.')
+        logger.fallbackToTrace()
+        throw e
     }
 }
 
-exports.loop = mainLoop
+function updateRespawnTime()
+{
+    if ( (_.size(Game.structures)==2 &&
+          _.size(Game.rooms)==1 && _.size(Game.spawns)==1 && 
+          _.size(Game.creeps)==0) ||
+         (!_.has(Memory, 'data.respawnTick')) )
+    {
+        logger.debug('### Respawn detected')
+        _.set(Memory, 'data.respawnTick', Game.time)
+    }
+        
+    return Memory.data.respawnTick
+}
+
+function stats(start)
+{
+    const cpuUsed = Game.cpu.getUsed()
+    const cpuPercent = Math.round(cpuUsed / Game.cpu.limit * 100)
+    const cpuUsed2 = Math.round(cpuUsed * 100) / 100
+    logger.debug(
+        '--- Tick finished.',
+        'CPU:',  cpuPercent + '% ('+ cpuUsed2 + '(' + Math.ceil(start*100)/100 + ')/' + Game.cpu.limit + '/' + Game.cpu.bucket + ')')
+}
+
+exports.loop = loop
