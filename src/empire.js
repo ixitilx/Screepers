@@ -1,22 +1,31 @@
 'use strict';
 
-exports.queueCreep = function(body, memory, pos=null)
+const Screeps = require('screeps')
+
+
+
+exports.queueCreep = function(body, memory, roomName=null)
 {
-    const canSpawn = _.filter(Game.spawns, spawn => spawn.canSpawn)
-    if(_.size(canSpawn)==0)
-        return ERR_NOT_FOUND
+    const spawns = _(Game.spawns).filter(spawn => spawn.canSpawn)
+                                 .sortBy(spawn => spawn.room.energyCapacityAvailable)
+                                 .reverse()
+                                 .value()
 
-    if(pos)
-    {
-        let spawn = _(canSpawn).filter({room:{name:pos.roomName}}).first()
-        if(spawn)
-            return spawn.queueCreep(body, memory)
+    const roomDistance = (spawn) => Game.map.getRoomLinearDistance(spawn.room.name, roomName)
+    const bestSpawn = roomName ? _(spawns).sortBy(roomDistance).first() : _(spawns).first()
+    if(bestSpawn)
+        return bestSpawn.queueCreep(body, memory)
+    return ERR_NOT_FOUND
+}
 
-        const posDistance = (spawn) => Game.map.getRoomLinearDistance(spawn.room.name, pos.roomName)
-        spawn = _(canSpawn).sortBy(spawn => posDistance).first()
-        if(spawn)
-            return spawn.queueCreep(body, memory)
-    }
+let tickCache = {}
+exports.getObjectById = function(id)
+{
+    if(tickCache._ts != Game.time)
+        tickCache = {_ts:Game.time}
 
-    return _.first(canSpawn).queueCreep(body, memory)
+    if(!_.has(tickCache, id))
+        tickCache[id] = Game.getObjectById(id)
+
+    return tickCache[id]
 }

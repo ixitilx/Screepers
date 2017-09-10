@@ -1,86 +1,100 @@
 'use strict';
 
 const logger = require('logger')
+const Empire = require('empire')
 
-function controlHauler()
+function haul(creep, from, to)
 {
-    const source = Game.getObjectById(this.memory.sourceId)
-    if(this.memory.loading)
+    if(creep.memory.haulFrom || creep.memory.haulTo)
+        return ERR_BUSY
+    creep.memory.haulFrom = from.id
+    creep.memory.haulTo = to.id
+    return OK
+}
+
+function run(creep)
+{
+    if(creep.memory.haulFrom)
     {
         const ret = loadHauler(this, source)
         if(ret==OK)
             ;
         else if(ret==ERR_FULL)
             this.memory.loading = false
-
-        this.memory.loading = _.sum(this.carry) < this.carryCapacity
     }
-    else
+}
+
+function controlHauler()
+{
+    if(!this.memory.haul)
     {
-        const ret = unloadHauler(this, source)
-        if(ret==OK)
-            ;
-        else if(ret==ERR_NOT_ENOUGH_RESOURCES)
-            this.memory.loading = true
-        else if(ret==ERR_FULL)
+        logger.trace(this, 'is missing memory.haul, idling')
+        return
+    }
+
+    if(!this.memory.haul.pos || !this.memory.haul.id || this.memory.haul.load===undefined)
+    {
+        logger.warning(this, 'memory.haul appears to be corrupted:', JSON.stringify(this.memory.haul))
+        delete this.memory.haul
+        return
+    }
+
+    const carry = _.sum(this.carry)
+
+    if(this.memory.haul.load && carry >= this.carryCapacity)
+    {
+        logger.warning(this, 'configured to load, but has no free room')
+        delete this.memory.haul
+        return
+    }
+
+    if(!this.memory.haul.load && carry===0)
+    {
+        logger.warning(this, 'configured to unload, but has no cargo')
+        delete this.memory.haul
+        return
+    }
+
+    const obj = Empire.getObjectById(this.memory.haul.id)
+    if(!obj)
+    {
+        logger.warning(this, 'has stale target')
+        delete this.memory.haul
+        return
+    }
+
+    if(!this.memory.haul.load && obj.unusedEnergyCapacity===0)
+    {
+        logger.warning(this, 'configured to unload, but target cannot accept any more energy')
+        delete this.memory.haul
+        return
+    }
+
+    const pos = this.memory.haul.pos
+    const roomPos = new RoomPosition(pos.x, pos.y, pos.roomName)
+
+    const action = this.memory.haul.load ? this.loadCargo : this.unloadCargo
+
+    if(this.memory.move || ERR_NOT_IN_RANGE==action.call(this, obj))
+        this.checkedMoveTo(roomPos)//, harvesterCostCallback)
+    else
+        delete this.memory.haul
+    return
+
+
+    const ret = this.checkedMoveTo(roomPos)
+    if(ret==OK)
+    {
+        if(this.memory.haulFrom)
         {
-            this.drop(RESOURCE_ENERGY)
+            this.loadCargo(this.memory.haulFrom.id)
+            delete this.memory.haulFrom
         }
-        this.memory.loading = _.sum(this.carry) == 0
-    }
-}
-
-function loadHauler(hauler, source)
-{
-    const energies = source.lookAround(LOOK_RESOURCES)
-
-    const target = _(energies).map(item => item.resource)
-                              .filter({resourceType:'energy'})
-                              .sortBy('amount')
-                              .last()
-
-    if(target)
-    {
-        const ret = hauler.pickup(target)
-        if([OK, ERR_BUSY].includes(ret))
-            return OK
-        else if(ret==ERR_FULL)
-            return ERR_FULL
-        else if(ret==ERR_NOT_IN_RANGE)
-            return moveHauler(hauler, target.pos)
-        throw new Error('Unexpected error. Creep[' + hauler.name + '].pickup('+target+') returned ['+ret+']')
-    }
-}
-
-function unloadHauler(hauler, source)
-{
-    const target = _(Game.spawns).map(s=>s).first()
-    const ret = hauler.transfer(target, RESOURCE_ENERGY)
-    if([OK, ERR_BUSY].includes(ret))
-        return OK
-    else if([ERR_FULL, ERR_NOT_ENOUGH_RESOURCES].includes(ret))
-        return ret
-    else if(ret==ERR_NOT_IN_RANGE)
-        return moveHauler(hauler, target.pos)
-    throw new Error('Unexpected error. Creep[' + hauler.name + '].transfer('+target+') returned ['+ret+']')
-}
-
-function moveHauler(hauler, pos)
-{
-    const ret = hauler.moveTo(pos, {reusePath:5, serialiseMemory:true})
-    if([OK, ERR_BUSY, ERR_TIRED].includes(ret))
-        return OK
-    else if(ret==ERR_NOT_FOUND)
-    {
-        logger.error('Creep[' + hauler.name + '].moveByPath(memory.path) => ERR_NOT_FOUND')
-        logger.error("Error doc: The specified path doesn't match the creep's location.")
-        logger.error("Dropping creep's path")
-        delete hauler.memory.path
-        return OK
-    }
-    else
-    {
-        throw new Error('Unexpected error. Creep[' + hauler.name + '].moveByPath(memory.path) returned ['+ret+']')
+        else if(this.memory.haulTo)
+        {
+            this.unloadCargo(this.memory.haulTo.id)
+            delete this.memory.haulTo
+        }
     }
 }
 

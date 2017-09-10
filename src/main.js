@@ -1,12 +1,10 @@
 'use strict';
 
 require('prototype')
-
 const logger = require('logger')
 
-updateRespawnTime()
-
 logger.debug('### Fresh start')
+updateRespawnTime()
 
 function loop()
 {
@@ -14,17 +12,23 @@ function loop()
     {
         const start = Game.cpu.getUsed()
 
-        _.each(Game.creeps, c => c.manage())
-        _(Game.rooms).sortBy('energyCapacityAvailable')
-                     .reverse()
-                     .map(r => r.manage())
-                     .value()
-        _.each(Game.spawns, s => s.manage())
+        cleanupMemory()
 
-        // sources_update_known.run()
-        // _.each(sources_prioritize.run(), source_manage.run)
-        // spawns_manage.run()
-        
+        PathFinder.use(true)
+
+        let [busy, free] = _.partition(Game.creeps, c => c.manager)
+        logger.trace('loop', 'busy', busy)
+        busy = _.groupBy(busy, c => c.managerId)
+
+        logger.trace('loop', 'free', free)
+
+        const rooms = _(Game.rooms).sortBy('energyCapacityAvailable').reverse().value()
+
+        _.each(rooms, r => r.plan(busy, free))
+        _.each(rooms, r => r.run(busy))
+                     // .map(r => r.plan(busy, free))
+                     // .value()
+
         stats(start)
         logger.restoreLoglevel()
     }
@@ -33,6 +37,19 @@ function loop()
         logger.fallbackToTrace()
         throw e
     }
+    finally
+    {
+        _.each(Game.creeps, c => c.memory.lastPos=c.pos)
+    }
+}
+
+function cleanupMemory()
+{
+    // Cleanup creeps
+    _(Memory.creeps).keys()
+                    .filter(k => !(k in Game.creeps))
+                    .map(k => delete Memory.creeps[k])
+                    .value()
 }
 
 function updateRespawnTime()
@@ -40,13 +57,13 @@ function updateRespawnTime()
     if ( (_.size(Game.structures)==2 &&
           _.size(Game.rooms)==1 && _.size(Game.spawns)==1 && 
           _.size(Game.creeps)==0) ||
-         (!_.has(Memory, 'data.respawnTick')) )
+          Memory._respawned===undefined)
     {
         logger.debug('### Respawn detected')
-        _.set(Memory, 'data.respawnTick', Game.time)
+        Memory._respawned = Game.time
     }
         
-    return Memory.data.respawnTick
+    return Memory._respawned
 }
 
 function stats(start)

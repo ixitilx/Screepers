@@ -2,76 +2,238 @@
 
 const logger = require('logger')
 const Empire = require('empire')
+const Screeps = require('screeps')
 
-const ROLE_HAULER = 'Hauler'
 const ROLE_HARVESTER = 'Harvester'
+const ROLE_HAULER = 'Hauler'
 
-Object.prototype.getDefault.call(Memory, 'sources')
+Screeps.newMemoryProperty(Source, getSpots, 'spots', 'sources')
 
-function isEnoughHaulers(source, haulers, harvesters)
+function getHarvesterBody(maxWork, energy)
 {
-    return _.size(haulers)>0
+    const cost = BODYPART_COST[MOVE] + BODYPART_COST[WORK]
+    const count = Math.min(maxWork, Math.floor(energy/cost))
+    return Screeps.buildCreepBodyArray([[WORK, count], [MOVE, count]])
 }
 
-function isEnoughHarvesters(source, harvesters)
+function getHaulerBody(energy)
 {
-    const workParts = _(harvesters).map(h => h.getActiveBodyparts(WORK)).sum()
-    return 600 * workParts >= source.energyCapacity || _.size(harvesters) >= _.size(source.spots)
+    const cost = BODYPART_COST[MOVE] + BODYPART_COST[CARRY]
+    const count = Math.floor(energy/cost)
+    return Screeps.buildCreepBodyArray([[CARRY, count], [MOVE, count]])
 }
 
-function getBestHaulerBody(spawn)
+function getSpots()
 {
-    const count = Math.floor(spawn.room.energyCapacityAvailable/100)
-    const body = {carry:count, move:count}
-    return getCreepBody(body)
+    logger.trace(this, 'getSpots()')
+    return  _(this.lookAround(LOOK_TERRAIN))
+                        .filter(t => ['plain', 'swamp'].includes(t.terrain))
+                        .map(spot => ( {x:spot.x, y:spot.y, roomName:this.room.name} ))
+                        .value()
 }
 
-function getBestHarvesterBody(spawn)
+Source.prototype.getHaulerRequirements = function(haulers)
 {
-    const count = Math.floor(spawn.room.energyCapacityAvailable/150)
-    const body = {work:count, move:count}
-    return getCreepBody(body)
+    const energyHas = _(this.resourcesAround)
+                            .filter({resourceType:RESOURCE_ENERGY})
+                            .map(r => r.amount)
+                            .sum()
+
+    const capacityHas = _(haulers)
+                            .map(h => h.freeCapacity)
+                            .sum()
+
+    const req = {freeCapacity:energyHas-capacityHas}
+    logger.trace(this, 'getHaulerRequirements', 'return', JSON.stringify(req))
+    return req
 }
 
-function getCreepBody(bodyObj)
+Source.prototype.hireHaulers = function(freeCreeps, req)
 {
-    return _(bodyObj).map( (count, name) => _.fill(Array(count), name))
-                     .flatten().join(',').split(',')
+    const hired = []
+
+    function hire(creeps, id)
+    {
+        while(req.freeCapacity>0 && _.size(creeps))
+        {
+            const h = creeps.pop()
+            h.managerId = id
+            hired.push(h)
+            req.freeCapacity -= h.freeCapacity
+        }
+    }
+
+    const haulers = _.filter(freeCreeps, c => c.memory.role===ROLE_HAULER && c.freeCapacity>0)
+
+    let [small, big] = _.partition(haulers, c => c.freeCapacity<req.freeCapacity)
+    small = _.sortBy(small, c=>c.freeCapacity)
+    big = _(big).sortBy(c=>c.freeCapacity).reverse().value()
+
+    hire(big, this.id)
+    hire(small, this.id)
+
+    const hiredById = _.indexBy(hired, 'id')
+    const freeById = _.indexBy(freeCreeps, 'id')
+    _.each(_.keys(hiredById), k => delete freeById[k])
+
+    return {free:_.map(freeById), req:req}
 }
 
-Source.prototype.manage = function()
+Source.prototype.createMoreHaulers = function(req)
 {
-    if(!isEnoughHaulers(this, this.haulers, this.harvesters))
-        Empire.queueCreep(getBestHaulerBody, {role:ROLE_HAULER, sourceId: this.id, loading:true}, this.pos)
+    const m = {role:ROLE_HAULER, managerId:this.id}
+    while(req.freeCapacity>0)
+    {
+        const b = getHaulerBody(this.room.spawnEnergyCapacity)
+        const c = b.count(CARRY) * CARRY_CAPACITY
+        if(this.room.createCreep(b, m)!=OK)
+            break
+        req.freeCapacity -= c
+    }
 
-    if(!isEnoughHarvesters(this, this.harvesters))
-        Empire.queueCreep(getBestHarvesterBody, {role:ROLE_HARVESTER, sourceId: this.id}, this.pos)
+    return req
 }
 
-Source.prototype.getCreepsByRole = function(role)
+
+Source.prototype.getHarvesterRequirements = function(harvesters)
 {
-    return _.filter(Game.creeps, c => c.memory.sourceId===this.id && c.memory.role===role)
+    // find if we need more harvesters
+    const hasCount = _.size(harvesters)
+    const needCount = _.size(this.spots)
+
+    // find how many more work we need
+    const hasWork  = _(harvesters).map(h => h.partCount[WORK]).sum()
+    const needWork  = Math.ceil(this.energyCapacity / (HARVEST_POWER*ENERGY_REGEN_TIME))
+
+    const req = {count: needCount-hasCount, work: needWork-hasWork}
+    logger.trace(this, 'getHarvesterRequirements', 'return', JSON.stringify(req))
+    return req
 }
 
-function getSpots(source)
+Source.prototype.hireHarvesters = function(free, req)
 {
-    logger.trace(source, 'getSpots()')
+    logger.trace(this, 'hireHarvesters', 'free', free)
+    logger.trace(this, 'hireHarvesters', 'req', JSON.stringify(req))
+    const hired = []
 
-    return  _(source.lookAround(LOOK_TERRAIN))
-                       .filter(t => ['plain', 'swamp'].includes(t.terrain))
-                       .map(spot => ( {x:spot.x, y:spot.y, roomName:source.room.name} ))
-                       .value()
+    function hire(creeps, id)
+    {
+        while(req.count>0 && req.work>0 && _.size(creeps))
+        {
+            const h = creeps.pop()
+            h.managerId = id
+            hired.push(h)
+
+            logger.info(id, 'hired', h)
+
+            req.count -= 1
+            req.work -= h.partCount[WORK]
+        }
+    }
+
+    const harv = _.filter(free, c => c.memory.role===ROLE_HARVESTER)
+    let [small, big] = _.partition(harv, c => c.partCount[WORK] < req.work)
+    small = _.sortBy(small, c=>c.partCount[WORK])
+    big = _(big).sortBy(c=>c.partCount[WORK]).reverse().value()
+
+    hire(big, this.id)
+    hire(small, this.id)
+
+    const hiredById = _.indexBy(hired, 'id')
+    const freeById = _.indexBy(free, 'id')
+    _.each(_.keys(hiredById), k => delete freeById[k])
+    free = _.map(freeById, c=>c)
+    
+    const ret = {free:free, req:req}
+    logger.trace(this, 'hireHarvesters', 'return', JSON.stringify(ret))
+    return ret
 }
 
-function Source_getSpots()
+Source.prototype.createMoreHarvesters = function(req)
 {
-    return Object.prototype.getDefault.call(this.memory, 'spots', getSpots)
+    const m = {role:ROLE_HARVESTER, managerId:this.id}
+    while(req.count>0 && req.work>0)
+    {
+        const b = getHarvesterBody(req.work, this.room.spawnEnergyCapacity)
+        const w = b.count(WORK)
+        if(this.room.createCreep(b, m)!=OK)
+            break
+        req.count -= 1
+        req.work  -= w
+    }
+
+    return req
 }
 
-Object.defineProperty(Source.prototype, 'memory', {
-    get: function(){return Object.prototype.getDefault.call(Memory.sources, this.id)},
-    set: function(value){Memory.sources[this.id]=value}}
-)
-Object.defineProperty(Source.prototype, 'spots',      {get: function(){return getSpots(this)}})
-Object.defineProperty(Source.prototype, 'harvesters', {get: function(){return this.getCreepsByRole(ROLE_HARVESTER)}} )
-Object.defineProperty(Source.prototype, 'haulers',    {get: function(){return this.getCreepsByRole(ROLE_HAULER)}} )
+Source.prototype.plan = function(creeps, free)
+{
+    logger.trace(this, 'plan', 'creeps', creeps)
+    logger.trace(this, 'plan', 'free', free)
+
+    let haul, harv, busy, ret, req
+
+    [haul, busy] = _.partition(creeps, c => c.memory.role===ROLE_HAULER && c.freeCapacity>0)
+    req = this.getHaulerRequirements(haul)
+    ret = this.hireHaulers(free, req)
+    free = ret.free
+    req = ret.req
+    req = this.createMoreHaulers(req);
+
+    [harv, busy] = _.partition(busy, c => c.memory.role===ROLE_HARVESTER)
+    req = this.getHarvesterRequirements(harv)
+    ret = this.hireHarvesters(free, req)
+    free = ret.free
+    req = ret.req
+    req = this.createMoreHarvesters(req)
+
+    ret = {fired:busy, free:free}
+    if(_.size(busy))
+        logger.info(this, 'fired', busy)
+    logger.trace(this, 'plan', 'return', JSON.stringify(ret))
+    return ret
+}
+
+Source.prototype.runHarvester = function([harvester, spot])
+{
+    Screeps.assert(harvester &&
+                   harvester instanceof Creep &&
+                   harvester.memory &&
+                   harvester.memory.role===ROLE_HARVESTER &&
+                   harvester.name in Game.creeps)
+
+    if(!Screeps.samePos(harvester.pos, spot))
+        harvester.checkedMoveTo(spot)
+    else
+        harvester.harvest(this)
+}
+
+Source.prototype.runHauler = function(hauler, energy)
+{
+    Screeps.assert(hauler && energy)
+
+    const res = _(energy).filter(e => hauler.pos.isNearTo(e.pos)).first()
+
+    if(res)
+        hauler.loadCargo(res)
+    else
+        hauler.checkedMoveTo(energy[0].pos, 1)
+}
+
+Source.prototype.run = function(creeps)
+{
+    const harv = _.filter(creeps, c => c.memory.role===ROLE_HARVESTER)
+
+    const n = Math.min(_.size(this.spots), _.size(harv))
+    if(_.size(harv) > n)
+        logger.warning(this, 'got', _.size(harv), 'harvesters, but only', _.size(this.spots), 'spots')
+
+    const nSpots = _.take(this.spots, n)
+    const nHarvs = _.take(harv, n)
+    const nZip = _.zip(nHarvs, nSpots)
+
+    _.each(nZip, this.runHarvester, this)
+
+    const nrg = _(this.resourcesAround).filter({resourceType:RESOURCE_ENERGY}).sortBy('amount').reverse().value()
+    const haul = _.filter(creeps, c => c.memory.role===ROLE_HAULER)
+    _.each(haul, h=>this.runHauler(h, nrg), this )
+}

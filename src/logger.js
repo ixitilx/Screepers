@@ -58,11 +58,40 @@ function restoreLoglevel()
     }
 }
 
-function logJson(...args)
+function jsonFunc(space)
 {
-    args[args.length-1] = JSON.stringify(_.last(args))
+    return (...args) => logJson(space, ...args)
+}
+
+function logJson(space, ...args)
+{
+    args[args.length-1] = JSON.stringify(_.last(args), null, space)
     log(LOGLEVEL.JSON, ...args)
 }
+
+function wrapFunc(logLevelOverride)
+{
+    return (func) => wrap(logLevelOverride, func)
+}
+
+function wrap(loglevelOverride, func)
+{
+    return function(...args)
+    {
+        const fallback = Memory.config.loglevel
+        Memory.config.loglevel = loglevelOverride
+        try
+        {
+            return func.apply(this, args)
+        }
+        finally
+        {
+            Memory.config.loglevel = fallback
+        }
+    }
+}
+
+
 
 exports.LOGLEVEL = LOGLEVEL
 
@@ -72,7 +101,10 @@ exports.debug   = logFunc(LOGLEVEL.DEBUG)
 exports.info    = logFunc(LOGLEVEL.INFO)
 exports.warning = logFunc(LOGLEVEL.WARNING)
 exports.error   = logFunc(LOGLEVEL.ERROR)
-exports.json    = logJson
+exports.json    = jsonFunc(0)
+exports.json_p  = jsonFunc(2)
+
+exports.wrapTrace = wrapFunc(LOGLEVEL.TRACE)
 
 exports.fallbackToTrace = fallbackToTrace
 exports.restoreLoglevel = restoreLoglevel
