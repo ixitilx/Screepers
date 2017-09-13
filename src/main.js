@@ -1,10 +1,44 @@
 'use strict';
 
 require('prototype')
+const activity_module = require('activity')
+
+const Activities = activity_module.Activities
+const runActivity = activity_module.runActivity
+
 const logger = require('logger')
 
 logger.debug('### Fresh start')
 updateRespawnTime()
+
+//
+// Never-ending operation
+// Example: Resource mining / Controller upgrade
+//
+// class Activity {
+//     constructor() {
+//     }
+// }
+
+// class CreepController extends Activity {
+//     constructor() {
+//         console.log('CreepRole.constructor')
+//     }
+// }
+
+// class CreepControllerHarvester extends CreepController {
+//     constructor() {
+//         console.log('CreepRoleHarvester.constructor')
+//     }
+// }
+
+// const a = new Activity();
+// console.log(Activity.name)
+// console.log(a.name)
+
+
+
+// console.log('####', _.toArray(Game.rooms)[0].getConstructorName())
 
 function loop()
 {
@@ -14,8 +48,6 @@ function loop()
 
         cleanupMemory()
 
-        PathFinder.use(true)
-
         let [busy, free] = _.partition(Game.creeps, c => c.manager)
         logger.trace('loop', 'busy', busy)
         busy = _.groupBy(busy, c => c.managerId)
@@ -24,10 +56,10 @@ function loop()
 
         const rooms = _(Game.rooms).sortBy('energyCapacityAvailable').reverse().value()
 
+        // _.each(rooms, r => runActivity(r, Activities.RoomActivityHarvestResources))
+
         _.each(rooms, r => r.plan(busy, free))
         _.each(rooms, r => r.run(busy))
-                     // .map(r => r.plan(busy, free))
-                     // .value()
 
         stats(start)
         logger.restoreLoglevel()

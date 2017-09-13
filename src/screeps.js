@@ -46,8 +46,8 @@ function makeTickPropertyDescriptor(propertyName, computeFunc)
 
     function getTickCache()
     {
-        if(time != Game.time)
-            cache = new Object()
+        if(time !== Game.time)
+            cache = {}
         return cache
     }
 
@@ -55,7 +55,7 @@ function makeTickPropertyDescriptor(propertyName, computeFunc)
         get: function()
         {
             const cache = getTickCache()
-            if(!_.has(cache, propertyName))
+            if(cache[propertyName]===undefined)
                 cache[propertyName] = computeFunc.call(this)
             return cache[propertyName]
         },
@@ -132,7 +132,17 @@ function assert(test)
         throw new Error('Assertion failed!')
 }
 
+function assertType(obj, constructor)
+{
+    if(!obj instanceof constructor)
+    {
+        const type = Object.prototype.toString.call(obj)
+        throw new TypeError('Unexpected type ' + type + ' of object ' + JSON.stringify(obj))
+    }
+}
+
 exports.assert = assert
+exports.assertType = assertType
 
 function resolveRoomPosition(obj)
 {

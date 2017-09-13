@@ -10,3 +10,8 @@ Object.prototype.getDefault = function(path, defaultValue= ()=>new Object())
     }
     return _.get(this, path)
 }
+
+Object.prototype.getConstructorName = function()
+{
+	return this.constructor.name
+}

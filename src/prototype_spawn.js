@@ -56,10 +56,10 @@ Spawn.prototype.plan = function(busy, free)
     logger.trace(this, 'plan', 'free', JSON.stringify(free))
     ret = {fired:[], free:free}
 
-    logger.info(this, 'plan', 'busy', busy);
+    // logger.info(this, 'plan', 'busy', busy);
     [haul, busy] = _.partition(busy, c => c.memory.role===ROLE_HAULER && c.carry[RESOURCE_ENERGY]>0)
-    logger.info(this, 'plan', 'haul', haul)
-    logger.info(this, 'plan', 'fire', busy)
+    // logger.info(this, 'plan', 'haul', haul)
+    // logger.info(this, 'plan', 'fire', busy)
     req = this.getHaulerRequirements(haul)
     ret = this.hireHaulers(free, req)
     free = ret.free
@@ -102,7 +102,7 @@ Spawn.prototype.checkedCreateCreep = function(body, memory)
     {
         logger.info(this, 'created a creep. Body:', body, 'Memory:', JSON.stringify(memory))
         this._calledCheckedCreateCreep = true
-        return OK
+        return Game.creeps[ret]
     }
 
     if(ret===ERR_INVALID_ARGS)

@@ -95,21 +95,29 @@ function defaultCostCallback(roomName, costMatrix)
     room._defaultCostMatrix = costMatrix
 }
 
-Creep.prototype.checkedTransfer = function(target, resourceType, amount)
+Creep.prototype.checkedTransfer = function(target, resourceType, amount=50*50)
 {
+    Screeps.assert(amount>=0)
+
+    if(amount===0)
+        return OK
+
     target = resolveGameObject(target)
 
-    if(!(target instanceof Structure))
-        throw new Error(this + ' cannot transfer to non-structure')
+    if(!(target instanceof Structure) && !(target instanceof Creep))
+        throw new Error(this + ' can transfer to structures or creeps. Got ' + target + ' instead')
 
-    if(target.storeCapacity===undefined && (resourceType===RESOURCE_ENERGY && target.energyCapacity===undefined))
-        throw new Error(this + ' cannot transfer resource [' + resourceType + '] to ' + target.structureType)
+    const carry = this.carry[resourceType] 
+    const space = target.unusedEnergyCapacity
 
-    if(amount===undefined)
-        amount = this.carry[resourceType]
+    if(carry===0)
+        return ERR_NOT_ENOUGH_RESOURCES
+    if(space===0)
+        return ERR_FULL
 
-    if(amount===undefined || amount <= 0)
-        throw new Error(this + ' cannot transfer amount=[' + amount + '] resources')
+    amount = Math.min(carry, amount, space)
+
+    logger.debug(this, 'transfering', amount, 'of [' +resourceType + '] to', target, 'carry:', carry, 'space:', space)
 
     const ret = this.transfer(target, resourceType, amount)
 

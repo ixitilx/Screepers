@@ -142,6 +142,10 @@ Room.prototype.manage = function()
     //build haulers & manage logistics
 }
 
+//
+// Why phases?
+// - optimise creeps filtering [premature optimisation?]
+//
 Room.prototype.plan = function(busy, free)
 {
     if(!(this.name in Game.rooms))
@@ -173,9 +177,20 @@ Room.prototype.run = function(busy)
 
 Room.prototype.createCreep = function(body, memory)
 {
-    let queued = false
-    _.each(this.spawns, s => queued=queued||s.checkedCreateCreep(body, memory)==OK)
-    return queued
+    let creep = undefined
+
+    function createCreep(spawn)
+    {
+        const ret = spawn.checkedCreateCreep(body, memory)
+        if(ret instanceof Creep)
+        {
+            creep = ret
+            return false
+        }
+    }
+
+    _.each(this.spawns, createCreep)
+    return creep instanceof Creep ? creep : ERR_BUSY
 }
 
 function getSpawns()
@@ -203,11 +218,6 @@ function getHarvestedEnergy()
     return _(this.sources).map(src => src.resourcesAround).flatten().value()
 }
 
-function getLogisticsManager()
-{
-    return new RoomLogisticsManager(this)
-}
-
 function getRoomHaulers()
 {
     return _.filter(Game.creeps, c => c.memory.roomName===this.name && c.memory.role===ROLE_HAULER)
@@ -225,7 +235,6 @@ function getSpawnEnergyCapacity()
 
 Screeps.newCachedProperty(Room, getSpawns,  'spawns')
 Screeps.newCachedProperty(Room, getSources, 'sources')
-Screeps.newCachedProperty(Room, getLogisticsManager, 'logisticsManager')
 
 Screeps.newTickProperty(Room, getStructures, 'structures')
 Screeps.newTickProperty(Room, getCreeps, 'creeps')

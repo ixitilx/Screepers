@@ -202,9 +202,8 @@ Source.prototype.runHarvester = function([harvester, spot])
                    harvester.name in Game.creeps)
 
     if(!Screeps.samePos(harvester.pos, spot))
-        harvester.checkedMoveTo(spot)
-    else
-        harvester.harvest(this)
+        return harvester.checkedMoveTo(spot)
+    return harvester.harvest(this)
 }
 
 Source.prototype.runHauler = function(hauler, energy)
@@ -215,13 +214,42 @@ Source.prototype.runHauler = function(hauler, energy)
 
     if(res)
         hauler.loadCargo(res)
-    else
+    else if(energy[0])
         hauler.checkedMoveTo(energy[0].pos, 1)
 }
 
-Source.prototype.run = function(creeps)
+Source.prototype.getHarvesters = function()
 {
-    const harv = _.filter(creeps, c => c.memory.role===ROLE_HARVESTER)
+    const creeps = _.filter(Game.creeps, c => c.memory.role===ROLE_HARVESTER &&
+                                             (c.memory.sourceId===this.id ||
+                                              c.memory.managerId===this.id))
+    return creeps
+}
+
+Source.prototype.getWorkNeeded = function()
+{
+    return Math.ceil(this.energyCapacity / (HARVEST_POWER*ENERGY_REGEN_TIME))
+}
+
+Source.prototype.harvest = function()
+{
+    const harv = this.getHarvesters()
+    const spots = this.spots
+
+    let count = _.size(harv)
+    let work = _(harv).map(c => c.partCount[WORK]).sum()
+    const workNeeded = this.getWorkNeeded()
+
+    while(count < _.size(spots) &&
+          work < workNeeded)
+    {
+        const ret = this.room.createCreep(Roles.Harvester, this.source)
+        if(!ret instanceof Creep)
+            break
+        harv.push(ret)
+        count += 1
+        work += harv.partCount[WORK]
+    }
 
     const n = Math.min(_.size(this.spots), _.size(harv))
     if(_.size(harv) > n)
@@ -232,7 +260,12 @@ Source.prototype.run = function(creeps)
     const nZip = _.zip(nHarvs, nSpots)
 
     _.each(nZip, this.runHarvester, this)
+}
 
+Source.prototype.run = function(creeps)
+{
+    this.harvest()
+    // this supposed to be in the room
     const nrg = _(this.resourcesAround).filter({resourceType:RESOURCE_ENERGY}).sortBy('amount').reverse().value()
     const haul = _.filter(creeps, c => c.memory.role===ROLE_HAULER)
     _.each(haul, h=>this.runHauler(h, nrg), this )
