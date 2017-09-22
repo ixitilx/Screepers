@@ -37,13 +37,13 @@ Observer
 #           ++  ++                s                        |
 #          + ++++ +                                        |
 #          ++ ++ ++                                        |
-#           ++  ++                                         |
-#         ++  ++  ++                                       |
-#        ++ ++ ++++ +                                      |
-#        + ++++ ++ ++                                      |
-#         ++  ++  ++                                       |
-#           ++  ++                s                        |
-#          ++ ++ ++                                        |
+#           ++  ++                 x   x                   |
+#         ++  ++  ++              xxx xxx                  |
+#        ++ ++ ++++ +            x x x x x                 |
+#        + ++++ ++ ++           xxx xxx xxx                |
+#         ++  ++  ++             x x x x x                 |
+#           ++  ++                xxx xxx                  |
+#          ++ ++ ++                x   x                   |
 #          + ++++ +                                        |
 #           ++  ++                                         |
 #                                                          |
@@ -57,12 +57,35 @@ Observer
 #        Ss                         |
 #  eeeeoo  eeeeee                       |
 #  teeoo oe eeee                        |
-#    eo ooee eet                        |
-#      ooeeee e                         |
-#        te                             |
+#    eo ooee eet           xxxxxxxxxxx |
+#      ooeeee e           x x x x x x  |
+#        te               xx x x x x x |
+#                         x xxxxxxx xx |
+#                         xx xooooxx x|
+#                         x xxoooox xx|
+#                         xx xooooxx x|
+#                         x xxoooox xx|
+#                         xx xxxxxxx x |
+#                         x x x x x xx |
+#                          x x x x x x |
+#                         xxxxxxxxxxx  |
 #                                       |
 #                                       |
 #                                       |
+#                                       |
+#          ss  ll                       |
+#         sT Pl ll                      |
+#           SNll l                      |
+#              ll                       |
+#                                       |
+#                                       |
+#                                       |
+#                                       |
+#                                       |
+#                                       |
+#                                       |
+#                                       |
+                                       |
 #       2 2 3 5                         |
 #                                       |
 

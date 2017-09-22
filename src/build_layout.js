@@ -10,14 +10,14 @@ const BlockLayer = BlockLayerModule.BlockLayer
 // Idea is to craft blocks by hand and place by script
 //
 const buildPriority = [
-    STRUCTURE_RAMPART,
-    STRUCTURE_WALL,
+    // STRUCTURE_RAMPART,
+    // STRUCTURE_WALL,
     STRUCTURE_EXTENSION,
     STRUCTURE_TOWER,
     STRUCTURE_LINK,
     STRUCTURE_STORAGE,
     STRUCTURE_SPAWN,
-    STRUCTURE_ROAD,   
+    // STRUCTURE_ROAD,
     STRUCTURE_OBSERVER,
     STRUCTURE_POWER_SPAWN,
     STRUCTURE_LAB,
@@ -68,9 +68,6 @@ const blocks = [
      'eS e',    // storage
      ' ee '],
 ]
-
-
-
 
 class Block
 {

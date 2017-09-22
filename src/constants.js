@@ -1,4 +1,6 @@
 global.ROLE_HARVESTER = 'Harvester'
+global.ROLE_HAULER = 'Hauler'
+global.ROLE_WORKER = 'Worker'
 
 global.TERRAIN_WALL  = 'wall'
 global.TERRAIN_PLAIN = 'plain'

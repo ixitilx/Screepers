@@ -32,6 +32,6 @@ function assertType(instance, typestring)
 
 function assertDefined(value)
 {
-    if(!_.isDefined(value))
-        throw new Error(`Assertion failed. Expected _.isDefined(${value})`)
+    if(_.isUndefined(value))
+        throw new Error(`Assertion failed. Expected !_.isUndefined(${value})`)
 }
