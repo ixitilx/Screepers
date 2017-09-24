@@ -75,9 +75,8 @@ module.exports = function(grunt) {
                 files: 'src/**',
                 tasks: ['clean', 'ts', 'copy:screeps', 'string-replace', 'screeps']
             }
-
         }
     });
 
-    // grunt.registerTask('default',  ['clean', 'ts', 'copy:screeps', 'string-replace']);
+    grunt.registerTask('default', 'watch');
 }

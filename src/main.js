@@ -1,14 +1,14 @@
 'use strict';
 
-require('proto_roomobject')
-require('proto_roomposition')
-require('proto_room')
+require('proto/roomobject')
+require('proto/roomposition')
+require('proto/room')
 
 // const assert = require('assert')
 const constants = require('constants')
 // const layout = require('build_layout')
-const roomManager = require('room_manager')
-const roomManager1 = require('room_manager_1')
+const roomManager = require('manager/room')
+const roomManager1 = require('manager/room1')
 
 class StateTransition {
     constructor(currentState, transitionHash) {

@@ -2,9 +2,9 @@
 
 // const lq = require('room_manager_logistics')
 const assert = require('assert')
-const source_manager = require('source_manager')
-const BaseConstructionManager = require('manager_base_construction')
-const ControllerUpgradeManager = require('manager_controller_upgrade')
+const source_manager = require('manager/source')
+const BaseConstructionManager = require('manager/base_construction')
+const ControllerUpgradeManager = require('manager/controller_upgrade')
 
 exports.manage = manage
 

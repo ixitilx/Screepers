@@ -6,9 +6,6 @@
 /node_modules
 /.tscache
 
-# Screeps config file
-/config.json
-
 # code coverage directory
 /coverage
 .nyc_output/
@@ -24,6 +21,9 @@
 *.zip
 *.vi
 *~
+
+# Typescript compile logs
+tscommand-*.tmp.txt
 
 # Editor folders
 .cache

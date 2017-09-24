@@ -1,18 +1,16 @@
 'use strict';
 
-const assert = require('assert')
+const assert = require('assert');
 
-RoomPosition.prototype.serialize = function()
-{
+RoomPosition.prototype.serialize = function() {
     return `${this.x} ${this.y} ${this.roomName}`
-}
+};
 
-RoomPosition.prototype.serializeShort = function()
-{
+RoomPosition.prototype.serializeShort = function() {
     return `${this.x} ${this.y}`
-}
+};
 
-Object.defineProperty(RoomPosition, 'deserialize', {value:deserialize})
+Object.defineProperty(RoomPosition, 'deserialize', {value:deserialize});
 
 function deserialize(obj)
 {
