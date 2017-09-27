@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = function(grunt) {
     const screepsConfig = require('./config/.screeps.json')
 
-    const reRequire = "require\\(([\\'\\\"\\`])(.*?)\\1\\)";
+    const reRequire = "require\\(([\\'\\\"\\`])\(?:\./\)?(.*?)\\1\\)";
     const requirePattern = new RegExp(reRequire, 'gi');
     const requireRepl = function(match, p1, p2) {
         return 'require("' + p2.replace(/[\/\\]/g, '_') + '")'
@@ -36,11 +36,15 @@ module.exports = function(grunt) {
         },
 
         ts: {
-            options: { allowJs: true, rootDir: 'src' },
             default: {
-                src: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.d.ts', 'src/**/*.js', 'src/**/*.jsx'],
-                outDir: 'dist/js/',
+                tsconfig: true
             }
+            // options: { allowJs: true, rootDir: 'src' },
+            // default: {
+            //     src: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.d.ts', 'src/**/*.js', 'src/**/*.jsx'],
+            //     outDir: 'dist/js/',
+            //     options: {additionalFlags: '--strictNullChecks --noImplicitThis'}
+            // }
         },
 
         'string-replace': {

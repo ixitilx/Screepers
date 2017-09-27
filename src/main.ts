@@ -1,35 +1,33 @@
-'use strict';
-
-require('proto/roomobject')
-require('proto/roomposition')
-require('proto/room')
+import 'proto/roomobject'
+import 'proto/roomposition'
+import 'proto/room'
 
 // const assert = require('assert')
-const constants = require('constants')
+// import {constants} from './constants'
 // const layout = require('build_layout')
-const roomManager = require('manager/room')
-const roomManager1 = require('manager/room1')
+import * as roomManager from './manager/room'
+import * as roomManager1 from './manager/room1'
 
-class StateTransition {
-    constructor(currentState, transitionHash) {
-        this.currentState = currentState
-        this.transitionHash = transitionHash
-    }
-}
+// class StateTransition {
+//     constructor(currentState:any, transitionHash:any) {
+//         this.currentState = currentState
+//         this.transitionHash = transitionHash
+//     }
+// }
 
 function loop()
 {
     // console.log(`#### ${Game.time}`)
     clearCreepMemory()
 
-    const roomInfo = collectRoomInfo()
+    const roomInfo:any = collectRoomInfo()
     _.each(Game.rooms, room => roomManager .manage(room, roomInfo[room.name]))
     _.each(Game.rooms, room => roomManager1.manage(room, roomInfo[room.name]))
 }
 
 function collectRoomInfo()
 {
-    const roomInfo = _.reduce(Game.rooms, function(acc, room) {
+    const roomInfo = _.reduce(Game.rooms, function(acc:any, room) {
         acc[room.name] = {
             constructionSites:[],
             structures:[],
@@ -38,16 +36,16 @@ function collectRoomInfo()
         return acc
     }, {})
 
-    function extractRoomInfo(prop)
+    function extractRoomInfo(collection:any, prop:string)
     {
-        const byRoom = _.groupBy(Game[prop], 'pos.roomName')
+        const byRoom = _.groupBy(collection, 'pos.roomName')
         _.each(byRoom, (collection, roomName) => _.set(roomInfo, [roomName, prop], collection))
     }
 
-    extractRoomInfo('constructionSites')
-    extractRoomInfo('structures')
-    extractRoomInfo('creeps')
-    extractRoomInfo('spawns')
+    extractRoomInfo(Game.constructionSites, 'constructionSites')
+    extractRoomInfo(Game.structures, 'structures')
+    extractRoomInfo(Game.creeps, 'creeps')
+    extractRoomInfo(Game.spawns, 'spawns')
 
     return roomInfo
 }
