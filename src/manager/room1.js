@@ -13,8 +13,7 @@ exports.manage = manage
         Construct base
         Upgrade controller
 */
-
-class BaseManager {
+class ControlledRoomManager {
     constructor(controller) {
         assert.Defined(controller);
         assert.InstanceOf(controller, StructureController);
@@ -31,46 +30,25 @@ class BaseManager {
     }
 }
 
-// class ConstructionManager {
-//     constructor(creepManager) {
-//         this._creepManager = creepManager;
-//         this.queue = [];
-//         this.workers = [];
-//     }
-
-//     requestStructure(position, type) {
-//     }
-// }
-
-// class CreepPoolManager {
-//     constructor(baseManager) {
-//         this._baseManager = baseManager;
-//     }
-
-//     requestCreep(requesterId, creepBody) {
-//     }
-
-//     releaseCreep(creep) {
-//     }
-// }
-
 function manage(room, info) {
     // agenda:
-    // - refill spawns
     // - build base
     // - upgrade controller
+    // - refill spawns
     // - harvest energy
-    new BaseManager(room.controller).manage()
 
-    updateRoomInfo(room, info)
-    const sourceStatus = _.map(info.sources, s => ({obj: s, status: source_manager.manage.call(s)}))
+    if(room.controller && room.controller.my)
+        new ControlledRoomManager(room.controller).manage();
+
+    updateRoomInfo(room, info);
+    const sourceStatus = _.map(info.sources, s => ({obj: s, status: source_manager.manage.call(s)}));
     // console.log(JSON.stringify(sourceStatus, null, 2))
-    drawRoads(room)
+    drawRoads(room);
     // console.log(JSON.stringify(obj, null, 2))
 
-    const harvesterBody = ['mcww', 'mw?', 'w?', 'mw?', 'w?']
-    const haulerBody = 'mcc+'
-    const workerBody = ['mcw','mww*','mw?']
+    // const harvesterBody = ['mcww', 'mw?', 'w?', 'mw?', 'w?']
+    // const haulerBody = 'mcc+'
+    // const workerBody = ['mcw','mww*','mw?']
 }
 
 function drawRoads(room)
@@ -133,13 +111,6 @@ function drawRoads(room)
     // console.log(JSON.stringify(roadMatrix, null, 2))
 }
 
-// function findNearbyContainers(roomPosition)
-// {
-//     const structures = _.map(roomPosition.lookAround(LOOK_STRUCTURES), record => record.structure)
-//     const containers = _.filter(structures, {my: true, structureType:STRUCTURE_CONTAINER})
-//     return containers
-// }
-
 //
 // energy hauling priorities
 // where to put(get) energy?
@@ -164,18 +135,6 @@ function drawRoads(room)
 //   source harvesters (spots and work requirement)
 //   workers (aim to finish construction/upgrade tasks for 500 ticks, has enough energy supply)
 //   scouts
-//
-
-//
-// what to build?
-//   spawn/extension
-//   tower
-//   controller (link, container)
-//   spawn (link, container)
-//   source (link, container)
-//   roads
-//   ramparts/walls
-//   other structures
 //
 
 const energyProviderPriorities = [

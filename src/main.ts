@@ -20,14 +20,14 @@ function loop()
     // console.log(`#### ${Game.time}`)
     clearCreepMemory()
 
-    const roomInfo:any = collectRoomInfo()
+    const roomInfo = collectRoomInfo()
     _.each(Game.rooms, room => roomManager .manage(room, roomInfo[room.name]))
     _.each(Game.rooms, room => roomManager1.manage(room, roomInfo[room.name]))
 }
 
 function collectRoomInfo()
 {
-    const roomInfo = _.reduce(Game.rooms, function(acc:any, room) {
+    const roomInfo = _.reduce(Game.rooms, function(acc, room) {
         acc[room.name] = {
             constructionSites:[],
             structures:[],
@@ -36,16 +36,16 @@ function collectRoomInfo()
         return acc
     }, {})
 
-    function extractRoomInfo(collection:any, prop:string)
+    function extractRoomInfo(prop)
     {
-        const byRoom = _.groupBy(collection, 'pos.roomName')
+        const byRoom = _.groupBy(Game[prop], 'pos.roomName')
         _.each(byRoom, (collection, roomName) => _.set(roomInfo, [roomName, prop], collection))
     }
 
-    extractRoomInfo(Game.constructionSites, 'constructionSites')
-    extractRoomInfo(Game.structures, 'structures')
-    extractRoomInfo(Game.creeps, 'creeps')
-    extractRoomInfo(Game.spawns, 'spawns')
+    extractRoomInfo('constructionSites')
+    extractRoomInfo('structures')
+    extractRoomInfo('creeps')
+    extractRoomInfo('spawns')
 
     return roomInfo
 }

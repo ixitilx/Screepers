@@ -14,9 +14,6 @@ Object.defineProperty(RoomPosition, 'deserialize', {value:deserialize});
 
 function deserialize(obj)
 {
-    if(obj instanceof RoomPosition)
-        return obj
-
     if(typeof(obj)==='string')
     {
         const regex = /^(\d+) (\d+) ([EW]\d+[SN]\d+)$/i
