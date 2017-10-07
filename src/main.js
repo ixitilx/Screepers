@@ -1,29 +1,20 @@
 'use strict';
 
-require('proto_roomobject')
-require('proto_roomposition')
-require('proto_room')
+require('proto_roomobject');
+require('proto_roomposition');
+require('proto_room');
+require('proto_structure_controller');
 
 // const assert = require('assert')
-const constants = require('constants')
+const constants = require('constants');
 // const layout = require('build_layout')
-const roomManager = require('room_manager')
-const roomManager1 = require('room_manager_1')
-
-class StateTransition {
-    constructor(currentState, transitionHash) {
-        this.currentState = currentState
-        this.transitionHash = transitionHash
-    }
-}
+const roomManager1 = require('room_manager_1');
 
 function loop()
 {
-    // console.log(`#### ${Game.time}`)
     clearCreepMemory()
 
     const roomInfo = collectRoomInfo()
-    _.each(Game.rooms, room => roomManager .manage(room, roomInfo[room.name]))
     _.each(Game.rooms, room => roomManager1.manage(room, roomInfo[room.name]))
 }
 
