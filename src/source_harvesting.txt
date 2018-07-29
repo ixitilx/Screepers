@@ -1,11 +1,28 @@
-source harvesting
-in order to harvest source
-we need:
-- initialize
--- determine positions for creeps
--- determine position for container
-- operate
--- deliver best creep to container position
-    configuration is body=[MCWW, MW, W, MW], cargo=[empty]
--- build container at container position
--- build road to the main spawn
+source manager operation:
+    analyze:
+        if has no creep positions:
+            determine creep positions
+
+        if has no container position:
+            determine container position
+
+        for each creep:
+            if full and no container: release
+
+        if has not enough creeps and no [deliver creep] tasks:
+            make deliver creep tasks
+
+        if has no container and no [build container] task:
+            make build container task
+
+        if has no road and no [build road] task:
+            make build road task
+
+    operate:
+        for each creep:
+            if not full: harvest
+            if has container: transfer
+
+//////
+analyze phase for all managers is followed by operate phase
+
