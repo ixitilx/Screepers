@@ -16,8 +16,11 @@ function analyze_findHarvesterPositions(source) {
         pos.y+1,
         pos.x+1,
         true)
+    var spots = _(terra).filter(t => t.terrain != 'wall')
+                        .map(t => {x: t.x, y: t.y})
+                        .value()
     console.log('terra:')
-    console.log(JSON.stringify(terra))
+    console.log(JSON.stringify(spots))
 }
 
 function analyze_findContainerPosition(source) {
