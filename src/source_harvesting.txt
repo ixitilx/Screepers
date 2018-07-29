@@ -1,0 +1,11 @@
+source harvesting
+in order to harvest source
+we need:
+- initialize
+-- determine positions for creeps
+-- determine position for container
+- operate
+-- deliver best creep to container position
+    configuration is body=[MCWW, MW, W, MW], cargo=[empty]
+-- build container at container position
+-- build road to the main spawn
