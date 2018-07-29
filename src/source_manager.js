@@ -14,7 +14,7 @@ function analyze_findHarvesterPositions(source) {
                     LOOK_TERRAIN, pos.y-1, pos.x-1, pos.y+1, pos.x+1, true)
 
     var spots = _(terra).filter(t => t.terrain != 'wall')
-                        .map(t => {'x': t.x, 'y': t.y})
+                        .map(t => ({'x': t.x, 'y': t.y}))
                         .value()
     return spots
 }
