@@ -17,7 +17,7 @@ function analyze_findHarvesterPositions(source) {
         pos.x+1,
         true)
     var spots = _(terra).filter(t => t.terrain != 'wall')
-                        .map(t => {x: t.x, y: t.y})
+                        .map(t => new RoomPosition(t.x, t.y, source.room.name))
                         .value()
     console.log('terra:')
     console.log(JSON.stringify(spots))
