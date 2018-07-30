@@ -16,8 +16,12 @@ function analyze_findHarvesterPositions(source) {
     var spots = _(terra).filter(t => t.terrain != 'wall')
                         .map(t => ({'x': t.x, 'y': t.y}))
                         .value()
-
-    _.each(spots, s => source.room.visual.circle(s.x, s.y, {fill:'#FF00FF'}))
+    var color = '#FF0000'
+    var t = Game.time % 10
+    if(t <= 3) color = '#FF0000'
+    else if(t <= 6) color = '#00FF00'
+    else color = '#0000FF'
+    _.each(spots, s => source.room.visual.circle(s.x, s.y, {fill:color}))
 
     return spots
 }
