@@ -16,7 +16,8 @@ function analyze_findHarvesterPositions(source) {
     var spots = _(terra).filter(t => t.terrain != 'wall')
                         .map(t => ({'x': t.x, 'y': t.y}))
                         .value()
-    _.each(spots, s => source.room.visual.circle(s.x, s.y))
+
+    _.each(spots, s => source.room.visual.circle(s.x, s.y, {fill:'#FF00FF'}))
 
     return spots
 }
