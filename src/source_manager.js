@@ -8,7 +8,7 @@ function analyze(source) {
 }
 
 function analyze_findHarvesterPositions(source) {
-    getHarvesterPositions();
+    findHarvesterPositions(source);
 }
 
 function getHarvesterPositions(source) {
