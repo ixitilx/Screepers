@@ -1,0 +1,19 @@
+VM maintains state of global variables for prolonged periods of time.
+
+Although it is possible for Screeps to reset VM - it is beneficial to keep intermediate values cached
+
+Basically, flow is as follows (for each tick):
+- if object does not exist - create
+- - if memory for this object exist - load
+- operate on object
+- dump object state back to memory
+
+It's crucial to limit memory interop to initialize/dump methods and operate  objects only via their defined interface
+
+Therefore - interface is as follows:
+getController(gameObject) {
+	if(cached) {
+		cached[gameObject.id].updateGameObject(gameObject)
+		return cached[gameObject.id]
+	}
+}
