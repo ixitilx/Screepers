@@ -7,7 +7,7 @@ exports.loop = function() {
         console.log('I have sources: ' + sources)
     } else {
         console.log('I do not have sources. Creating some.')
-        sources = _.first(Game.rooms).find(FIND_SOURCES)
+        sources = _(Game.rooms).map(r => r.find(FIND_SOURCES)).flatten()
     }
     _(Game.rooms).map(r => r.find(FIND_SOURCES))
                  .flatten()
