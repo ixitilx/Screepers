@@ -8,7 +8,8 @@ function analyze(source) {
 }
 
 function analyze_findHarvesterPositions(source) {
-    findHarvesterPositions(source);
+    const pos = findHarvesterPositions(source);
+    _.each(pos, p => source.room.visual.circle(p, 'Yellow'));
 }
 
 function getHarvesterPositions(source) {
