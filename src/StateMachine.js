@@ -1,3 +1,5 @@
+const assert = require('assert');
+
 class StateTransitionTable {
     constructor(table) {
         this.table = table;

@@ -1,3 +1,5 @@
+const assert = require('assert');
+
 class StateMachineBuilder {
     constructor() {
         this.fsm = new StateMachine();
