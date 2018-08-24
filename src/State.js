@@ -11,7 +11,7 @@ class State {
     };
 
     run(data) {
-        return lookup(this.action(data));
+        return this.lookup(this.action(data));
     };
 };
 
