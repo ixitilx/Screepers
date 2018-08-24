@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const State = require('State');
 const StateTransitionTable = require('StateTransitionTable');

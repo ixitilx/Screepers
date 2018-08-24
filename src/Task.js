@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const StateMachine = require('StateMachine');
 const StateMachineRegistry = require('StateMachineRegistry');

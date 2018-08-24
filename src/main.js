@@ -1,3 +1,5 @@
+'use strict';
+
 require('task.dungeon.run');
 const Task = require('Task');
 const source_manager = require('source_manager');

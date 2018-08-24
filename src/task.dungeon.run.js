@@ -1,3 +1,5 @@
+'use strict';
+
 const StateMachineBuilder = require('StateMachineBuilder');
 const StateMachineRegistry = require('StateMachineRegistry');
 
