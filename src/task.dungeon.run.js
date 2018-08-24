@@ -11,7 +11,7 @@ const states = {
 };
 
 const smb = new StateMachineBuilder();
-smb.AddState(states.init, action);
-smb.AddTransition(states.init, 0, states.init);
+smb.addState(states.init, action);
+smb.addTransition(states.init, 0, states.init);
 
 StateMachineRegistry.register('task.dungeon.run', smb.create());
