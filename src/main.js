@@ -11,7 +11,8 @@ exports.loop = function() {
                  .value();
 
     const t = Task.makeTask('task.dungeon.run', 'init', {});
-    console.log('t.run:', t.run());
+    console.log('t.run:');
+    console.log(t.run());
 
     console.log(Game.time);
 };
