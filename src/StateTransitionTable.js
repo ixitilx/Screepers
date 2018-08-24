@@ -9,9 +9,6 @@ class StateTransitionTable {
     };
 
     hasTransition(actionResult) {
-        console.log(JSON.stringify(this.table), actionResult);
-        assert(actionResult === 0);
-
         return actionResult in this.table;
     }
 

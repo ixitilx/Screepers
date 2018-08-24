@@ -13,7 +13,6 @@ class Task {
     };
 
     run() {
-        console.log('in Task.run()');
         return this.fsm.run(this.state, this.data);
     };
 };
