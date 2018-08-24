@@ -10,7 +10,7 @@ class StateMachineBuilder {
 
     addState(stateId, action) {
         assert(!this.fsm.hasState(stateId));
-        this.fsm.table[stateId] = new State(action, new StateTransitionTable());
+        this.fsm.table[stateId] = new State(action, new StateTransitionTable({}));
         return this;
     };
 
