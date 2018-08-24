@@ -9,7 +9,7 @@ class StateTransitionTable {
     };
 
     hasTransition(actionResult) {
-        console.log(this.table);
+        console.log(JSON.stringify(this.table));
         return actionResult in this.table;
     }
 
