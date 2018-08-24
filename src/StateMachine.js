@@ -1,35 +1,5 @@
 const assert = require('assert');
 
-class StateTransitionTable {
-    constructor(table) {
-        this.table = table;
-    };
-
-    hasTransition(actionResult) {
-        return actionResult in this.table;
-    }
-
-    lookup(actionResult) {
-        assert(this.hasTransition(actionResult));
-        return this.table[actionResult];
-    };
-};
-
-class State {
-    constructor(action, table) {
-        this.action = action;
-        this.table = table;
-    };
-
-    lookup(actionResult) {
-        return this.table.lookup(actionResult);
-    };
-
-    run(data) {
-        return lookup(this.action(data));
-    };
-};
-
 class StateMachine {
     constructor(table) {
         this.table = table;
@@ -56,6 +26,4 @@ class StateMachine {
     };
 };
 
-// exports = State;
-// exports = StateTransitionTable;
 module.exports = StateMachine;
