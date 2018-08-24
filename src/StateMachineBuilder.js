@@ -3,7 +3,7 @@ const StateMachine = require('StateMachine');
 
 class StateMachineBuilder {
     constructor() {
-        this.fsm = new StateMachine();
+        this.fsm = new StateMachine({});
     };
 
     addState(stateId, action) {
