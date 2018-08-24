@@ -15,9 +15,6 @@ source manager operation:
         if has no container and no [build container] task:
             make build container task
 
-        if has no road and no [build road] task:
-            make build road task
-
     operate:
         for each creep:
             if not full: harvest
@@ -26,3 +23,15 @@ source manager operation:
 //////
 analyze phase for all managers is followed by operate phase
 
+source.runtime                                  source.memory
+    // analytics-one-time
+    RoomPosition[]      harvesterPos            [x,y][]
+    RoomPosition        containerPos            [x,y]
+
+    // gameobjects
+    Creep[]             harvesters              id[]
+    StructureContainer  container               id
+
+    // extensions
+    Task[]              harvesterRequests       id[]
+    Task                containerRequest        id

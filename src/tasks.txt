@@ -1,0 +1,36 @@
+# Problem
+
+In screeps, whole script is running to the very end each tick.
+However, almost every useful activity span multiple ticks.
+Given that we have limited CPU, this imposes certain restrictions on script design.
+Consider this sample of harvester logic:
+
+if (harvesting and !cargo.full and isNear(targetSource)) {
+    harvest(targetSource);
+    if (cargo.full)
+        harvesting = false;
+} elif (harvesting and !cargo.full and !isNear(targetSource)) {
+    moveTo(targetSource);
+} elif (!harvesting and !cargo.empty and isNear(targetSink)) {
+    transferEnergy(targetSink);
+    if (cargo.empty)
+        harvesting = true;
+} elif (!harvesting and !cargo.empty and !isNear(targetSink)) {
+    moveTo(targetSink);
+} ... {
+} else {
+    throw new Error('invalid state');
+}
+
+Basically, only a small portion of the code is getting executed depending on the state from previous tick.
+Also, each tick, script has to 'continue' from where it has finished from the previous tick.
+Naturally, this fits perfectly in FSM (finite state machine) concept.
+
+State actions describe sensible portions of script code.
+State transition table describes changes in behavior depending on state action outcome.
+
+
+# Task
+
+Task here is an activity which can span multiple ticks.
+It's behavior is driven by FSM table, it tracks current FSM state and carries data to operate on.

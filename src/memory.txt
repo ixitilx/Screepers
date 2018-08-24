@@ -1,6 +1,6 @@
 VM maintains state of global variables for prolonged periods of time.
 
-Although it is possible for Screeps to reset VM - it is beneficial to keep intermediate values cached
+Although it is possible for Screeps to reset VM - it is beneficial to keep intermediate values cached 
 
 Basically, flow is as follows (for each tick):
 - if object does not exist - create
@@ -8,7 +8,7 @@ Basically, flow is as follows (for each tick):
 - operate on object
 - dump object state back to memory
 
-It's crucial to limit memory interop to initialize/dump methods and operate  objects only via their defined interface
+It's crucial to limit memory interop to initialize/dump methods and operate objects only via their defined interface
 
 Therefore - interface is as follows:
 getController(gameObject) {
@@ -17,3 +17,22 @@ getController(gameObject) {
 		return cached[gameObject.id]
 	}
 }
+
+Data exists in:
+- `Game` global, game state. Its lifetime = one tick.
+- `Memory` global. Reliably persists thru ticks, but can contain json data only.
+- `Runtime` global or user-created objects. Persists thru ticks, but not in reliable fashion. Can be destroyed anytime without notification.
+
+Script, naturally, examines `Game` state and operates on `Runtime` objects. `Runtime` objects, in turn, have to initialize from `Memory` if they were wiped out and dump their state back to `Memory` by the end of each tick.
+
+Some `Game` objects have references to sections of `Memory`.
+Conversely, `Memory` can hold `Game` object ids which can be used to retrieve `Game` objects using Game.getObjectById(id) call.
+
+One-tick nature of `Game` objects allow us to reference its objects by id only, because we will be provided with fresh new copy of `Game` in the following tick.
+
+Source.memory.s_harvesting.harvesterPositions = [0101,1003]
+
+GameObject.runtime -> associated runtime object
+GameObject.memory -> associated memory json
+Memory.gameObjectData[id] -> memory associated with gameobject with id==id
+_.get(Memory, [Rooms, r.name])
