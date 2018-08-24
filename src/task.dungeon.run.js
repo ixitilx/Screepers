@@ -25,4 +25,7 @@ smb.addTransition(flip, 0, flip);
 smb.addTransition(flip, 1, init);
 const fsm = smb.create();
 
+console.log('fsm');
+console.log(JSON.stringify(fsm));
+
 StateMachineRegistry.register('task.dungeon.run', fsm);
