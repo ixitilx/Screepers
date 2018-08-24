@@ -1,4 +1,5 @@
 const assert = require('assert');
+const State = require('State');
 const StateMachine = require('StateMachine');
 
 class StateMachineBuilder {
