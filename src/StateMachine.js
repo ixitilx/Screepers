@@ -23,8 +23,7 @@ class StateMachine {
 
     run(stateId, data) {
         const state = this.getState(stateId);
-        const actionResult = state.run(data);
-        return state.lookup(actionResult);
+        return state.run(data);
     };
 };
 
