@@ -8,12 +8,10 @@ function action(data) {
     return 0;
 };
 
-const states = {
-    init: 'init'
-};
+const init = 'init';
 
 const smb = new StateMachineBuilder();
-smb.addState(states.init, action);
-smb.addTransition(states.init, 0, states.init);
+smb.addState(init, action);
+smb.addTransition(init, 0, init);
 
 StateMachineRegistry.register('task.dungeon.run', smb.create());
