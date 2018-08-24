@@ -14,7 +14,9 @@ class State {
     };
 
     run(data) {
-        return this.lookup(this.action(data));
+        const result = this.action(data);
+        console.log('this.action:', result);
+        return this.lookup(result);
     };
 };
 
