@@ -12,7 +12,7 @@ class StateMachine {
 
     hasState(stateId) {
         return stateId in this.table;
-    }
+    };
 
     lookup(stateId, actionResult) {
         const state = this.getState(stateId);

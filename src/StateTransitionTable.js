@@ -2,6 +2,7 @@ const assert = require('assert');
 
 class StateTransitionTable {
     constructor(table) {
+        assert(table);
         this.table = table;
     };
 
