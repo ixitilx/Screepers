@@ -9,6 +9,7 @@ class State {
     };
 
     lookup(actionResult) {
+        console.log('State.lookup:', actionResult);
         return this.table.lookup(actionResult);
     };
 
