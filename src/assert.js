@@ -1,5 +1,5 @@
 module.exports = function(criteria) {
     if(!criteria) {
-        throw new Error();
+        throw new Error('Assertion error');
     }
 };
