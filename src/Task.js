@@ -13,7 +13,7 @@ class Task {
     };
 
     run() {
-        return this.fsm.run(this.state, this.data);
+        return this.state = this.fsm.run(this.state, this.data);
     };
 };
 
