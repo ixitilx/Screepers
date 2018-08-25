@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = function(criteria) {
+module.exports = function(criteria, message='Assertion error') {
     if(!criteria) {
-        throw new Error('Assertion error');
+        throw new Error(message);
     }
 };

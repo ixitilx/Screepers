@@ -15,7 +15,6 @@ class State {
     run(data) {
         const actionResult = this.action(data);
         const newState = this.lookup(actionResult);
-        console.log('State.run(', actionResult, ', ', newState, ')');
         return newState;
     };
 };

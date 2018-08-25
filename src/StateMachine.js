@@ -24,7 +24,6 @@ class StateMachine {
     run(stateId, data) {
         const state = this.getState(stateId);
         const newStateId = state.run(data);
-        console.log('StateMachine run(', stateId, '->', newStateId, ')');
         return newStateId;
     };
 };

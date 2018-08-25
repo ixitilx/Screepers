@@ -28,7 +28,7 @@ function findHarvesterPositions(source) {
     var pos = source.pos;
     var terra = source.room.lookForAtArea(
                     LOOK_TERRAIN, pos.y-1, pos.x-1, pos.y+1, pos.x+1, true);
-    return _(terra).filter(t => t.terrain !== 'wall')
+    return _(terra).filter(t => t.terrain === 'plain' || t.terrain === 'swamp')
                    .map(t => new RoomPosition(t.x, t.y, source.room.name))
                    .value();
 }

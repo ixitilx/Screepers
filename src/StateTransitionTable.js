@@ -13,7 +13,7 @@ class StateTransitionTable {
     }
 
     lookup(actionResult) {
-        assert(this.hasTransition(actionResult));
+        assert(this.hasTransition(actionResult), `No transition for actionResult=${actionResult}`);
         return this.table[actionResult];
     };
 };
