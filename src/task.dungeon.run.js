@@ -4,25 +4,30 @@ const StateMachineBuilder = require('StateMachineBuilder');
 const StateMachineRegistry = require('StateMachineRegistry');
 
 function log1(data) {
-    console.log('task.dungeon.run:log1');
-    return (Game.time % 13) === 0 ? 1 : 0;
+    const flag = (Game.time % 13) === 0 ? 1 : 0;
+    console.log('task.dungeon.run:log1', flag);
+    return flag;
 };
 
 function log2(data) {
-    console.log('task.dungeon.run:log2');
-    return (Game.time % 17) === 0 ? 1 : 0;
+    const flag = (Game.time % 17) === 0 ? 1 : 0;
+    console.log('task.dungeon.run:log2', flag);
+    return flag;
 };
 
 const init = 'init';
 const flip = 'flip';
 
 const smb = new StateMachineBuilder();
+
 smb.addState(init, log1);
 smb.addState(flip, log2);
+
 smb.addTransition(init, 0, init);
 smb.addTransition(init, 1, flip);
 smb.addTransition(flip, 0, flip);
 smb.addTransition(flip, 1, init);
+
 const fsm = smb.create();
 
 console.log('fsm');
