@@ -5,23 +5,12 @@ const StateMachine = require('StateMachine');
 const StateMachineRegistry = require('StateMachineRegistry');
 
 class Task {
-    constructor(fsmName, initialStateId, data) {
+    constructor(fsmName, state, data) {
         assert(fsm instanceof StateMachine);
         this.fsmName = fsmName;
         this.fsm = StateMachineRegistry.get(fsmName);
-        this.state = initialStateId;
+        this.state = state;
         this.data = data;
-    };
-
-    constructor(json) {
-        assert('fsmName' in json);
-        assert('state' in json);
-        assert('data' in json);
-
-        this.fsmName = json.fsmName;
-        this.fsm = StateMachineRegistry.get(fsmName);
-        this.state = json.state;
-        this.data = json.data;
     };
 
     dump() {
@@ -41,7 +30,16 @@ function makeTask(name, initialStateId, data) {
     return new Task(name, initialStateId, data);
 };
 
+function loadTask(json) {
+    assert('fsmName' in json);
+    assert('state' in json);
+    assert('data' in json);
+
+    return new Task(json.fsmName, json.state, json.data);
+};
+
 module.exports = {
     'Task': Task,
     'makeTask': makeTask,
+    'loadTask': loadTask,
 };
