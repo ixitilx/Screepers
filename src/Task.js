@@ -6,7 +6,6 @@ const StateMachineRegistry = require('StateMachineRegistry');
 
 class Task {
     constructor(fsmName, state, data) {
-        assert(fsm instanceof StateMachine);
         this.fsmName = fsmName;
         this.fsm = StateMachineRegistry.get(fsmName);
         this.state = state;
