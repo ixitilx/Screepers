@@ -50,7 +50,7 @@ function drawSpots(source) {
 };
 
 function buildHarvester(source) {
-    console.log(`in buildHarvester(${source})`);
+    // console.log(`in buildHarvester(${source})`);
     const spawn = Game.spawns.Spawn1;
     const body = [WORK, WORK, CARRY, MOVE];
     const name = `harvester_${Game.time % 1500}`;
@@ -70,11 +70,11 @@ function runHarvesters(source) {
 };
 
 function buildHarvesters(source) {
-    console.log(`in buildHarvesters(${source})`);
+    // console.log(`in buildHarvesters(${source})`);
     const harvesters = source.harvesters;
     const spots = source.spots;
-    console.log(`spots: ${JSON.stringify(spots)}`);
-    console.log(`harvesters: ${JSON.stringify(harvesters)}`);
+    // console.log(`spots: ${JSON.stringify(spots)}`);
+    // console.log(`harvesters: ${JSON.stringify(harvesters)}`);
 
     if (_.size(harvesters) < _.size(spots)) {
         buildHarvester(source);
