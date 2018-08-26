@@ -25,10 +25,6 @@ class Task {
     };
 };
 
-function makeTask(name, initialStateId, data) {
-    return new Task(name, initialStateId, data);
-};
-
 function loadTask(json) {
     assert('fsmName' in json);
     assert('state' in json);

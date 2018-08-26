@@ -1,18 +1,38 @@
 'use strict';
 
-require('task.dungeon.run');
-const Task = require('Task');
-const source_manager = require('source_manager');
+Object.defineProperty(Room.prototype, 'sources', {
+    get: function() {
+        return this.find(FIND_SOURCES);
+    },
+    enumerable: false,
+    configurable: true,
+});
 
-const t = Task.makeTask('task.dungeon.run', 'init', {});
+Object.defineProperty(Source.prototype, 'spots', {
+    get: function() {
+        const pos = this.pos;
+        const room = this.room;
+        const terra = room.lookForAtArea(
+                        LOOK_TERRAIN, pos.y-1, pos.x-1, pos.y+1, pos.x+1, true);
+        return _(terra).filter(t => t.terrain === 'plain' || t.terrain === 'swamp')
+                       .map(t => new RoomPosition(t.x, t.y, room.name))
+                       .value();
+    },
+    enumerable: false,
+    configurable: true,
+});
+
+Object.defineProperty(Source.prototype, 'memory', {
+    get: function() {
+        return _.get(Memory, `sources.${this.id}`);
+    },
+    enumerable: false,
+    configurable: true,
+});
 
 exports.loop = function() {
-    _(Game.rooms).map(r => r.find(FIND_SOURCES))
-                 .flatten()
-                 .each(s => source_manager.analyze(s))
+    _(Game.rooms).map(r => r.sources).flatten()
+                 .each(s => s.spots).flatten()
+                 .each(p => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}));
                  .value();
-
-    t.run();
-
-    console.log(Game.time);
 };
