@@ -44,7 +44,7 @@ function containerSpot() {
     if (path.incomplete) {
         throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
     }
-    const spot = _.last(path);
+    const spot = _.last(path.path);
     this.memory.containerSpot = {x: spot.x, y: spot.y};
     return spot;
 };
