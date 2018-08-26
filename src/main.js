@@ -39,7 +39,6 @@ function containerSpot() {
     //         this.room.name);
     // }
     const spawn = Game.spawns.Spawn1;
-    const spots = this.spots;
     const path = PathFinder.search(this.pos, spawn.exispots, {plainCost:2, maxRooms:1});
     if (path.incomplete) {
         throw new Error(`Cannot find complete path from ${this} to ${spawn.exispots}`);
@@ -113,7 +112,7 @@ function runHarvester(creep, spot, source) {
 };
 
 function runHarvesters(source) {
-    const harvoSpots = _.zip(source.spots, source.harvesters);
+    const harvoSpots = _.zip(source.harvospots, source.harvesters);
     _(harvoSpots).filter(hs => hs[0] && hs[1])
                  .each(hs => runHarvester(hs[1], hs[0], source))
                  .value();
@@ -122,7 +121,7 @@ function runHarvesters(source) {
 function buildHarvesters(source) {
     // console.log(`in buildHarvesters(${source})`);
     const harvesters = source.harvesters;
-    const spots = source.spots;
+    const spots = source.harvospots;
     // console.log(`spots: ${JSON.stringify(spots)}`);
     // console.log(`harvesters: ${JSON.stringify(harvesters)}`);
 
