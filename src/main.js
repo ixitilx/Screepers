@@ -40,13 +40,13 @@ function containerSpot() {
     // }
     const spawn = Game.spawns.Spawn1;
     const spots = this.spots;
-    const path = PathFinder.search(spawn.pos, this.spots, {plainCost:2, maxRooms:1});
+    const path = PathFinder.search(this.pos, spawn.exispots, {plainCost:2, maxRooms:1});
     if (path.incomplete) {
-        throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
+        throw new Error(`Cannot find complete path from ${this} to ${spawn.exispots}`);
     }
 
     // this.room.visual.poly(path.path);
-    const spot = _.last(path.path);
+    const spot = _.first(path.path);
     this.memory.containerSpot = {x: spot.x, y: spot.y};
     return spot;
 };
