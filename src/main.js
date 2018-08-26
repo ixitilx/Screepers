@@ -30,9 +30,14 @@ Object.defineProperty(Source.prototype, 'memory', {
     configurable: true,
 });
 
+function drawSpots(source) {
+    _.each(source.spots, pos => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}));
+};
+
+function harvestSource(source) {
+    drawSpots(source);
+};
+
 exports.loop = function() {
-    const sources = _(Game.rooms).map(r => r.sources).flatten()
-                                 .map(s => s.spots).flatten()
-                                 .each(p => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}))
-                                 .value();
+    _(Game.rooms).map(r => r.sources).flatten().each(harvestSource).value();
 };
