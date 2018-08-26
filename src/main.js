@@ -32,7 +32,7 @@ Object.defineProperty(Source.prototype, 'memory', {
 
 exports.loop = function() {
     const sources = _(Game.rooms).map(r => r.sources).flatten().value();
-    const spots = _(sources).each(s => s.spots).flatten().value();
+    const spots = _(sources).map(s => s.spots).flatten().value();
     console.log(`sources: ${sources}`);
     console.log(`spots: ${spots}`);
                  // .each(p => function(p){console.log(JSON.stringify(p)); return p;})
