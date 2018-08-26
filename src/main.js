@@ -59,7 +59,7 @@ function getHarvesters() {
 };
 
 defineProperty(Source, 'memory', getSourceMemory);
-defineProperty(Source, 'harvoSpots', findSpots);
+defineProperty(Source, 'harvospots', findSpots);
 defineProperty(Source, 'harvesters', getHarvesters);
 defineProperty(Source, 'containerSpot', containerSpot);
 
