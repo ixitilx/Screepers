@@ -39,8 +39,8 @@ function getHarvesters() {
     return _.filter(Game.creeps, c => c.memory.source === this.id);
 };
 
-defineProperty(Source, 'memory', findSpots);
-defineProperty(Source, 'spots', getSourceMemory);
+defineProperty(Source, 'memory', getSourceMemory);
+defineProperty(Source, 'spots', findSpots);
 defineProperty(Source, 'harvesters', getHarvesters);
 
 // ------------
