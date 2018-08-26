@@ -60,6 +60,9 @@ function buildHarvester(source) {
 
 function runHarvester(creep, spot) {
     console.log(`Running harvester ${creep} to ${spot}`);
+    if (creep.pos !== spot) {
+        creep.moveTo(spot);
+    }
 };
 
 function runHarvesters(source) {
