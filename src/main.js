@@ -33,6 +33,6 @@ Object.defineProperty(Source.prototype, 'memory', {
 exports.loop = function() {
     _(Game.rooms).map(r => r.sources).flatten()
                  .each(s => s.spots).flatten()
-                 .each(p => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}));
+                 .each(p => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}))
                  .value();
 };
