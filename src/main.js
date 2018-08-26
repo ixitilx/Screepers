@@ -39,13 +39,14 @@ function containerSpot() {
     //         this.room.name);
     // }
     const spawn = Game.spawns.Spawn1;
-    const path = PathFinder.search(this.pos, spawn.exispots, {plainCost:2, maxRooms:1});
+    const spots = this.spots;
+    const path = PathFinder.search(spawn.pos, this.spots, {plainCost:2, maxRooms:1});
     if (path.incomplete) {
-        throw new Error(`Cannot find complete path from ${this} to ${spawn.exispots}`);
+        throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
     }
 
     // this.room.visual.poly(path.path);
-    const spot = _.first(path.path);
+    const spot = _.last(path.path);
     this.memory.containerSpot = {x: spot.x, y: spot.y};
     return spot;
 };
@@ -59,7 +60,7 @@ function getHarvesters() {
 };
 
 defineProperty(Source, 'memory', getSourceMemory);
-defineProperty(Source, 'harvospots', findSpots);
+defineProperty(Source, 'spots', findSpots);
 defineProperty(Source, 'harvesters', getHarvesters);
 defineProperty(Source, 'containerSpot', containerSpot);
 
@@ -73,7 +74,7 @@ defineProperty(Creep, 'carryNow', cargoSize);
 
 // ------------
 
-function findSpots() {
+function findSpawnSpots() {
     const p = this.pos;
     const sides = [
         new RoomPosition(p.x-1, p.y, p.roomName),
@@ -83,13 +84,13 @@ function findSpots() {
     return _.filter(sides, p => p.lookFor(LOOK_TERRAIN) !== 'wall');
 };
 
-defineProperty(StructureSpawn, 'exispots', findSpots);
+defineProperty(StructureSpawn, 'spots', findSpawnSpots);
 
 // ------------
 
 function drawSpots(source) {
     const visual = source.room.visual;
-    _.each(source.harvospots, pos => visual.circle(pos, {fill:'Yellow'}));
+    _.each(source.spots, pos => visual.circle(pos, {fill:'Yellow'}));
     visual.circle(source.containerSpot, {fill: 'Red'});
 };
 
@@ -112,7 +113,7 @@ function runHarvester(creep, spot, source) {
 };
 
 function runHarvesters(source) {
-    const harvoSpots = _.zip(source.harvospots, source.harvesters);
+    const harvoSpots = _.zip(source.spots, source.harvesters);
     _(harvoSpots).filter(hs => hs[0] && hs[1])
                  .each(hs => runHarvester(hs[1], hs[0], source))
                  .value();
@@ -121,7 +122,7 @@ function runHarvesters(source) {
 function buildHarvesters(source) {
     // console.log(`in buildHarvesters(${source})`);
     const harvesters = source.harvesters;
-    const spots = source.harvospots;
+    const spots = source.spots;
     // console.log(`spots: ${JSON.stringify(spots)}`);
     // console.log(`harvesters: ${JSON.stringify(harvesters)}`);
 
@@ -137,7 +138,7 @@ function harvestSource(source) {
 };
 
 exports.loop = function() {
-    _(Game.spawns).map(s => s.exispots)
+    _(Game.spawns).map(s => s.spots)
                   .flatten()
                   .each(p => Game.rooms[p.roomName].visual.circle(p, {fill: 'Red'}))
                   .value();
