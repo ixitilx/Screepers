@@ -49,6 +49,7 @@ function drawSpots(source) {
 };
 
 function buildHarvester(source) {
+    console.log(`in buildHarvester(${source})`);
     const spawn = Game.spawns.Spawn1;
     const body = [WORK, WORK, CARRY, MOVE];
     const name = `harvester_${Game.time % 1500}`;
