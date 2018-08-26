@@ -31,6 +31,24 @@ function findSpots() {
                    .value();
 };
 
+function containerSpot() {
+    if (this.memory.containerSpot) {
+        return new RoomObject(
+            this.memory.containerSpot.x,
+            this.memory.containerSpot.y,
+            this.room.name);
+    }
+    const spawn = Game.spawns.Spawn1;
+    const spots = this.spots;
+    const path = Game.PathFinder.search(spawn, this.spots, {plainCost:2});
+    if (path.incomplete) {
+        throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
+    }
+    const spot = _.last(path);
+    this.memory.containerSpot = {x: spot.x, y: spot.y};
+    return spot;
+};
+
 function getSourceMemory() {
     return _.get(Memory, `sources.${this.id}`, {});
 };
@@ -42,11 +60,22 @@ function getHarvesters() {
 defineProperty(Source, 'memory', getSourceMemory);
 defineProperty(Source, 'spots', findSpots);
 defineProperty(Source, 'harvesters', getHarvesters);
+defineProperty(Source, 'containerSpot', containerSpot);
+
+// ------------
+
+function cargoSize() {
+    return _.sum(this.carry);
+};
+
+defineProperty(Creep, 'carryNow', cargoSize);
 
 // ------------
 
 function drawSpots(source) {
-    _.each(source.spots, pos => Game.rooms[pos.roomName].visual.circle(pos, {fill:'Yellow'}));
+    const visual = Game.rooms[source.pos.roomName].visual;
+    _.each(source.spots, pos => visual.circle(pos, {fill:'Yellow'}));
+    visual.circle(source.containerSpot, {fill: 'Red'});
 };
 
 function buildHarvester(source) {
@@ -60,10 +89,11 @@ function buildHarvester(source) {
 
 function runHarvester(creep, spot, source) {
     if (!creep.pos.isEqualTo(spot)) {
-        const ret = creep.moveTo(spot);
-    } else {
-        const ret = creep.harvest(source);
+        creep.moveTo(spot);
+        return;
     }
+
+    creep.harvest(source);
 };
 
 function runHarvesters(source) {
