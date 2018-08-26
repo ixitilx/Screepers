@@ -59,13 +59,10 @@ function buildHarvester(source) {
 };
 
 function runHarvester(creep, spot, source) {
-    console.log(`creep.pos = ${creep.pos}, spot = ${spot}`);
-    if (creep.pos !== spot) {
+    if (!creep.pos.isEqualTo(spot)) {
         const ret = creep.moveTo(spot);
-        console.log(`creep(${creep}).moveTo(${spot}) => ${ret}`);
     } else {
         const ret = creep.harvest(source);
-        console.log(`creep(${creep}).harvest(${source}) => ${ret}`);
     }
 };
 
