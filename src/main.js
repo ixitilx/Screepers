@@ -1,13 +1,13 @@
 'use strict';
 
-function defineProperty(class, name, impl, enumerable=false, configurable=true) {
-    const descriptor =     {
+function defineProperty(className, name, impl, enumerable=false, configurable=true) {
+    const descriptor = {
         get: impl,
         enumerable: enumerable,
         configurable: configurable,
     };
 
-    Object.defineProperty(class.prototype, name, descriptor);
+    Object.defineProperty(className.prototype, name, descriptor);
 };
 
 // -------------
