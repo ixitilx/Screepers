@@ -40,7 +40,7 @@ function containerSpot() {
     }
     const spawn = Game.spawns.Spawn1;
     const spots = this.spots;
-    const path = PathFinder.search(spawn, this.spots, {plainCost:2});
+    const path = PathFinder.search(spawn.pos, this.spots, {plainCost:2});
     if (path.incomplete) {
         throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
     }
