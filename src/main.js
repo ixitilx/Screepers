@@ -58,17 +58,20 @@ function buildHarvester(source) {
     return spawn.spawnCreep(body, name, {memory:memory});
 };
 
-function runHarvester(creep, spot) {
-    console.log(`Running harvester ${creep} to ${spot}`);
+function runHarvester(creep, spot, source) {
     if (creep.pos !== spot) {
-        creep.moveTo(spot);
+        const ret = creep.moveTo(spot);
+        console.log(`creep(${creep}).moveTo(${spot}) => ${ret}`);
+    } else {
+        const ret = creep.harvest(source);
+        console.log(`creep(${creep}).harvest(${source}) => ${ret}`);
     }
 };
 
 function runHarvesters(source) {
     const harvoSpots = _.zip(source.spots, source.harvesters);
     _(harvoSpots).filter(hs => hs[0] && hs[1])
-                 .each(hs => runHarvester(hs[1], hs[0]))
+                 .each(hs => runHarvester(hs[1], hs[0], source))
                  .value();
 };
 
