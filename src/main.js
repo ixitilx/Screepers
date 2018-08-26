@@ -21,6 +21,7 @@ defineProperty(Room, 'sources', findSources);
 // -------------
 
 function findSpots() {
+    console.log(`in findSpots(${this})`);
     const pos = this.pos;
     const room = this.room;
     const terra = room.lookForAtArea(
