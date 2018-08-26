@@ -31,11 +31,8 @@ Object.defineProperty(Source.prototype, 'memory', {
 });
 
 exports.loop = function() {
-    const sources = _(Game.rooms).map(r => r.sources).flatten().value();
-    const spots = _(sources).map(s => s.spots).flatten().value();
-    console.log(`sources: ${sources}`);
-    console.log(`spots: ${spots}`);
-                 // .each(p => function(p){console.log(JSON.stringify(p)); return p;})
-                 // .each(p => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}))
-                 // .value();
+    const sources = _(Game.rooms).map(r => r.sources).flatten()
+                                 .map(s => s.spots).flatten()
+                                 .each(p => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}));
+                                 // .value();
 };
