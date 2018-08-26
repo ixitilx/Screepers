@@ -60,7 +60,7 @@ function getHarvesters() {
 };
 
 defineProperty(Source, 'memory', getSourceMemory);
-defineProperty(Source, 'spots', findSpots);
+defineProperty(Source, 'harvoSpots', findSpots);
 defineProperty(Source, 'harvesters', getHarvesters);
 defineProperty(Source, 'containerSpot', containerSpot);
 
@@ -84,13 +84,13 @@ function findSpots() {
     return _.filter(sides, p => p.lookFor(LOOK_TERRAIN) !== 'wall');
 };
 
-defineProperty(StructureSpawn, 'spots', findSpots);
+defineProperty(StructureSpawn, 'exispots', findSpots);
 
 // ------------
 
 function drawSpots(source) {
     const visual = source.room.visual;
-    _.each(source.spots, pos => visual.circle(pos, {fill:'Yellow'}));
+    _.each(source.harvospots, pos => visual.circle(pos, {fill:'Yellow'}));
     visual.circle(source.containerSpot, {fill: 'Red'});
 };
 
@@ -138,7 +138,7 @@ function harvestSource(source) {
 };
 
 exports.loop = function() {
-    _(Game.spawns).map(s => s.spots)
+    _(Game.spawns).map(s => s.exispots)
                   .flatten()
                   .each(p => Game.rooms[p.roomName].visual.circle(p, {fill: 'Red'}))
                   .value();
