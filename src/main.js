@@ -76,7 +76,7 @@ function buildHarvesters(source) {
     console.log(`spots: ${JSON.stringify(spots)}`);
     console.log(`harvesters: ${JSON.stringify(harvesters)}`);
 
-    if (_.size() < _.size()) {
+    if (_.size(harvesters) < _.size(spots)) {
         buildHarvester(source);
     }
 };
