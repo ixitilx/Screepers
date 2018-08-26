@@ -33,7 +33,7 @@ function findSpots() {
 
 function containerSpot() {
     if (this.memory.containerSpot) {
-        return new RoomObject(
+        return new RoomPosition(
             this.memory.containerSpot.x,
             this.memory.containerSpot.y,
             this.room.name);
