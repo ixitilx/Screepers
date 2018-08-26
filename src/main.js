@@ -45,7 +45,7 @@ function containerSpot() {
         throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
     }
 
-    // Game.rooms[this.pos.roomName].visual.poly(path.path);
+    // this.room.visual.poly(path.path);
     const spot = _.last(path.path);
     this.memory.containerSpot = {x: spot.x, y: spot.y};
     return spot;
@@ -74,8 +74,22 @@ defineProperty(Creep, 'carryNow', cargoSize);
 
 // ------------
 
+function findSpots() {
+    const p = this.pos;
+    const sides = [
+        new RoomPosition(p.x-1, p.y, p.roomName),
+        new RoomPosition(p.x+1, p.y, p.roomName),
+        new RoomPosition(p.x, p.y-1, p.roomName),
+        new RoomPosition(p.x, p.y+1, p.roomName)];
+    return _.filter(sides, p => p.lookFor(LOOK_TERRAIN) !== 'wall');
+};
+
+defineProperty(StructureSpawn, 'spots', findSpots);
+
+// ------------
+
 function drawSpots(source) {
-    const visual = Game.rooms[source.pos.roomName].visual;
+    const visual = source.room.visual;
     _.each(source.spots, pos => visual.circle(pos, {fill:'Yellow'}));
     visual.circle(source.containerSpot, {fill: 'Red'});
 };
@@ -124,5 +138,9 @@ function harvestSource(source) {
 };
 
 exports.loop = function() {
+    _(Game.spawns).map(s => s.spots)
+                  .flatten()
+                  .each(p => Game.rooms[p.roomName].visual.circle(p, {fill: 'Red'}))
+                  .value();
     _(Game.rooms).map(r => r.sources).flatten().each(harvestSource).value();
 };
