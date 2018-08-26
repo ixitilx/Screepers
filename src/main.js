@@ -32,13 +32,12 @@ function findSpots() {
 };
 
 function containerSpot() {
-    if (this.memory.containerSpot) {
-        delete this.memory.containerSpot;
-        // return new RoomPosition(
-        //     this.memory.containerSpot.x,
-        //     this.memory.containerSpot.y,
-        //     this.room.name);
-    }
+    // if (this.memory.containerSpot) {
+    //     return new RoomPosition(
+    //         this.memory.containerSpot.x,
+    //         this.memory.containerSpot.y,
+    //         this.room.name);
+    // }
     const spawn = Game.spawns.Spawn1;
     const spots = this.spots;
     const path = PathFinder.search(spawn.pos, this.spots, {plainCost:2, maxRooms:1});
@@ -46,7 +45,7 @@ function containerSpot() {
         throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
     }
 
-    Game.rooms[this.pos.roomName].visual.poly(path.path);
+    // Game.rooms[this.pos.roomName].visual.poly(path.path);
     const spot = _.last(path.path);
     this.memory.containerSpot = {x: spot.x, y: spot.y};
     return spot;
