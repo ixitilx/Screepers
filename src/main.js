@@ -21,7 +21,7 @@ defineProperty(Room, 'sources', findSources);
 // -------------
 
 function findSpots() {
-    console.log(`in findSpots(${this})`);
+    // console.log(`in findSpots(${this})`);
     const pos = this.pos;
     const room = this.room;
     const terra = room.lookForAtArea(
@@ -46,7 +46,7 @@ defineProperty(Source, 'harvesters', getHarvesters);
 // ------------
 
 function drawSpots(source) {
-    _.each(source.spots, pos => Game.rooms[p.roomName].visual.circle(p, {fill:'Yellow'}));
+    _.each(source.spots, pos => Game.rooms[pos.roomName].visual.circle(pos, {fill:'Yellow'}));
 };
 
 function buildHarvester(source) {
