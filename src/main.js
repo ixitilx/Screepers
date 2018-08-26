@@ -72,8 +72,8 @@ function buildHarvesters(source) {
     console.log(`in buildHarvesters(${source})`);
     const harvesters = source.harvesters;
     const spots = source.spots;
-    console.log(`spots: ${spots}`);
-    console.log(`harvesters: ${harvesters}`);
+    console.log(`spots: ${JSON.stringify(spots)}`);
+    console.log(`harvesters: ${JSON.stringify(harvesters)}`);
 
     if (_.size() < _.size()) {
         buildHarvester(source);
