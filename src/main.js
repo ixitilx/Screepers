@@ -69,6 +69,7 @@ function runHarvesters(source) {
 };
 
 function buildHarvesters(source) {
+    console.log(`in buildHarvesters(${source})`);
     if (_.size(source.harvesters) < _.size(source.spots)) {
         buildHarvester(source);
     }
