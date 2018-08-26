@@ -70,7 +70,12 @@ function runHarvesters(source) {
 
 function buildHarvesters(source) {
     console.log(`in buildHarvesters(${source})`);
-    if (_.size(source.harvesters) < _.size(source.spots)) {
+    const harvesters = source.harvesters;
+    const spots = source.spots;
+    console.log(`spots: ${spots}`);
+    console.log(`harvesters: ${harvesters}`);
+
+    if (_.size() < _.size()) {
         buildHarvester(source);
     }
 };
