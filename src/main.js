@@ -17,7 +17,7 @@ function findSources() {
 };
 
 function findEnergy() {
-    _.each(this.find(FIND_DROPPED_ENERGY), e => console.log(e));
+    _.each(this.find(FIND_DROPPED_RESOURCES), e => console.log(e));
 };
 
 defineProperty(Room, 'sources', findSources);
