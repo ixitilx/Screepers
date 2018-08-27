@@ -21,6 +21,7 @@ function findEnergy() {
 };
 
 defineProperty(Room, 'sources', findSources);
+Room.prototype.findEnergy = findEnergy;
 
 // -------------
 
