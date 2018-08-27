@@ -148,4 +148,5 @@ exports.loop = function() {
                   .value();
 
     _(Game.rooms).map(r => r.sources).flatten().each(harvestSource).value();
+    _.each(Game.rooms, r => r.findEnergy());
 };
