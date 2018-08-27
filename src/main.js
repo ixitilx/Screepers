@@ -16,6 +16,10 @@ function findSources() {
     return this.find(FIND_SOURCES);
 };
 
+function findEnergy() {
+    _.each(this.find(FIND_DROPPED_ENERGY), e => console.log(e));
+};
+
 defineProperty(Room, 'sources', findSources);
 
 // -------------
@@ -142,5 +146,6 @@ exports.loop = function() {
                   .flatten()
                   .each(p => Game.rooms[p.roomName].visual.circle(p, {fill: 'Red'}))
                   .value();
+
     _(Game.rooms).map(r => r.sources).flatten().each(harvestSource).value();
 };
