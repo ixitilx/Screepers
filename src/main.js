@@ -18,7 +18,7 @@ function findSources() {
 
 function findEnergy(type=RESOURCE_ENERGY) {
     const droppedEnergy = this.find(FIND_DROPPED_RESOURCES, {resourceType:type});
-    _.each(droppedEnergy, console.log);
+    _.each(droppedEnergy, e => console.log(e));
 };
 
 defineProperty(Room, 'sources', findSources);
