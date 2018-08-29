@@ -32,6 +32,7 @@ function collectEnergyData() {
 };
 
 function buildHauler() {
+    console.log('Building hauler!');
     const spawn = Game.spawns.Spawn1;
     const body = [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
     const name = `hauler_${Game.time % 1500}`;
@@ -39,11 +40,14 @@ function buildHauler() {
 };
 
 function routeEnergy(sinks, sources, haulers) {
-    if (_.size(sinks) === 0 || _.size(sources) === 0)
+    if (_.size(sinks) === 0 || _.size(sources) === 0) {
+        console.log('No sinks or sources');
         return;
+    }
 
     if (_.size(haulers) === 0) {
-        buildHauler();
+        const ret = buildHauler();
+        console.log('Building hauler!', ret);
         return;
     }
 
