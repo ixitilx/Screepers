@@ -32,7 +32,10 @@ function collectEnergyData() {
 };
 
 function buildHauler() {
-
+    const spawn = Game.spawns.Spawn1;
+    const body = [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
+    const name = `hauler_${Game.time % 1500}`;
+    return spawn.spawnCreep(body, name, {memory:memory});
 };
 
 function routeEnergy(sinks, sources, haulers) {
