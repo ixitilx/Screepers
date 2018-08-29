@@ -10,9 +10,10 @@ require('prototype.creep');
 const SourceManager = require('manager.source');
 
 function collectEnergyData() {
-    const spawns = Game.spawns;
+    const spawns = _.map(Game.spawns);
     const haulers = _.filter(Game.creeps, c => _.startsWith(c.name, 'hauler'));
-    const energy = _(Game.rooms).map(r => r.find(FIND_DROPPED_RESOURCES)).flatten()
+    const energy = _(Game.rooms).map(r => r.find(FIND_DROPPED_RESOURCES))
+                                .flatten()
                                 .filter(r => {resourceType: 'energy'})
                                 .value();
 
