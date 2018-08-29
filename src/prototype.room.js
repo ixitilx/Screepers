@@ -7,4 +7,3 @@ function findSources() {
 };
 
 defineProperty(Room, 'sources', findSources);
-Room.prototype.findEnergy = findEnergy;
