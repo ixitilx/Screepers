@@ -17,7 +17,7 @@ function drawSpots() {
 };
 
 function getEnergyLevel() {
-    return energy - energyCapacity;
+    return this.energy - this.energyCapacity;
 };
 
 defineProperty(StructureSpawn, 'spots', findSpawnSpots);
