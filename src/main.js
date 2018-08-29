@@ -18,16 +18,39 @@ function collectEnergyData() {
                                 .filter(r => r.resourceType === 'energy')
                                 .value();
 
-    const sinks = _([spawns]).flatten().filter(s => s.energyLevel < 0).value();
-    const sources = _([energy]).flatten().filter(s => s.energyLevel > 0).value();
+    const sinks = _([spawns]).flatten()
+                             .filter(s => s.energyLevel < 0)
+                             .sortBy(s => -s.energyLevel)
+                             .value();
+
+    const sources = _([energy]).flatten()
+                               .filter(s => s.energyLevel > 0)
+                               .sortBy(s => -s.energyLevel)
+                               .value();
 
     return {sinks, sources, haulers};
 };
 
-function routeEnergyData(sinks, sources, haulers) {
-    console.log(`sinks: ${sinks}`);
-    console.log(`sources: ${sources}`);
-    console.log(`haulers: ${haulers}`);
+function buildHauler() {
+
+};
+
+function routeEnergy(sinks, sources, haulers) {
+    if (_.size(sinks) === 0 || _.size(sources) === 0)
+        return;
+
+    if (_.size(haulers) === 0) {
+        buildHauler();
+        return;
+    }
+
+    for(const i=0; i<sinks.length; i++) {
+        console.log(sinks[i]);
+    }
+
+    // console.log(`sinks: ${sinks}`);
+    // console.log(`sources: ${sources}`);
+    // console.log(`haulers: ${haulers}`);
 };
 
 exports.loop = function() {
@@ -35,5 +58,5 @@ exports.loop = function() {
     _(Game.rooms).map(r => r.sources).flatten().each(SourceManager).value();
  
     const {sinks, sources, haulers} = collectEnergyData();
-    routeEnergyData(sinks, sources, haulers);
+    routeEnergy(sinks, sources, haulers);
 };
