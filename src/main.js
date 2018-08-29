@@ -13,7 +13,7 @@ function collectEnergyData() {
     const spawns = Game.spawns;
     const haulers = _.filter(Game.creeps, c => _.startsWith(c.name, 'hauler'));
     const energy = _(Game.rooms).map(r => r.find(FIND_DROPPED_RESOURCES)).flatten().value();
-    console.log(energy);
+    console.log(JSON.stringify(energy, null, 2));
 };
 
 exports.loop = function() {
