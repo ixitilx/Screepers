@@ -20,8 +20,8 @@ function collectEnergyData() {
     const sinks = _.flatten([spawns]);
     const sources = _.flatten([energy]);
 
-    console.log(`spawns: ${spawns}`);
-    console.log(`energy: ${energy}`);
+    console.log(`spawns: ${sinks}`);
+    console.log(`energy: ${sources}`);
 };
 
 exports.loop = function() {
