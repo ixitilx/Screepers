@@ -12,4 +12,9 @@ function findSpawnSpots() {
     return _.filter(sides, p => p.lookFor(LOOK_TERRAIN) !== 'wall');
 };
 
+function drawSpots() {
+    _.each(this.spots, p => this.room.visual.circle(p, {fill: 'Red'}));
+};
+
 defineProperty(StructureSpawn, 'spots', findSpawnSpots);
+StructureSpawn.prototype.drawSpots = drawSpots;
