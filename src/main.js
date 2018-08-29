@@ -12,8 +12,15 @@ const SourceManager = require('manager.source');
 function collectEnergyData() {
     const spawns = Game.spawns;
     const haulers = _.filter(Game.creeps, c => _.startsWith(c.name, 'hauler'));
-    const energy = _(Game.rooms).map(r => r.find(FIND_DROPPED_RESOURCES)).flatten().value();
-    console.log(JSON.stringify(energy, null, 2));
+    const energy = _(Game.rooms).map(r => r.find(FIND_DROPPED_RESOURCES)).flatten()
+                                .filter(r => {resourceType: 'energy'})
+                                .value();
+
+    const sinks = _.flatten([spawns]);
+    const sources = _.flatten([energy]);
+
+    console.log(sinks);
+    console.log(sources);
 };
 
 exports.loop = function() {
