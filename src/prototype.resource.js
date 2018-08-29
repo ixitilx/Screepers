@@ -1,6 +1,6 @@
 'use strict';
 
-const { defineProperty } = require('utils.prototype');
+const { defineProperty, assert } = require('utils.prototype');
 
 function getEnergyLevel() {
     assert(this.resourceType === 'energy');

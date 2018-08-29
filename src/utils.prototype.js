@@ -10,6 +10,13 @@ function defineProperty(className, name, impl, enumerable=false, configurable=tr
     Object.defineProperty(className.prototype, name, descriptor);
 };
 
+function assert(criteria, message='Assertion error') {
+    if(!criteria) {
+        throw new Error(message);
+    }
+};
+
 module.exports = {
-    defineProperty: defineProperty
+    defineProperty: defineProperty,
+    assert: assert,
 };
