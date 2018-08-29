@@ -32,9 +32,8 @@ function collectEnergyData() {
 };
 
 function buildHauler() {
-    console.log('Building hauler!');
     const spawn = Game.spawns.Spawn1;
-    const body = [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
+    const body = [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
     const name = `hauler_${Game.time % 1500}`;
     return spawn.spawnCreep(body, name);
 };
