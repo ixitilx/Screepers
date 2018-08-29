@@ -14,7 +14,7 @@ function collectEnergyData() {
     const haulers = _.filter(Game.creeps, c => _.startsWith(c.name, 'hauler'));
     const energy = _(Game.rooms).map(r => r.find(FIND_DROPPED_RESOURCES))
                                 .flatten()
-                                // .filter(r => {resourceType: 'energy'})
+                                .filter(r => r.resourceType === 'energy')
                                 .value();
 
     const sinks = _.flatten([spawns]);
