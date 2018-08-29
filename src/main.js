@@ -41,7 +41,7 @@ function buildHauler() {
 
 function routeEnergy(sinks, sources, haulers) {
     if (_.size(sinks) === 0 || _.size(sources) === 0) {
-        console.log('No sinks or sources');
+        console.log(`No sinks or sources. Sinks: ${sinks}, Sources: ${sources}`);
         return;
     }
 
