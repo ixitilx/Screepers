@@ -16,5 +16,10 @@ function drawSpots() {
     _.each(this.spots, p => this.room.visual.circle(p, {fill: 'Red'}));
 };
 
+function getEnergyLevel() {
+    return energy - energyCapacity;
+};
+
 defineProperty(StructureSpawn, 'spots', findSpawnSpots);
+defineProperty(StructureSpawn, 'energyLevel', getEnergyLevel);
 StructureSpawn.prototype.drawSpots = drawSpots;

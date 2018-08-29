@@ -6,6 +6,7 @@ require('prototype.room');
 require('prototype.source');
 require('prototype.spawn');
 require('prototype.creep');
+require('prototype.resource');
 
 const SourceManager = require('manager.source');
 
@@ -17,15 +18,22 @@ function collectEnergyData() {
                                 .filter(r => r.resourceType === 'energy')
                                 .value();
 
-    const sinks = _.flatten([spawns]);
-    const sources = _.flatten([energy]);
+    const sinks = _([spawns]).flatten().filter(s => s.energyLevel < 0).value();
+    const sources = _([energy]).flatten().filter(s => s.energyLevel > 0).value();
 
-    console.log(`spawns: ${sinks}`);
-    console.log(`energy: ${sources}`);
+    return {sinks, sources, haulers};
+};
+
+function routeEnergyData(sinks, sources, haulers) {
+    console.log(`sinks: ${sinks}`);
+    console.log(`sources: ${sources}`);
+    console.log(`haulers: ${haulers}`);
 };
 
 exports.loop = function() {
     _.each(Game.spawns, s => s.drawSpots());
     _(Game.rooms).map(r => r.sources).flatten().each(SourceManager).value();
-    collectEnergyData();
+ 
+    const {sinks, sources, haulers} = collectEnergyData();
+    routeEnergyData(sinks, sources, haulers);
 };
