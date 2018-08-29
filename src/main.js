@@ -2,100 +2,10 @@
 
 console.log(`Reinitialized at ${Game.time}`);
 
-const { defineProperty } = require('utils.prototype');
-
-// -------------
-
-function findSources() {
-    return this.find(FIND_SOURCES);
-};
-
-function findEnergy(type=RESOURCE_ENERGY) {
-    const droppedEnergy = this.find(FIND_DROPPED_RESOURCES, {resourceType:type});
-    // _.each(droppedEnergy, e => console.log(e.pos, e.amount));
-
-    const spawns = _.filter(Game.spawns, {room: {name: this.name}});
-    // _.each(spawns, s => console.log(s.pos, s.energy - s.energyCapacity));
-};
-
-defineProperty(Room, 'sources', findSources);
-Room.prototype.findEnergy = findEnergy;
-
-// -------------
-
-function findSpots() {
-    // console.log(`in findSpots(${this})`);
-    const pos = this.pos;
-    const room = this.room;
-    const terra = room.lookForAtArea(
-                    LOOK_TERRAIN, pos.y-1, pos.x-1, pos.y+1, pos.x+1, true);
-    return _(terra).filter(t => t.terrain === 'plain' || t.terrain === 'swamp')
-                   .map(t => new RoomPosition(t.x, t.y, room.name))
-                   .value();
-};
-
-function containerSpot() {
-    // if (this.memory.containerSpot) {
-    //     return new RoomPosition(
-    //         this.memory.containerSpot.x,
-    //         this.memory.containerSpot.y,
-    //         this.room.name);
-    // }
-    const spawn = Game.spawns.Spawn1;
-    const spots = this.spots;
-    const path = PathFinder.search(spawn.pos, this.spots, {plainCost:2, maxRooms:1});
-    if (path.incomplete) {
-        throw new Error(`Cannot find complete path from ${spawn} to ${this.spots}`);
-    }
-
-    // this.room.visual.poly(path.path);
-    const spot = _.last(path.path);
-    this.memory.containerSpot = {x: spot.x, y: spot.y};
-    return spot;
-};
-
-function getSourceMemory() {
-    return _.get(Memory, `sources.${this.id}`, {});
-};
-
-function getHarvesters() {
-    return _.filter(Game.creeps, c => c.memory.source === this.id);
-};
-
-defineProperty(Source, 'memory', getSourceMemory);
-defineProperty(Source, 'spots', findSpots);
-defineProperty(Source, 'harvesters', getHarvesters);
-defineProperty(Source, 'containerSpot', containerSpot);
-
-// ------------
-
-function cargoSize() {
-    return _.sum(this.carry);
-};
-
-defineProperty(Creep, 'carryNow', cargoSize);
-
-// ------------
-
-function findSpawnSpots() {
-    const p = this.pos;
-    const sides = [
-        new RoomPosition(p.x-1, p.y, p.roomName),
-        new RoomPosition(p.x+1, p.y, p.roomName),
-        new RoomPosition(p.x, p.y-1, p.roomName),
-        new RoomPosition(p.x, p.y+1, p.roomName)];
-    return _.filter(sides, p => p.lookFor(LOOK_TERRAIN) !== 'wall');
-};
-
-defineProperty(StructureSpawn, 'spots', findSpawnSpots);
-
-// ------------
-
-function drawSpots(source) {
-    const visual = source.room.visual;
-    _.each(source.spots, pos => visual.circle(pos, {fill:'Yellow'}));
-    visual.circle(source.containerSpot, {fill: 'Red'});
-};
+require('prototype.room');
+require('prototype.source');
+require('prototype.spawn');
+require('prototype.creep');
 
 function buildHarvester(source) {
     // console.log(`in buildHarvester(${source})`);
@@ -123,11 +33,8 @@ function runHarvesters(source) {
 };
 
 function buildHarvesters(source) {
-    // console.log(`in buildHarvesters(${source})`);
     const harvesters = source.harvesters;
     const spots = source.spots;
-    // console.log(`spots: ${JSON.stringify(spots)}`);
-    // console.log(`harvesters: ${JSON.stringify(harvesters)}`);
 
     if (_.size(harvesters) < _.size(spots)) {
         buildHarvester(source);
@@ -135,7 +42,7 @@ function buildHarvesters(source) {
 };
 
 function harvestSource(source) {
-    drawSpots(source);
+    source.drawSpots();
     runHarvesters(source);
     buildHarvesters(source);
 };
