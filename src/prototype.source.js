@@ -14,12 +14,12 @@ function findSpots() {
 };
 
 function containerSpot() {
-    // if (this.memory.containerSpot) {
-    //     return new RoomPosition(
-    //         this.memory.containerSpot.x,
-    //         this.memory.containerSpot.y,
-    //         this.room.name);
-    // }
+    if (this.memory.containerSpot) {
+        return new RoomPosition(
+            this.memory.containerSpot.x,
+            this.memory.containerSpot.y,
+            this.room.name);
+    }
     const spawn = Game.spawns.Spawn1;
     const spots = this.spots;
     const path = PathFinder.search(spawn.pos, this.spots, {plainCost:2, maxRooms:1});
@@ -31,6 +31,18 @@ function containerSpot() {
     const spot = _.last(path.path);
     this.memory.containerSpot = {x: spot.x, y: spot.y};
     return spot;
+};
+
+function getContainer() {
+    const containers = _.filter(Game.structures, s => {structureType: STRUCTURE_CONTAINER, pos: this.containerSpot});
+    if (_.size(containers) === 1)
+        return _.first(containers);
+
+    const sites = _.filter(Game.constructionSites, s => {structureType: STRUCTURE_CONTAINER, pos: this.containerSpot});
+    if (_.size(sites) === 1)
+        return _.first(sites);
+
+    return null;
 };
 
 function getSourceMemory() {
@@ -51,4 +63,5 @@ defineProperty(Source, 'memory', getSourceMemory);
 defineProperty(Source, 'spots', findSpots);
 defineProperty(Source, 'harvesters', getHarvesters);
 defineProperty(Source, 'containerSpot', containerSpot);
+defineProperty(Source, 'container', getContainer);
 Source.prototype.drawSpots = drawSpots;

@@ -1,5 +1,7 @@
 'use strict';
 
+
+
 function buildHarvester(source) {
     const spawn = Game.spawns.Spawn1;
     const body = [WORK, WORK, CARRY, MOVE];
@@ -8,13 +10,62 @@ function buildHarvester(source) {
     return spawn.spawnCreep(body, name, {memory:memory});
 };
 
-function runHarvester(creep, spot, source) {
-    if (!creep.pos.isEqualTo(spot)) {
-        creep.moveTo(spot);
-        return;
+function moveTo(creep, pos) {
+    const ret = creep.moveTo(spot);
+    if (ret === OK || ret === ERR_TIRED || ret === ERR_BUSY)
+        return OK;
+    return ret;
+};
+
+function repair(creep, target) {
+    const ret = creep.repair(target);
+    if (ret === OK || ret === ERR_TIRED || ret === ERR_BUSY)
+        return OK;
+    return ret;
+};
+
+function transfer(creep, target) {
+    const ret = creep.transfer(target);
+    if (ret === OK || ret === ERR_BUSY)
+        return OK;
+    return ret;
+};
+
+function harvest(creep, spot, source) {
+    const workCount  = _(creep.body).map(b => b.type === WORK ? 1 : 0).sum();
+    const hasCarry = _.any(creep.body, {type: CARRY});
+
+    if (workCount === 0 || !hasCarry)
+        return ERR_NO_BODYPART;
+
+    if (!creep.pos.isEqualTo(spot))
+        return moveTo(creep, spot);
+
+    const creepCarry = _.sum(creep.carry);
+    const wouldOverflow = (creep.carryCapacity - creepCarry - workCount * HARVEST_POWER) < 0;
+    if (wouldOverflow) {
+        let repairFlag = false;
+        let transferFlag = false;
+        const cont = source.container;
+        if (cont instanceof StructureContainer) {
+            if (cont.hits < cont.hitsMax/2)
+                repairFlag = OK === repair(creep, cont);
+
+            const contUnusedRoom = cont.storeCapacity - _.sum(cont.store);
+            if (contUnusedRoom > 0)
+                transferFlag = OK === transfer(creep, cont);
+        }
     }
 
-    creep.harvest(source);
+    if (creepCarry === creep.carryCapacity && !repairFlag && !transferFlag)
+        return ERR_FULL;
+
+    if (!repairFlag)
+        return creep.harvest(source);
+};
+
+function runHarvester(creep, spot, source) {
+    return harvest(creep, spot, source);
 };
 
 function runHarvesters(source) {

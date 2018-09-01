@@ -1,0 +1,89 @@
+What are script's game goals?
+
+ExpansionRank (upgrade controllers)
+PowerRank (process power)
+
+--
+
+ExpansionRank():
+    RefillStructures() && BuildStructures() && UpgradeController();
+
+PowerRank():
+    ProcessPower();
+
+--
+
+RefillStructures():
+    // structures which require energy and does not have enough energy incoming
+    // prioritized somehow
+    const sinks = GetEnergyShortageStructures(room); // instant
+    const creeps = GetEnergyFilledCreeps(room); // may span
+    routeEnergy(creeps, sinks);
+
+    RouteEnergy(creeps, sinks):
+
+
+    GetEnergyShortageStructures():
+        _.filter(Game.structures, s => s.structureType in [spawn, extension, tower, lab])
+         .filter(s => s.getEnergyBalance() < 0)
+
+        GetEnergyBalance(structure):
+            return structure.energy - structure.energyCapacity + structure.getIncomingEnergy()
+
+            GetIncomingEnergy(structure):
+                return sum(IncomingEnergy);
+
+RefillStructure(structure):
+    // objects which have energy which is not queued to be hauled
+    // prioritized by distance
+    const balance = structure.getEnergyBalance();
+    let creeps = getDedicatedCreeps(structure);
+    let toDeliver = balance;
+    _.each(creeps, function(creep) {
+        const toDeliver = creep.addDeliveryOrder(structure, balance);
+        balance -= toDeliver;
+    });
+
+
+creep with a certain configuration serves multiple buildings
+energyFlow
+
+source  harvest:
+            if (me.wouldoverflow)
+                if (hascontainer)
+                    if (cont.hp < 50%)
+                        repair
+                        repflag = true
+                    if (!cont.full)
+                        transfer
+                        transferflag = true
+
+            if (me.full && !repflag && !transferflag)
+                err_full
+
+            if (!repFlag)
+                harvest
+
+        haul:
+            if (hascontainer)
+                if (cont.damaged)
+                    repair
+                if (repairflag || !full && cont.hasenergy)
+                    withdraw
+            
+            if (hasstorage)
+                transfer(storage)
+
+        fill:
+            if (hasstorage)
+                withdraw
+
+        --(withdraw)-> filler   || carry --(transfer)-> eShortageStructure
+        --(withdraw)-> builder  || work/carry --(build)-> site
+                                              --(repair)-> wall/rampart
+        --(withdraw)-> upgrader || work/carry --(upgrade)-> controller
+
+if (hascontainer && container.hasroom)
+    container 
+else
+    refill || build || upgrade
