@@ -17,7 +17,7 @@ class Helper {
             case ERR_BUSY:
                 return OK;
             case ERR_NOT_IN_RANGE:
-                if (moveRange >== 0) {
+                if (moveRange >= 0) {
                     try {
                         this.errFlag = true;
                         return this.move(target, moveRange);
