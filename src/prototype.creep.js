@@ -8,9 +8,6 @@ class Helper {
     };
 
     err(ret, target, moveRange) {
-        if (this.errFlag)
-            throw new Error('Detected error processing recursion');
-
         switch(ret) {
             case OK:
             case ERR_TIRED:
@@ -19,6 +16,8 @@ class Helper {
             case ERR_NOT_IN_RANGE:
                 if (moveRange >= 0) {
                     try {
+                        if (this.errFlag)
+                            throw new Error('Detected error processing recursion');
                         this.errFlag = true;
                         return this.move(target, moveRange);
                     } finally {
