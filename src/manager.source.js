@@ -36,11 +36,9 @@ function harvest(creep, source, spot) {
         return ERR_FULL;
 
     if (!repairFlag)
-    {
-        if (!creep.pos.isEqualTo(spot))
-            return creep.helper.move(spot);
         return creep.helper.harvest(source, spot);
-    }
+
+    return OK;
 };
 
 function haul(creep, source) {
