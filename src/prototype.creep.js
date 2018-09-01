@@ -52,7 +52,7 @@ class Helper {
         if (pos instanceof RoomPosition) {
             if (!pos.isNearTo(target.pos))
                 throw new Error(`Attempt ${this.creep} to harvest ${target} from ${pos}`);
-            if (!pos.isEqual(this.creep.pos))
+            if (!pos.isEqualTo(this.creep.pos))
                 return this.move(pos);
         }
 
