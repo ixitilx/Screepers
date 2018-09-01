@@ -7,7 +7,7 @@ class Helper {
         this.creep = creep;
     };
 
-    err(code, target, moveRange) {
+    err(ret, target, moveRange) {
         if (this.errFlag)
             throw new Error('Detected error processing recursion');
 
