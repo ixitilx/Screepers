@@ -43,9 +43,9 @@ function harvest(creep, spot, source) {
 
     const creepCarry = _.sum(creep.carry);
     const wouldOverflow = (creep.carryCapacity - creepCarry - workCount * HARVEST_POWER) < 0;
+    let repairFlag = false;
+    let transferFlag = false;
     if (wouldOverflow) {
-        let repairFlag = false;
-        let transferFlag = false;
         const cont = source.container;
         if (cont instanceof StructureContainer) {
             if (cont.hits < cont.hitsMax/2)
