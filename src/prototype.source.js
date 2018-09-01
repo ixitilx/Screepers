@@ -34,11 +34,11 @@ function containerSpot() {
 };
 
 function getContainer() {
-    const containers = _.filter(Game.structures, s => {structureType: STRUCTURE_CONTAINER, pos: this.containerSpot});
+    const containers = _.filter(Game.structures, s => {'structureType': STRUCTURE_CONTAINER, 'pos': this.containerSpot});
     if (_.size(containers) === 1)
         return _.first(containers);
 
-    const sites = _.filter(Game.constructionSites, s => {structureType: STRUCTURE_CONTAINER, pos: this.containerSpot});
+    const sites = _.filter(Game.constructionSites, s => {'structureType': STRUCTURE_CONTAINER, 'pos': this.containerSpot});
     if (_.size(sites) === 1)
         return _.first(sites);
 
