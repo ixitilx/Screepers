@@ -11,7 +11,7 @@ function buildHarvester(source) {
 };
 
 function moveTo(creep, pos) {
-    const ret = creep.moveTo(spot);
+    const ret = creep.moveTo(pos);
     if (ret === OK || ret === ERR_TIRED || ret === ERR_BUSY)
         return OK;
     return ret;
