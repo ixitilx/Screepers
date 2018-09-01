@@ -87,8 +87,9 @@ const actions = [harvest, haul, fill, build];
 
 function runHarvester(creep, source, spot) {
     const lastActionId = creep.memory.lastActionId || 0;
-    for(let i = 0; i < _.size(actions); i++) {
-        const action = actions[i + lastActionId];
+    const nActions = _.size(actions);
+    for(let i = 0; i < nActions; i++) {
+        const action = actions[(i + lastActionId) % nActions];
         const ret = action(creep, source, spot);
         if (ret === OK) {
             creep.memory.lastActionId = i + lastActionId;
