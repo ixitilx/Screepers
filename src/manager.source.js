@@ -15,9 +15,6 @@ function harvest(creep, source, spot) {
     if (workCount === 0 || !hasCarry)
         return ERR_NO_BODYPART;
 
-    if (!creep.pos.isEqualTo(spot))
-        return creep.helper.move(spot);
-
     const creepCarry = _.sum(creep.carry);
     const wouldOverflow = (creep.carryCapacity - creepCarry - workCount * HARVEST_POWER) < 0;
     let repairFlag = false;
@@ -39,7 +36,11 @@ function harvest(creep, source, spot) {
         return ERR_FULL;
 
     if (!repairFlag)
+    {
+        if (!creep.pos.isEqualTo(spot))
+            return creep.helper.move(spot);
         return creep.helper.harvest(source, spot);
+    }
 };
 
 function haul(creep, source) {
