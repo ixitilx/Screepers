@@ -63,6 +63,6 @@ exports.loop = function() {
     _.each(Game.spawns, s => s.drawSpots());
     _(Game.rooms).map(r => r.sources).flatten().each(SourceManager).value();
  
-    const {sinks, sources, haulers} = collectEnergyData();
-    routeEnergy(sinks, sources, haulers);
+    // const {sinks, sources, haulers} = collectEnergyData();
+    // routeEnergy(sinks, sources, haulers);
 };

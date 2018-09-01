@@ -1,37 +1,14 @@
 'use strict';
 
-
-
 function buildHarvester(source) {
     const spawn = Game.spawns.Spawn1;
     const body = [WORK, WORK, CARRY, MOVE];
-    const name = `harvester_${Game.time % 1500}`;
+    const name = `harvester_${Game.time % CREEP_LIFE_TIME}`;
     const memory = {source: source.id};
     return spawn.spawnCreep(body, name, {memory:memory});
 };
 
-function moveTo(creep, pos) {
-    const ret = creep.moveTo(pos);
-    if (ret === OK || ret === ERR_TIRED || ret === ERR_BUSY)
-        return OK;
-    return ret;
-};
-
-function repair(creep, target) {
-    const ret = creep.repair(target);
-    if (ret === OK || ret === ERR_TIRED || ret === ERR_BUSY)
-        return OK;
-    return ret;
-};
-
-function transfer(creep, target) {
-    const ret = creep.transfer(target);
-    if (ret === OK || ret === ERR_BUSY)
-        return OK;
-    return ret;
-};
-
-function harvest(creep, spot, source) {
+function harvest(creep, source, spot) {
     const workCount  = _(creep.body).map(b => b.type === WORK ? 1 : 0).sum();
     const hasCarry = _.any(creep.body, {type: CARRY});
 
@@ -39,21 +16,22 @@ function harvest(creep, spot, source) {
         return ERR_NO_BODYPART;
 
     if (!creep.pos.isEqualTo(spot))
-        return moveTo(creep, spot);
+        return creep.helper.move(spot);
 
     const creepCarry = _.sum(creep.carry);
     const wouldOverflow = (creep.carryCapacity - creepCarry - workCount * HARVEST_POWER) < 0;
     let repairFlag = false;
     let transferFlag = false;
+
     if (wouldOverflow) {
         const cont = source.container;
         if (cont instanceof StructureContainer) {
             if (cont.hits < cont.hitsMax/2)
-                repairFlag = OK === repair(creep, cont);
+                repairFlag = OK === creep.helper.repair(cont);
 
             const contUnusedRoom = cont.storeCapacity - _.sum(cont.store);
             if (contUnusedRoom > 0)
-                transferFlag = OK === transfer(creep, cont);
+                transferFlag = OK === creep.helper.transfer(cont);
         }
     }
 
@@ -61,20 +39,70 @@ function harvest(creep, spot, source) {
         return ERR_FULL;
 
     if (!repairFlag)
-        return creep.harvest(source);
+        return creep.helper.harvest(source, spot);
 };
 
-function runHarvester(creep, spot, source) {
-    const ret = harvest(creep, spot, source);
-    if (ret !== OK)
-        console.log(creep, source, spot, ret);
-    return ret;
+function haul(creep, source) {
+    const cont = source.container;
+    if (cont instanceof StructureContainer) {
+        const creepCarry = _.sum(creep.carry);
+        let repairFlag = false;
+        if (cont.hits < cont.hitsMax)
+            repairFlag = OK === creep.helper.repair(cont);
+        if ((repairFlag || creepCarry < creep.carryCapacity) && cont.store[RESOURCE_ENERGY] > 0)
+            creep.helper.withdraw(cont, RESOURCE_ENERGY);
+    }
+
+    if (creep.room.storage) {
+        return creep.helper.transfer(creep.room.storage);
+    }
+
+    return ERR_INVALID_TARGET;
+};
+
+function fill(creep) {
+    if (creep.room.storage) {
+        const ret = creep.helper.withdraw(creep.room.storage);
+        if (ret !== ERR_FULL && ret !== ERR_NOT_ENOUGH_RESOURCES)
+            return ret;
+    }
+
+    const starvingStructures =
+        _(Game.structures).filter({room: {name: creep.room.name}})
+                          .filter(s => s.energy && s.energyCapacity && s.energy < s.energyCapacity)
+                          .value();
+
+    if (_.size(starvingStructures) > 0) {
+        return creep.helper.transfer(_.first(starvingStructures));
+    }
+
+    return ERR_INVALID_TARGET;
+};
+
+function build(creep) {
+
+};
+
+const actions = [harvest, haul, fill, build];
+
+function runHarvester(creep, source, spot) {
+    const lastActionId = creep.memory.lastActionId || 0;
+    for(let i = 0; i < _.size(actions); i++) {
+        const action = actions[i + lastActionId];
+        const ret = action(creep, source, spot);
+        if (ret === OK) {
+            creep.memory.lastActionId = i + lastActionId;
+            return OK;
+        } else {
+            console.log(`Creep ${creep} Action ${i} returned ${ret}. ${source}, ${spot}`);
+        }
+    }
 };
 
 function runHarvesters(source) {
     const harvoSpots = _.zip(source.spots, source.harvesters);
     _(harvoSpots).filter(hs => hs[0] && hs[1])
-                 .each(hs => runHarvester(hs[1], hs[0], source))
+                 .each(hs => runHarvester(hs[1], source, hs[0]))
                  .value();
 };
 
