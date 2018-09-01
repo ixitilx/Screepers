@@ -65,7 +65,10 @@ function harvest(creep, spot, source) {
 };
 
 function runHarvester(creep, spot, source) {
-    return harvest(creep, spot, source);
+    const ret = harvest(creep, spot, source);
+    if (ret !== OK)
+        console.log(creep, spot, source, ret);
+    return ret;
 };
 
 function runHarvesters(source) {
