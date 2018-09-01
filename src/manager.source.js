@@ -89,13 +89,13 @@ function runHarvester(creep, source, spot) {
     const lastActionId = creep.memory.lastActionId || 0;
     const nActions = _.size(actions);
     for(let i = 0; i < nActions; i++) {
-        const action = actions[(i + lastActionId) % nActions];
-        const ret = action(creep, source, spot);
+        const idx = (i + lastActionId) % nActions;
+        const ret = actions[idx](creep, source, spot);
         if (ret === OK) {
             creep.memory.lastActionId = i + lastActionId;
             return OK;
         } else {
-            console.log(`Creep ${creep} Action ${i} returned ${ret}. ${source}, ${spot}`);
+            console.log(`Creep ${creep} Action ${idx} returned ${ret}. ${source}, ${spot}`);
         }
     }
 };
