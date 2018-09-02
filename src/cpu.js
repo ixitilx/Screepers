@@ -20,7 +20,6 @@ class Record {
     addRecord(record) {
         record.parent = this;
         this.children.push(record);
-        console.log(`${this.id}, ${this.children.length}`);
         return record;
     };
 
@@ -37,7 +36,7 @@ class Record {
     print(recurse=true, indent=0) {
         const out = [];
         this.format(out, recurse, indent);
-        _.each(out, console.log);
+        _.each(out, line => console.log(line));
 
 
         // const rows = _.map(table, row => _.map(row, v => v.length));
