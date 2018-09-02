@@ -116,18 +116,18 @@ function buildHarvesters(source) {
 };
 
 function harvestSource(source) {
-    let cpu = Game.cpu.getUsed();
+    // let cpu = Game.cpu.getUsed();
     source.drawSpots();
-    let cpu2 = Game.cpu.getUsed();
-    console.log('source.drawSpots', cpu2 - cpu); cpu = cpu2;
+    // let cpu2 = Game.cpu.getUsed();
+    // console.log('source.drawSpots', cpu2 - cpu); cpu = cpu2;
 
     runHarvesters(source);
-    cpu2 = Game.cpu.getUsed();
-    console.log('source.runHarvesters', cpu2 - cpu); cpu = cpu2;
+    // cpu2 = Game.cpu.getUsed();
+    // console.log('source.runHarvesters', cpu2 - cpu); cpu = cpu2;
 
     buildHarvesters(source);
-    cpu2 = Game.cpu.getUsed();
-    console.log('source.buildHarvesters', cpu2 - cpu); cpu = cpu2;
+    // cpu2 = Game.cpu.getUsed();
+    // console.log('source.buildHarvesters', cpu2 - cpu); cpu = cpu2;
 };
 
 module.exports = harvestSource;
