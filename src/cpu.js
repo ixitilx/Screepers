@@ -90,6 +90,7 @@ function printReport() {
 };
 
 module.exports = {
+    reset: reset,
     measure: measure,
     printReport: printReport,
 };

@@ -10,13 +10,13 @@ require('prototype.resource');
 
 const SourceManager = require('manager.source');
 
-const {measure, printReport} = require('cpu');
+const {reset, measure, printReport} = require('cpu');
 
 exports.loop = function() {
+    reset();
     measure('loop', function() {
         _.each(Game.spawns, s => s.drawSpots());
         _(Game.rooms).map(r => r.sources).flatten().each(SourceManager).value();
     });
-
     printReport();
 };
