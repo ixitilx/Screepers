@@ -1,5 +1,7 @@
 'use strict';
 
+const {measure} = require('cpu');
+
 function buildHarvester(source) {
     const spawn = Game.spawns.Spawn1;
     const body = [WORK, WORK, CARRY, MOVE];
@@ -117,15 +119,21 @@ function buildHarvesters(source) {
 
 function harvestSource(source) {
     // let cpu = Game.cpu.getUsed();
-    source.drawSpots();
+    measure('drawSpots', function() {
+        source.drawSpots();
+    });
     // let cpu2 = Game.cpu.getUsed();
     // console.log('source.drawSpots', cpu2 - cpu); cpu = cpu2;
 
-    runHarvesters(source);
+    measure('runHarvesters', function() {
+        runHarvesters(source);
+    });
     // cpu2 = Game.cpu.getUsed();
     // console.log('source.runHarvesters', cpu2 - cpu); cpu = cpu2;
 
-    buildHarvesters(source);
+    measure('buildHarvesters', function() {
+        buildHarvesters(source);
+    });
     // cpu2 = Game.cpu.getUsed();
     // console.log('source.buildHarvesters', cpu2 - cpu); cpu = cpu2;
 };
