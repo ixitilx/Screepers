@@ -23,25 +23,20 @@ class Record {
         return record;
     };
 
-    format(recurse=true, indent=0) {
-        const out = [];
+    format(out, recurse=true, indent=0) {
         const ind = indentStr.repeat(indent);
         const sta = fmtFloat(this.start);
         const end = fmtFloat(this.end);
         out.push(`${ind}${this.id} ${sta} ${end}`);
-        if (recurse) {
-            console.log('formatting children');
-            _(this.children).map(c => c.format(recurse, indent+1))
-                            .each(c => out.push(c))
-                            .value();
-        }
+        if (recurse)
+            _.each(this.children, c => c.format(out, recurse, indent+1));
         return out;
     };
 
     print(recurse=true, indent=0) {
-        const table = this.format(recurse, indent);
-
-        console.log(JSON.stringify(table, 0, 2));
+        const out = [];
+        this.format(out, recurse, indent);
+        console.log(JSON.stringify(out, 0, 2));
         // _.each(table, console.log);
 
 
