@@ -55,7 +55,7 @@ class Record {
 };
 
 let root;
-let curr = root;
+let curr;
 
 function beginRecord(id) {
     curr = curr.addRecord(new Record(id));
@@ -76,8 +76,8 @@ function measure(id, functor) {
 };
 
 function reset() {
-    nonlocal root;
     root = new Record('root');
+    curr = root;
 };
 
 function printReport() {
