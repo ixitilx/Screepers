@@ -54,7 +54,7 @@ class Record {
     };
 };
 
-let root = new Record('root');
+let root;
 let curr = root;
 
 function beginRecord(id) {
@@ -76,7 +76,7 @@ function measure(id, functor) {
 };
 
 function reset() {
-    root = new Record('root');
+    global root = new Record('root');
 };
 
 function printReport() {
