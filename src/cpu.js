@@ -77,7 +77,8 @@ function measure(id, functor) {
 };
 
 function printReport() {
-    root.print();
+    console.log(JSON.stringify(root, null, 2));
+    // root.print();
     root = new Record('root');
 };
 
