@@ -76,7 +76,7 @@ function measure(id, functor) {
 };
 
 function reset() {
-    global root;
+    nonlocal root;
     root = new Record('root');
 };
 
