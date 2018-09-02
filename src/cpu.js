@@ -55,7 +55,7 @@ function beginRecord(id) {
 
 function endRecord() {
     curr.endRecord();
-    curr = r.parent;
+    curr = curr.parent;
 };
 
 function measure(id, functor) {
