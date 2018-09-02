@@ -2,6 +2,10 @@
 
 const indentStr = '  ';
 
+function fmtFloat(x) {
+    return Number.parseFloat(x).toFixed(4);
+};
+
 class Record {
     constructor(id) {
         this.id = id;
@@ -22,7 +26,7 @@ class Record {
 
     format(recurse=true, indent=0) {
         const out = [];
-        out.push(`${indentStr.repeat(indent)}${this.id} - ${this.start} - ${this.end}`);
+        out.push(`${indentStr.repeat(indent)}${this.id} - ${fmtFloat(this.start)} - ${fmtFloat(this.end)}`);
         if (recurse && this.children) {
             const childrenRecs = _.map(this.children, c => c.format(recurse, indent+1));
             out.concat(childrenRecs);
