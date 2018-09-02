@@ -13,7 +13,7 @@ class Record {
     };
 
     addRecord(record) {
-        if (!'children' in this)
+        if (!('children' in this))
             this.children = [];
         record.parent = this;
         this.children.push(record);
