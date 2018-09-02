@@ -10,6 +10,7 @@ class Record {
     constructor(id) {
         this.id = id;
         this.start = Game.cpu.getUsed();
+        this.children = [];
     };
 
     endRecord() {
@@ -17,8 +18,6 @@ class Record {
     };
 
     addRecord(record) {
-        if (!('children' in this))
-            this.children = [];
         record.parent = this;
         this.children.push(record);
         return record;
@@ -30,7 +29,7 @@ class Record {
         const sta = fmtFloat(this.start);
         const end = fmtFloat(this.end);
         out.push(`${ind}${this.id} ${sta} ${end}`);
-        if (recurse && typeof(this.children) !== 'undefined') {
+        if (recurse) {
             console.log('formatting children');
             _(this.children).map(c => c.format(recurse, indent+1))
                             .each(c => out.push(c))
@@ -63,8 +62,7 @@ let root = new Record('root');
 let curr = root;
 
 function beginRecord(id) {
-    const r = new Record(id);
-    curr = curr.addRecord(r);
+    curr = curr.addRecord(new Record(id));
 };
 
 function endRecord() {
