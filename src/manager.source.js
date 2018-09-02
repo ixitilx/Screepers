@@ -94,7 +94,7 @@ function runHarvester(creep, source, spot) {
             creep.memory.lastActionId = i + lastActionId;
             return OK;
         } else {
-            console.log(`Creep ${creep} Action ${idx} returned ${ret}. ${source}, ${spot}`);
+            // console.log(`Creep ${creep} Action ${idx} returned ${ret}. ${source}, ${spot}`);
         }
     }
 };
@@ -116,9 +116,18 @@ function buildHarvesters(source) {
 };
 
 function harvestSource(source) {
+    let cpu = Game.cpu.getUsed();
     source.drawSpots();
+    let cpu2 = Game.cpu.getUsed();
+    console.log('source.drawSpots', cpu2 - cpu); cpu = cpu2;
+
     runHarvesters(source);
+    cpu2 = Game.cpu.getUsed();
+    console.log('source.runHarvesters', cpu2 - cpu); cpu = cpu2;
+
     buildHarvesters(source);
+    cpu2 = Game.cpu.getUsed();
+    console.log('source.buildHarvesters', cpu2 - cpu); cpu = cpu2;
 };
 
 module.exports = harvestSource;
