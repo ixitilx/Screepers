@@ -69,6 +69,7 @@ function measure(id, functor) {
 
 function printReport() {
     root.print();
+    root = new Record('root');
 };
 
 module.exports = {
