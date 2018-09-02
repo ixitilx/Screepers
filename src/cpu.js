@@ -32,7 +32,7 @@ class Record {
         out.push(`${ind} ${sta} ${end}`);
         if (recurse && typeof(this.children) !== 'undefined') {
             _(this.children).map(c => c.format(recurse, indent+1))
-                            .each(out.push)
+                            .each(c => out.push(c))
                             .value();
         }
         return out;
