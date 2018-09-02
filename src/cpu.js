@@ -31,6 +31,7 @@ class Record {
         const end = fmtFloat(this.end);
         out.push(`${ind}${this.id} ${sta} ${end}`);
         if (recurse && typeof(this.children) !== 'undefined') {
+            console.log('formatting children');
             _(this.children).map(c => c.format(recurse, indent+1))
                             .each(c => out.push(c))
                             .value();
