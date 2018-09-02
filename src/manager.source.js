@@ -104,8 +104,9 @@ function runHarvester(creep, source, spot) {
 function runHarvesters(source) {
     const harvoSpots = _.zip(source.spots, source.harvesters);
     _(harvoSpots).filter(hs => hs[0] && hs[1])
-                 .each(hs => runHarvester(hs[1], source, hs[0]))
-                 .value();
+                 .each(hs => measure('runHarvester', function() {
+                    runHarvester(hs[1], source, hs[0]);
+                 }).value();
 };
 
 function buildHarvesters(source) {
