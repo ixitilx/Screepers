@@ -37,7 +37,9 @@ class Record {
     print(recurse=true, indent=0) {
         const table = this.format(recurse, indent);
 
-        _.each(table, console.log);
+        console.log(JSON.stringify(table, 0, 2));
+        // _.each(table, console.log);
+
 
         // const rows = _.map(table, row => _.map(row, v => v.length));
         // const cols = _.zip(...rows);
