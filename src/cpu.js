@@ -20,6 +20,7 @@ class Record {
     addRecord(record) {
         record.parent = this;
         this.children.push(record);
+        console.log(`${this.id}, ${this.children.length}`);
         return record;
     };
 
@@ -27,7 +28,7 @@ class Record {
         const ind = indentStr.repeat(indent);
         const sta = fmtFloat(this.start);
         const end = fmtFloat(this.end);
-        out.push(`${ind}${this.id} ${sta} ${end} ${_.size(this.children)}`);
+        out.push(`${ind}${this.id} ${sta} ${end} ${this.children.length}`);
         if (recurse)
             _.each(this.children, c => c.format(out, recurse, indent+1));
         return out;
