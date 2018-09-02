@@ -76,7 +76,8 @@ function measure(id, functor) {
 };
 
 function reset() {
-    global root = new Record('root');
+    global root;
+    root = new Record('root');
 };
 
 function printReport() {
