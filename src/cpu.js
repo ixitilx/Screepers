@@ -26,10 +26,14 @@ class Record {
 
     format(recurse=true, indent=0) {
         const out = [];
-        out.push(`${indentStr.repeat(indent)}${this.id} - ${fmtFloat(this.start)} - ${fmtFloat(this.end)}`);
-        if (recurse && this.children) {
-            const childrenRecs = _.map(this.children, c => c.format(recurse, indent+1));
-            out.concat(childrenRecs);
+        const ind = indentStr.repeat(indent);
+        const sta = fmtFloat(this.start);
+        const end = fmtFloat(this.end);
+        out.push(`${ind} ${sta} ${end}`);
+        if (recurse && typeof(this.children) !== 'undefined') {
+            _(this.children).map(c => c.format(recurse, indent+1))
+                            .each(out.push)
+                            .value();
         }
         return out;
     };
@@ -77,8 +81,8 @@ function measure(id, functor) {
 };
 
 function printReport() {
-    console.log(JSON.stringify(root, null, 2));
-    // root.print();
+    // console.log(JSON.stringify(root, null, 2));
+    root.print();
     root = new Record('root');
 };
 
