@@ -106,7 +106,7 @@ function runHarvesters(source) {
     _(harvoSpots).filter(hs => hs[0] && hs[1])
                  .each(hs => measure('runHarvester', function() {
                     runHarvester(hs[1], source, hs[0]);
-                 }).value();
+                 })).value();
 };
 
 function buildHarvesters(source) {
