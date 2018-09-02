@@ -68,6 +68,7 @@ function beginRecord(id) {
 
 function endRecord() {
     curr.endRecord();
+    console.log(curr.format(false));
     curr = curr.parent;
 };
 
