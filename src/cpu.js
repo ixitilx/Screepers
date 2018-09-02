@@ -25,9 +25,8 @@ class Record {
 
     format(out, recurse=true, indent=0) {
         const ind = indentStr.repeat(indent);
-        const sta = fmtFloat(this.start);
-        const end = fmtFloat(this.end);
-        out.push(`${ind}${this.id} ${sta} ${end} ${this.children.length}`);
+        const dur = fmtFloat(this.end - this.start);
+        out.push(`${ind}${this.id} ${dur}`);
         if (recurse)
             _.each(this.children, c => c.format(out, recurse, indent+1));
         return out;
