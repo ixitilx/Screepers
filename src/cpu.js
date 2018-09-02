@@ -32,16 +32,18 @@ class Record {
     print(recurse=true, indent=0) {
         const table = this.format(recurse, indent);
 
-        const rows = _.map(table, row => _.map(row, v => v.length));
-        const cols = _.zip(...rows);
-        const lengths = _.map(cols, _.max);
+        _.each(table, console.log);
 
-        const formatRow = function(row) {
-            const rowLen = _.zip(row, lengths);
-            return _.map(rowLen, (value, len) => _.padRight(value, len));
-        };
+        // const rows = _.map(table, row => _.map(row, v => v.length));
+        // const cols = _.zip(...rows);
+        // const lengths = _.map(cols, _.max);
 
-        _.each(_.map(table, formatRow), console.log);
+        // const formatRow = function(row) {
+        //     const rowLen = _.zip(row, lengths);
+        //     return _.map(rowLen, (value, len) => _.padRight(value, len));
+        // };
+
+        // _.each(_.map(table, formatRow), console.log);
     };
 };
 
