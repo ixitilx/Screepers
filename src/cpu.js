@@ -82,6 +82,7 @@ function measure(id, functor) {
 
 function printReport() {
     // console.log(JSON.stringify(root, null, 2));
+    root.endRecord();
     root.print();
     root = new Record('root');
 };
