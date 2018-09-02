@@ -37,7 +37,7 @@ class Record {
     print(recurse=true, indent=0) {
         const out = [];
         this.format(out, recurse, indent);
-        _.each(table, console.log);
+        _.each(out, console.log);
 
 
         // const rows = _.map(table, row => _.map(row, v => v.length));
