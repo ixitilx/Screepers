@@ -24,7 +24,7 @@ class Record {
         const rec = [`${indentStr.repeat(indent)}${this.id}`, `${this.start}`, `${this.end}`];
         if (recurse && this.children) {
             const childrenRecs = _.map(this.children, c => c.format(recurse, indent+1));
-            return [rec].concat(childRecs);
+            return [rec].concat(childrenRecs);
         }
         return [rec];
     };
