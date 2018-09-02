@@ -38,7 +38,7 @@ class Record {
 
         const formatRow = function(row) {
             const rowLen = _.zip(row, lengths);
-            return _.map(rowLen, (value, len) => value.padEnd(len, ' '));
+            return _.map(rowLen, (value, len) => _.padRight(value, len));
         };
 
         _.each(_.map(table, formatRow), console.log);
