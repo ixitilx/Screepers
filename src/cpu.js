@@ -21,12 +21,13 @@ class Record {
     };
 
     format(recurse=true, indent=0) {
-        const rec = [`${indentStr.repeat(indent)}${this.id}`, `${this.start}`, `${this.end}`];
+        const out = [];
+        out.push(`${indentStr.repeat(indent)}${this.id} - ${this.start} - ${this.end}`);
         if (recurse && this.children) {
             const childrenRecs = _.map(this.children, c => c.format(recurse, indent+1));
-            return [rec].concat(childrenRecs);
+            out.concat(childrenRecs);
         }
-        return [rec];
+        return out;
     };
 
     print(recurse=true, indent=0) {
