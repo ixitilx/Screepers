@@ -61,7 +61,7 @@ function endRecord() {
 function measure(id, functor) {
     beginRecord(id);
     try {
-        return functor.apply(thisArg, args);
+        return functor();
     } finally {
         endRecord();
     }    
