@@ -48,7 +48,7 @@ class Plan {
 };
 
 function mapIndex(x, y) {
-    assert(x && y, `Invalid coordinates: ${x}, ${y}`);
+    assert(x>=0 && y>=0, `Invalid coordinates: ${x}, ${y}`);
     return 50*y + x;
 };
 
