@@ -97,6 +97,8 @@ function buildDistanceMap(positions, terrainMap) {
                         .filter(p => mapLookup(terrainMap, p.x, p.y) !== '#')
                         .filter(p => mapLookup(out, p.x, p.y) === -1)
                         .value();
+        if (Game.cpu.getUsed() > 5)
+            break;
     };
 
     return {distanceMap: out, maxScore: score-1};
@@ -127,9 +129,11 @@ const tm_ = {};
 
 function drawSomething(room) {
     const terrainMap = room.name in tm_ ? tm_[room.name] : tm_[room.name] = buildTerrainMap(room);
-    console.log(Game.cpu.getUsed(), terrainMap);
-    // const {distanceMap, maxScore} = buildDistanceMap(room.controller.pos, terrainMap);
-    // drawDistanceMap(room, distanceMap, maxScore);
+    console.log(Game.cpu.getUsed());
+    const {distanceMap, maxScore} = buildDistanceMap(room.controller.pos, terrainMap);
+    console.log(Game.cpu.getUsed());
+    drawDistanceMap(room, distanceMap, maxScore);
+    console.log(Game.cpu.getUsed());
 };
 
 module.exports = drawSomething;
