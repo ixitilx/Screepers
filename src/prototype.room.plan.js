@@ -134,6 +134,7 @@ const dm_ = {};
 const cm_ = {};
 
 function drawSomething(room) {
+    console.log('-'.repeat(80));
     const terrainMap = room.name in tm_ ?
                        tm_[room.name] :
                        tm_[room.name] = buildTerrainMap(room);
