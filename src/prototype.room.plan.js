@@ -97,6 +97,7 @@ function buildDistanceMap(positions, terrainMap) {
         queue = _(queue).filter(p => mapLookup(terrainMap, p.x, p.y) !== '#')
                         .filter(p => mapLookup(out, p.x, p.y) === -1)
                         .value();
+        console.log('buildDistanceMap', score, queue);
         if (Game.cpu.getUsed() > 5)
             break;
     };
