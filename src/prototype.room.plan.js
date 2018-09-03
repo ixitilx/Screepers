@@ -95,7 +95,7 @@ function buildDistanceMap(positions, terrainMap) {
         queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
         queue = _.filter(queue, p => mapLookup(terrainMap, p.x, p.y) !== '#');
         queue = _.filter(queue, p => mapLookup(out, p.x, p.y) === -1);
-        if (score > 2 || Game.cpu.getUsed() > 5)
+        if (Game.cpu.getUsed() > 5)
             break;
     };
 
@@ -105,15 +105,14 @@ function buildDistanceMap(positions, terrainMap) {
 function hexColorFromWeight(weight) {
     const color = Math.floor(Math.min(255, Math.max(256 * weight, 0)));
     const hexcolor = _.padLeft(color.toString(16), 2, '0');
-    console.log('hexColorFromWeight', weight, color, hexcolor);
     return hexcolor;
 };
 
 function colorFromWeight(weight) {
     assert(0 <= weight && weight <= 1, `Weight is out of range: ${weight}`);
     const invWeight = 1 - weight;
-    const green = hexColorFromWeight(weight);
-    const red = hexColorFromWeight(invWeight);
+    const red = hexColorFromWeight(weight);
+    const green = hexColorFromWeight(invWeight);
     const color = `#${red}${green}00`;
     return color;
 };
