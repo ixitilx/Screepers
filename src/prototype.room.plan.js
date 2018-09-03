@@ -122,7 +122,7 @@ function drawDistanceMap(room, distanceMap, maxScore) {
                                           return {x: x, y: y, w: v};
                                        })
                                   .filter(obj => obj.w >= 0)
-                                  .map(obj => {x: obj.x, y: obj.y, c: colorFromWeight(obj.w/maxScore)})
+                                  .map(obj => ({x: obj.x, y: obj.y, c: colorFromWeight(obj.w/maxScore)}) )
                                   .each(obj => room.visual.circle(obj.x, obj.y, {fill: obj.c}))
                                   .value();
 };
