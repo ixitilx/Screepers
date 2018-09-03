@@ -139,14 +139,18 @@ function drawSomething(room) {
                        tm_[room.name] :
                        tm_[room.name] = buildTerrainMap(room);
     console.log(Game.cpu.getUsed());
+
+    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
     const {distanceMap, maxScore} = room.name in dm_ ?
                        dm_[room.name] :
-                       dm_[room.name] = buildDistanceMap(room.controller.pos, terrainMap);
+                       dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
     console.log(Game.cpu.getUsed(), maxScore);
+
     const colorMap = room.name in cm_ ?
                      cm_[room.name] :
                      cm_[room.name] = buildColorMap(distanceMap, maxScore);
     console.log(Game.cpu.getUsed());
+
     _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
     console.log(Game.cpu.getUsed());
 };
