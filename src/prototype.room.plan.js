@@ -108,7 +108,7 @@ function hexColorFromWeight(weight) {
 };
 
 function colorFromWeight(weight) {
-    assert(0 <= weight && weight < 1, `Weight is out of range: ${weight}`);
+    assert(0 <= weight && weight <= 1, `Weight is out of range: ${weight}`);
     const invWeight = 1.0 - weight;
     return `#${hexColorFromWeight(invWeight)}${hexColorFromWeight(weight)}00`;
 };
