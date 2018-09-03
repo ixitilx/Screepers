@@ -123,10 +123,11 @@ function drawDistanceMap(room, distanceMap, maxScore) {
                                   .value();
 };
 
+const tm_ = {};
+
 function drawSomething(room) {
-    const a = Game.cpu.getUsed();
-    const terrainMap = buildTerrainMap(room);
-    console.log(Game.cpu.getUsed() - a, terrainMap);
+    const terrainMap = room.name in tm_ ? tm_[room.name] : tm_[room.name] = buildTerrainMap(room);
+    console.log(Game.cpu.getUsed(), terrainMap);
     // const {distanceMap, maxScore} = buildDistanceMap(room.controller.pos, terrainMap);
     // drawDistanceMap(room, distanceMap, maxScore);
 };
