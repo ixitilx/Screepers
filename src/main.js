@@ -2,16 +2,16 @@
 
 console.log(`Reinitialized at ${Game.time}`);
 
-require('prototype.room');
-require('prototype.source');
-require('prototype.spawn');
-require('prototype.creep');
-require('prototype.resource');
+// require('prototype.room');
+// require('prototype.source');
+// require('prototype.spawn');
+// require('prototype.creep');
+// require('prototype.resource');
 const drawSomething = require('prototype.room.plan');
 
-const SourceManager = require('manager.source');
+// const SourceManager = require('manager.source');
 
-const {reset, measure, printReport} = require('cpu');
+// const {reset, measure, printReport} = require('cpu');
 
 exports.loop = function() {
     // reset();
