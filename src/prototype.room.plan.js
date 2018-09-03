@@ -99,7 +99,7 @@ function buildDistanceMap(positions, terrainMap) {
             break;
     };
 
-    return {distanceMap: out, maxScore: score-1};
+    return {distanceMap: out, maxScore: score};
 };
 
 function hexColorFromWeight(weight) {
@@ -131,7 +131,6 @@ function drawSomething(room) {
     const terrainMap = room.name in tm_ ? tm_[room.name] : tm_[room.name] = buildTerrainMap(room);
     console.log(Game.cpu.getUsed());
     const {distanceMap, maxScore} = buildDistanceMap(room.controller.pos, terrainMap);
-    console.log('DistanceMap:', _.filter(distanceMap, d => d > 0));
     console.log(Game.cpu.getUsed(), maxScore);
     drawDistanceMap(room, distanceMap, maxScore);
     console.log(Game.cpu.getUsed());
