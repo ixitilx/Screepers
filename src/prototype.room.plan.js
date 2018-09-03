@@ -95,7 +95,6 @@ function buildDistanceMap(positions, terrainMap) {
         queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
         queue = _.filter(queue, p => mapLookup(terrainMap, p.x, p.y) !== '#');
         queue = _.filter(queue, p => mapLookup(out, p.x, p.y) === -1);
-        console.log('buildDistanceMap', score, JSON.stringify(queue));
         if (score > 2 || Game.cpu.getUsed() > 5)
             break;
     };
@@ -132,6 +131,7 @@ function drawSomething(room) {
     const terrainMap = room.name in tm_ ? tm_[room.name] : tm_[room.name] = buildTerrainMap(room);
     console.log(Game.cpu.getUsed());
     const {distanceMap, maxScore} = buildDistanceMap(room.controller.pos, terrainMap);
+    console.log('DistanceMap:', _.filter(distanceMap, d => d > 0));
     console.log(Game.cpu.getUsed(), maxScore);
     drawDistanceMap(room, distanceMap, maxScore);
     console.log(Game.cpu.getUsed());
