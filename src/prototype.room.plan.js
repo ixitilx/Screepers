@@ -104,7 +104,7 @@ function buildDistanceMap(positions, terrainMap) {
 
 function hexColorFromWeight(weight) {
     const color = Math.min(255, Math.max(256 * weight, 0));
-    return color.toString(16);
+    return _.padLeft(color.toString(16), 2, '0');
 };
 
 function colorFromWeight(weight) {
