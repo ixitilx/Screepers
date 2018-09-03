@@ -87,7 +87,7 @@ function buildDistanceMap(positions, terrainMap) {
 
     const out = Array.from({length: 2500}, (v) => -1);
     
-    let queue = _.map(positions, p => _.pick(p, ['x', 'y']);
+    let queue = _.map(positions, p => _.pick(p, ['x', 'y']));
     let score;
     for (score = 0; queue.length > 0; score++) {
         _.each(queue, q => out[mapIndex(q.x, q.y)] = score);
