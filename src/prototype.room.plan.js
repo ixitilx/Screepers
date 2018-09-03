@@ -144,7 +144,7 @@ function drawSomething(room) {
     console.log(Game.cpu.getUsed(), maxScore);
     const colorMap = room.name in cm_ ?
                      cm_[room.name] :
-                     cm_[room.name] = buildColorMap(drawDistanceMap, maxScore);
+                     cm_[room.name] = buildColorMap(distanceMap, maxScore);
     _.each(colorMap, c => roomVisual.circle(c.x, c.y, {fill: c.c}));
     console.log(Game.cpu.getUsed());
 };
