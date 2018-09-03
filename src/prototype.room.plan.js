@@ -58,7 +58,7 @@ function unmapIndex(idx) {
 };
 
 function mapLookup(roomMap, x, y) {
-    return roomMap[index(x, y)];
+    return roomMap[mapIndex(x, y)];
 };
 
 function buildTerrainMap(room) {
