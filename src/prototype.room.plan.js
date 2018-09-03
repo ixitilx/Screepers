@@ -107,28 +107,31 @@ function hexColorFromWeight(weight) {
 };
 
 function colorFromWeight(weight) {
-    assert(0 <= weight && weight <= 1, `Weight is out of range: ${weight}`);
-    const invWeight = 1 - weight;
-    const red = hexColorFromWeight(weight);
-    const green = hexColorFromWeight(invWeight);
-    const color = `#${red}${green}00`;
-    return color;
+    if (0 <= weight && weight <= 1) {
+        const invWeight = 1 - weight;
+        const red = hexColorFromWeight(weight);
+        const green = hexColorFromWeight(invWeight);
+        const color = `#${red}${green}00`;
+        return color;
+    }
+    return null;
 };
 
-function drawDistanceMap(room, distanceMap, maxScore) {
-    const circles = _(distanceMap).map(function(v, i) {
-                                          const {x, y} = unmapIndex(i);
-                                          const weight = v / maxScore;
-                                          return {x: x, y: y, w: v};
-                                       })
-                                  .filter(obj => obj.w >= 0)
-                                  .map(obj => ({x: obj.x, y: obj.y, c: colorFromWeight(obj.w/maxScore)}) )
-                                  .each(obj => room.visual.circle(obj.x, obj.y, {fill: obj.c}))
-                                  .value();
+function normalizeValue(value, idx, maxScore) {
+    const {x, y} = unmapIndex(i);
+    const color = colorFromWeight(v / maxScore);
+    return {x: x, y: y, c: color};
+};
+
+function buildColorMap(distanceMap, maxScore) {
+    return _(distanceMap).map((v, i) => normalizeValue(v, i, maxScore))
+                         .filter(obj => obj.color !== null)
+                         .value();
 };
 
 const tm_ = {};
 const dm_ = {};
+const cm_ = {};
 
 function drawSomething(room) {
     const terrainMap = room.name in tm_ ?
@@ -139,7 +142,10 @@ function drawSomething(room) {
                        dm_[room.name] :
                        dm_[room.name] = buildDistanceMap(room.controller.pos, terrainMap);
     console.log(Game.cpu.getUsed(), maxScore);
-    drawDistanceMap(room, distanceMap, maxScore);
+    const colorMap = room.name in cm_ ?
+                     cm_[room.name] :
+                     cm_[room.name] = buildColorMap(drawDistanceMap, maxScore);
+    _.each(colorMap, c => roomVisual.circle(c.x, c.y, {fill: c.c}));
     console.log(Game.cpu.getUsed());
 };
 
