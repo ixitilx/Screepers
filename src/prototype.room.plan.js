@@ -91,7 +91,7 @@ function buildDistanceMap(positions, terrainMap) {
     let score;
     for (score = 0; queue.length > 0; score++) {
         _.each(queue, q => out[mapIndex(q.x, q.y)] = score);
-        queue = _(queue).map(p => posAround(p)).flatten().sortBy(['y', 'x'].value();
+        queue = _(queue).map(p => posAround(p)).flatten().sortBy(['y', 'x']).value();
         queue = _.uniq(queue, true, p => mapIndex(p.x, p.y));
         // console.log('buildDistanceMap', score, JSON.stringify(queue));
         queue = _(queue).filter(p => mapLookup(terrainMap, p.x, p.y) !== '#')
