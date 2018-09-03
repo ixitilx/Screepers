@@ -95,11 +95,9 @@ function buildDistanceMap(positions, terrainMap) {
         queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
         queue = _.filter(queue, p => mapLookup(terrainMap, p.x, p.y) !== '#');
         queue = _.filter(queue, p => mapLookup(out, p.x, p.y) === -1);
-        if (Game.cpu.getUsed() > 5)
-            break;
     };
 
-    return {distanceMap: out, maxScore: score};
+    return {distanceMap: out, maxScore: score-1};
 };
 
 function hexColorFromWeight(weight) {
