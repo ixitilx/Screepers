@@ -119,9 +119,11 @@ function drawDistanceMap(room, distanceMap, maxScore) {
     const circles = _(distanceMap).map(function(v, i) {
                                           const {x, y} = unmapIndex(i);
                                           const weight = v / maxScore;
-                                          return {x: x, y: y, w: weight};
+                                          return {x: x, y: y, w: v};
                                        })
-                                  .each(obj => room.visual.circle(obj.x, obj.y, {fill: colorFromWeight(obj.w)}))
+                                  .filter(obj => obj.w >= 0)
+                                  .map(obj => {x: obj.x, y: obj.y, c: colorFromWeight(obj.w/maxScore)})
+                                  .each(obj => room.visual.circle(obj.x, obj.y, {fill: obj.c}))
                                   .value();
 };
 
