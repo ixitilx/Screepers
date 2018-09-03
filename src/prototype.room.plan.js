@@ -119,7 +119,7 @@ function colorFromWeight(weight) {
 
 function normalizeValue(value, idx, maxScore) {
     const {x, y} = unmapIndex(idx);
-    const color = colorFromWeight(v / maxScore);
+    const color = colorFromWeight(value / maxScore);
     return {x: x, y: y, c: color};
 };
 
