@@ -125,8 +125,8 @@ function drawDistanceMap(room, distanceMap, maxScore) {
 
 function drawSomething(room) {
     const terrainMap = buildTerrainMap(room);
-    const {distanceMap, maxScore} = buildDistanceMap(room.controller.pos, terrainMap);
-    drawDistanceMap(room, distanceMap, maxScore);
+    // const {distanceMap, maxScore} = buildDistanceMap(room.controller.pos, terrainMap);
+    // drawDistanceMap(room, distanceMap, maxScore);
 };
 
 module.exports = drawSomething;
