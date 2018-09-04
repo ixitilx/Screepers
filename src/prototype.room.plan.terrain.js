@@ -150,30 +150,31 @@ function drawRow(room, y, row) {
     // row.forEach(drawLog);
 };
 
-const tm_ = {};
-const dm_ = {};
-const cm_ = {};
-
 function drawSomething(room) {
     console.log('-'.repeat(80));
 
     const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
     let cpu = Game.cpu.getUsed();
+    let cpy;
 
     const terrainMap = buildTerrainMap(room);
-    console.log('terrainMap', Game.cpu.getUsed()-cpu);
-    cpu = Game.cpu.getUsed();
+    cpy = Game.cpu.getUsed();
+    console.log('terrainMap', cpy-cpu);
+    cpu = cpy;
 
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
-    console.log('distanceMap', Game.cpu.getUsed()-cpu, maxScore);
-    cpu = Game.cpu.getUsed();
+    cpy = Game.cpu.getUsed();
+    console.log('distanceMap', cpy-cpu, maxScore);
+    cpu = cpy;
 
     const colorMap = buildColorMap(distanceMap, maxScore);
-    console.log('colorMap', Game.cpu.getUsed()-cpu);
-    cpu = Game.cpu.getUsed();
+    cpy = Game.cpu.getUsed();
+    console.log('colorMap', cpy-cpu);
+    cpu = cpy;
 
     colorMap.forEach((row, y) => drawRow(room, y, row));
-    console.log('drawCircle', Game.cpu.getUsed()-cpu);
+    cpy = Game.cpu.getUsed();
+    console.log('drawCircle', cpy-cpu);
 };
 
 module.exports = drawSomething;

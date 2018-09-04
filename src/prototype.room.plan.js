@@ -68,48 +68,59 @@ function scanRow(room, rowIdx) {
 };
 
 function buildTerrainMap(room) {
-    return Array.from({length: 50}, (v, i) => scanRow(room, i)).join('');
+    return Array.from({length: 50}, (v, i) => scanRow(room, i));
 };
 
 function isInRoom(p) {
     return (0 <= p.x && p.x < 50) && (0 <= p.y && p.y < 50);
 };
 
-function posAround(p) {
+function posAround(p, pos) {
     const out = [];
-    _.each([-1, 0, 1], dy =>
-        _.each([-1, 0, 1], dx =>
-            out.push({x: p.x + dx, y: p.y + dy})));
-    return _.filter(out, isInRoom);
+    [-1, 0, 1].forEach(dy =>
+        [-1, 0, 1].forEach(function(dx) {
+            const pt = {x: p.x + dx, y: p.y + dy};
+            if (isInRoom(pt) && pos[pt.y][pt.x]===false) {
+                out.push(pt);
+                pos[pt.y][pt.x] = true;
+            }
+        }));
+    return out;
 };
 
 function buildDistanceMap(positions, terrainMap) {
     if (!_.isArray(positions) && positions.x && positions.y)
         positions = [positions];
 
-    const out = Array.from({length: 2500}, (v) => -1);
+    const out = Array.from({length: 50}, v => Array.from({length: 50}, vv => null));
+    const pos = Array.from({length: 50}, v => Array.from({length: 50}, vv => false));
     
-    let queue = _.map(positions, p => _.pick(p, ['x', 'y']));
+    let queue = positions.map(p => _.pick(p, ['x', 'y']));
+    queue.forEach(p => pos[p.y][p.x] = true);
+
     let score;
     for (score = 0; queue.length > 0; score++) {
-        _.each(queue, q => out[mapIndex(q.x, q.y)] = score);
-        queue = _(queue).map(p => posAround(p)).flatten().value();
-        queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
-        queue = _.filter(queue, p => mapLookup(terrainMap, p.x, p.y) !== '#');
-        queue = _.filter(queue, p => mapLookup(out, p.x, p.y) === -1);
+        queue.filter(p => terrainMap[p.y][p.x] !== '#')
+             .forEach(p => out[p.y][p.x] = score);
+
+        queue = _(queue).map(p => posAround(p, pos)).flatten().value();
+        // queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
+        queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
+        queue = _.filter(queue, p => out[p.y][p.x] === null);
     };
 
     return {distanceMap: out, maxScore: score-1};
 };
 
 function hexColorFromWeight(weight) {
-    const color = Math.floor(Math.min(255, Math.max(256 * weight, 0)));
-    const hexcolor = _.padLeft(color.toString(16), 2, '0');
-    return hexcolor;
+    return _.padLeft(Math.floor(255*weight).toString(16), 2, '0');
+    // const color = Math.floor(Math.min(255, Math.max(256 * weight, 0)));
+    // const hexcolor = _.padLeft(color.toString(16), 2, '0');
+    // return hexcolor;
 };
 
 function colorFromWeight(weight) {
-    if (0 <= weight && weight <= 1) {
+    if (weight !== null && 0 <= weight && weight <= 1) {
         const invWeight = 1 - weight;
         const red = hexColorFromWeight(weight);
         const green = hexColorFromWeight(invWeight);
@@ -119,16 +130,24 @@ function colorFromWeight(weight) {
     return null;
 };
 
-function normalizeValue(value, idx, maxScore) {
-    const {x, y} = unmapIndex(idx);
-    const color = colorFromWeight(value / maxScore);
-    return {x: x, y: y, c: color};
+function normalizeRow(row, maxScore) {
+    return row.map(value => value === null ? null : value/maxScore);
 };
 
 function buildColorMap(distanceMap, maxScore) {
-    return _(distanceMap).map((v, i) => normalizeValue(v, i, maxScore))
-                         .filter(obj => obj.color !== null)
-                         .value();
+    assert(maxScore>0, `maxScore(${maxScore}) must be a positive integer`);
+    const normMap = distanceMap.map(row => normalizeRow(row, maxScore));
+    const colorMap = normMap.map(row => row.map(colorFromWeight));
+    return colorMap;
+};
+
+function drawRow(room, y, row) {
+    // const drawLog = function(value, x) {
+    //     console.log(`Drawing ${x}, ${y}, ${value}`);
+    //     visual.circle(x, y, value)
+    // };
+    row.forEach((value, x) => room.visual.circle(x, y, {fill:value}));
+    // row.forEach(drawLog);
 };
 
 const tm_ = {};
@@ -138,27 +157,23 @@ const cm_ = {};
 function drawSomething(room) {
     console.log('-'.repeat(80));
 
-    // const terrainMap = room.name in tm_ ?
-    //                    tm_[room.name] :
-    //                    tm_[room.name] = buildTerrainMap(room);
-
-    console.log(Game.cpu.getUsed());
-    const terrainMap = buildTerrainMap(room);
-    console.log(Game.cpu.getUsed());
-
     const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
-    const {distanceMap, maxScore} = room.name in dm_ ?
-                       dm_[room.name] :
-                       dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
-    console.log(Game.cpu.getUsed(), maxScore);
+    let cpu = Game.cpu.getUsed();
 
-    const colorMap = room.name in cm_ ?
-                     cm_[room.name] :
-                     cm_[room.name] = buildColorMap(distanceMap, maxScore);
-    console.log(Game.cpu.getUsed());
+    const terrainMap = buildTerrainMap(room);
+    console.log('terrainMap', Game.cpu.getUsed()-cpu);
+    cpu = Game.cpu.getUsed();
 
-    _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
-    console.log(Game.cpu.getUsed());
+    const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
+    console.log('distanceMap', Game.cpu.getUsed()-cpu, maxScore);
+    cpu = Game.cpu.getUsed();
+
+    const colorMap = buildColorMap(distanceMap, maxScore);
+    console.log('colorMap', Game.cpu.getUsed()-cpu);
+    cpu = Game.cpu.getUsed();
+
+    colorMap.forEach((row, y) => drawRow(room, y, row));
+    console.log('drawCircle', Game.cpu.getUsed()-cpu);
 };
 
 module.exports = drawSomething;
