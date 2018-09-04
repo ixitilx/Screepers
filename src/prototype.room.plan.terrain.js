@@ -163,7 +163,7 @@ function drawSomething(room) {
     //                    tm_[room.name] = buildTerrainMap(room);
     const terrainMap = buildTerrainMap(room);
     terrainMap.forEach(row => console.log(row));
-    console.log('terrainMap', Game.cpu.getUsed()-cpu);
+    // console.log('terrainMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
 
     const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
@@ -171,6 +171,7 @@ function drawSomething(room) {
     //                    dm_[room.name] :
     //                    dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
+    distanceMap.forEach(row => console.log(row));
     console.log('distanceMap', Game.cpu.getUsed()-cpu, maxScore);
     cpu = Game.cpu.getUsed();
     // const colorMap = room.name in cm_ ?
