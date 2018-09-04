@@ -172,7 +172,7 @@ function drawSomething(room) {
     cpu = Game.cpu.getUsed();
 
     _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
-    console.log(Game.cpu.getUsed());
+    console.log('drawCircle', Game.cpu.getUsed()-cpu);
 };
 
 module.exports = drawSomething;
