@@ -75,12 +75,17 @@ function isInRoom(p) {
     return (0 <= p.x && p.x < 50) && (0 <= p.y && p.y < 50);
 };
 
-function posAround(p) {
+function posAround(p, pos) {
     const out = [];
-    _.each([-1, 0, 1], dy =>
-        _.each([-1, 0, 1], dx =>
-            out.push({x: p.x + dx, y: p.y + dy})));
-    return _.filter(out, isInRoom);
+    [-1, 0, 1].forEach(dy =>
+        [-1, 0, 1].forEach(function(dx) {
+            const p = {x: p.x + dx, y: p.y + dy};
+            if (isInRoom(p) && !pos[p.y][p.x]) {
+                out.push(p);
+                pos[p.y][p.x] = true;
+            }
+        }));
+    return out;
 };
 
 function buildDistanceMap(positions, terrainMap) {
@@ -88,13 +93,18 @@ function buildDistanceMap(positions, terrainMap) {
         positions = [positions];
 
     const out = Array.from({length: 50}, v => Array.from({length: 50}, vv => null));
+    const pos = Array.from({length: 50}, v => Array.from({length: 50}, vv => false));
     
-    let queue = _.map(positions, p => _.pick(p, ['x', 'y']));
+    let queue = positions.map(p => _.pick(p, ['x', 'y']));
+    queue.forEach(p => pos[p.y][p.x] = true);
+
     let score;
     for (score = 0; queue.length > 0; score++) {
-        _.each(queue, q => out[q.y][q.x] = score);
-        queue = _(queue).map(p => posAround(p)).flatten().value();
-        queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
+        queue.filter(p => terrainMap[p.y][p.x] !== '#')
+             .forEach(p => out[p.y][p.x] = score);
+
+        queue = _(queue).map(p => posAround(p, pos)).flatten().value();
+        // queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
         queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
         queue = _.filter(queue, p => out[p.y][p.x] === null);
     };
@@ -138,18 +148,19 @@ const cm_ = {};
 function drawSomething(room) {
     console.log('-'.repeat(80));
 
-    // const terrainMap = room.name in tm_ ?
-    //                    tm_[room.name] :
-    //                    tm_[room.name] = buildTerrainMap(room);
-
     console.log(Game.cpu.getUsed());
-    const terrainMap = buildTerrainMap(room);
+    const terrainMap = room.name in tm_ ?
+                       tm_[room.name] :
+                       tm_[room.name] = buildTerrainMap(room);
+
+    // const terrainMap = buildTerrainMap(room);
     console.log(Game.cpu.getUsed());
 
     const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
-    const {distanceMap, maxScore} = room.name in dm_ ?
-                       dm_[room.name] :
-                       dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
+    // const {distanceMap, maxScore} = room.name in dm_ ?
+    //                    dm_[room.name] :
+    //                    dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
+    const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
     console.log(Game.cpu.getUsed(), maxScore);
 
     const colorMap = room.name in cm_ ?
