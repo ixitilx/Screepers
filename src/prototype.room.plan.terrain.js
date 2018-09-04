@@ -113,9 +113,10 @@ function buildDistanceMap(positions, terrainMap) {
 };
 
 function hexColorFromWeight(weight) {
-    const color = Math.floor(Math.min(255, Math.max(256 * weight, 0)));
-    const hexcolor = _.padLeft(color.toString(16), 2, '0');
-    return hexcolor;
+    return _.padLeft((255*weight).toString(16), 2, '0');
+    // const color = Math.floor(Math.min(255, Math.max(256 * weight, 0)));
+    // const hexcolor = _.padLeft(color.toString(16), 2, '0');
+    // return hexcolor;
 };
 
 function colorFromWeight(weight) {
@@ -129,16 +130,20 @@ function colorFromWeight(weight) {
     return null;
 };
 
-function normalizeValue(value, idx, maxScore) {
-    const {x, y} = unmapIndex(idx);
-    const color = colorFromWeight(value / maxScore);
-    return {x: x, y: y, c: color};
+function normalizeRow(row, maxScore) {
+    return row.map(value => value/maxScore);
 };
 
 function buildColorMap(distanceMap, maxScore) {
-    return _(distanceMap).map((v, i) => normalizeValue(v, i, maxScore))
-                         .filter(obj => obj.color !== null)
-                         .value();
+    assert(maxScore>0, `maxScore(${maxScore}) must be a positive integer`);
+    
+    const normMap = distanceMap.map(row => normalizeRow(row, maxScore));
+    const colorMap = normMap.map(row => row.map(colorFromWeight));
+    return colorMap;
+};
+
+function drawRow(visual, row, y) {
+    row.forEach((value, x) => visual.circle(x, y, value));
 };
 
 const tm_ = {};
@@ -171,7 +176,8 @@ function drawSomething(room) {
     console.log('colorMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
 
-    _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
+    colorMap.forEach((row, y) => drawRow(room.visual, y, row));
+    // _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
     console.log('drawCircle', Game.cpu.getUsed()-cpu);
 };
 
