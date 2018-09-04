@@ -169,7 +169,7 @@ function drawSomething(room) {
     cpu = Game.cpu.getUsed();
 
     const colorMap = buildColorMap(distanceMap, maxScore);
-    console.log('colorMap', Game.cpu.getUsed()-cpu, count);
+    console.log('colorMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
 
     colorMap.forEach((row, y) => drawRow(room, y, row));
