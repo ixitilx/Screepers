@@ -142,7 +142,7 @@ function buildColorMap(distanceMap, maxScore) {
     return colorMap;
 };
 
-function drawRow(visual, row, y) {
+function drawRow(visual, y, row) {
     row.forEach((value, x) => visual.circle(x, y, value));
 };
 
