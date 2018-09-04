@@ -151,19 +151,19 @@ function drawSomething(room) {
     const terrainMap = buildTerrainMap(room);
     console.log(Game.cpu.getUsed());
 
-    // const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
-    // const {distanceMap, maxScore} = room.name in dm_ ?
-    //                    dm_[room.name] :
-    //                    dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
-    // console.log(Game.cpu.getUsed(), maxScore);
+    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
+    const {distanceMap, maxScore} = room.name in dm_ ?
+                       dm_[room.name] :
+                       dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
+    console.log(Game.cpu.getUsed(), maxScore);
 
-    // const colorMap = room.name in cm_ ?
-    //                  cm_[room.name] :
-    //                  cm_[room.name] = buildColorMap(distanceMap, maxScore);
-    // console.log(Game.cpu.getUsed());
+    const colorMap = room.name in cm_ ?
+                     cm_[room.name] :
+                     cm_[room.name] = buildColorMap(distanceMap, maxScore);
+    console.log(Game.cpu.getUsed());
 
-    // _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
-    // console.log(Game.cpu.getUsed());
+    _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
+    console.log(Game.cpu.getUsed());
 };
 
 module.exports = drawSomething;
