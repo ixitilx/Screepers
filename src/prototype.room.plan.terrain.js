@@ -141,12 +141,12 @@ function buildColorMap(distanceMap, maxScore) {
     return colorMap;
 };
 
-function drawRow(visual, y, row) {
+function drawRow(room, y, row) {
     // const drawLog = function(value, x) {
     //     console.log(`Drawing ${x}, ${y}, ${value}`);
     //     visual.circle(x, y, value)
     // };
-    row.forEach((value, x) => visual.circle(x, y, value));
+    row.forEach((value, x) => room.visual.circle(x, y, {fill:value}));
     // row.forEach(drawLog);
 };
 
@@ -157,26 +157,22 @@ const cm_ = {};
 function drawSomething(room) {
     console.log('-'.repeat(80));
 
+    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
     let cpu = Game.cpu.getUsed();
+
     const terrainMap = buildTerrainMap(room);
-    terrainMap.forEach(row => console.log(row));
     console.log('terrainMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
 
-    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
     console.log('distanceMap', Game.cpu.getUsed()-cpu, maxScore);
     cpu = Game.cpu.getUsed();
 
     const colorMap = buildColorMap(distanceMap, maxScore);
-    colorMap.forEach(row => console.log(row));
-    const count = _.sum(colorMap.map(row => row.length));
     console.log('colorMap', Game.cpu.getUsed()-cpu, count);
-
     cpu = Game.cpu.getUsed();
 
-    colorMap.forEach((row, y) => drawRow(room.visual, y, row));
-    console.log(colorMap[0][0]);
+    colorMap.forEach((row, y) => drawRow(room, y, row));
     console.log('drawCircle', Game.cpu.getUsed()-cpu);
 };
 
