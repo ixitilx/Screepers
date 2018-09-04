@@ -143,7 +143,12 @@ function buildColorMap(distanceMap, maxScore) {
 };
 
 function drawRow(visual, y, row) {
-    row.forEach((value, x) => visual.circle(x, y, value));
+    const drawLog = function(value, x) {
+        console.log(`Drawing ${x}, ${y}, ${value}`);
+        visual.circle(x, y, value)
+    };
+    // row.forEach((value, x) => visual.circle(x, y, value));
+    row.forEach(drawLog);
 };
 
 const tm_ = {};
