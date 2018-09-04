@@ -113,7 +113,7 @@ function buildDistanceMap(positions, terrainMap) {
 };
 
 function hexColorFromWeight(weight) {
-    return _.padLeft((255*weight).toString(16), 2, '0');
+    return _.padLeft(Math.floor(255*weight).toString(16), 2, '0');
     // const color = Math.floor(Math.min(255, Math.max(256 * weight, 0)));
     // const hexcolor = _.padLeft(color.toString(16), 2, '0');
     // return hexcolor;
