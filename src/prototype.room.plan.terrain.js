@@ -178,6 +178,7 @@ function drawSomething(room) {
     cpu = Game.cpu.getUsed();
 
     colorMap.forEach((row, y) => drawRow(room.visual, y, row));
+    console.log(colorMap[0][0]);
     // _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
     console.log('drawCircle', Game.cpu.getUsed()-cpu);
 };
