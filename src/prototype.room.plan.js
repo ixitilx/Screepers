@@ -61,7 +61,14 @@ function mapLookup(roomMap, x, y) {
     return roomMap[mapIndex(x, y)];
 };
 
+function scanRow(room, rowIdx) {
+    return room.lookForAtArea(LOOK_TERRAIN, rowIdx, 0, rowIdx, 49, true)
+                    .map(rec => Plan.encode(rec.terrain))
+                    .join('');
+};
+
 function buildTerrainMap(room) {
+    // return Array.from({length: 50}, (v, i) => scanRow(room, i)).join('');
     return _(room.lookForAtArea(LOOK_TERRAIN, 0, 0, 49, 49, true))
                 .sortBy(rec => 50*rec.y + rec.x)
                 .map(rec => Plan.encode(rec.terrain))
@@ -135,24 +142,28 @@ const cm_ = {};
 
 function drawSomething(room) {
     console.log('-'.repeat(80));
-    const terrainMap = room.name in tm_ ?
-                       tm_[room.name] :
-                       tm_[room.name] = buildTerrainMap(room);
+
+    // const terrainMap = room.name in tm_ ?
+    //                    tm_[room.name] :
+    //                    tm_[room.name] = buildTerrainMap(room);
+
+    console.log(Game.cpu.getUsed());
+    const terrainMap = buildTerrainMap(room);
     console.log(Game.cpu.getUsed());
 
-    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
-    const {distanceMap, maxScore} = room.name in dm_ ?
-                       dm_[room.name] :
-                       dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
-    console.log(Game.cpu.getUsed(), maxScore);
+    // const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
+    // const {distanceMap, maxScore} = room.name in dm_ ?
+    //                    dm_[room.name] :
+    //                    dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
+    // console.log(Game.cpu.getUsed(), maxScore);
 
-    const colorMap = room.name in cm_ ?
-                     cm_[room.name] :
-                     cm_[room.name] = buildColorMap(distanceMap, maxScore);
-    console.log(Game.cpu.getUsed());
+    // const colorMap = room.name in cm_ ?
+    //                  cm_[room.name] :
+    //                  cm_[room.name] = buildColorMap(distanceMap, maxScore);
+    // console.log(Game.cpu.getUsed());
 
-    _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
-    console.log(Game.cpu.getUsed());
+    // _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
+    // console.log(Game.cpu.getUsed());
 };
 
 module.exports = drawSomething;
