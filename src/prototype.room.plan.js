@@ -68,7 +68,7 @@ function scanRow(room, rowIdx) {
 };
 
 function buildTerrainMap(room) {
-    // return Array.from({length: 50}, (v, i) => scanRow(room, i)).join('');
+    return Array.from({length: 50}, (v, i) => scanRow(room, i)).join('');
     return _(room.lookForAtArea(LOOK_TERRAIN, 0, 0, 49, 49, true))
                 .sortBy(rec => 50*rec.y + rec.x)
                 .map(rec => Plan.encode(rec.terrain))
