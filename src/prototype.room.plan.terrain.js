@@ -79,10 +79,10 @@ function posAround(p, pos) {
     const out = [];
     [-1, 0, 1].forEach(dy =>
         [-1, 0, 1].forEach(function(dx) {
-            const p = {x: p.x + dx, y: p.y + dy};
-            if (isInRoom(p) && !pos[p.y][p.x]) {
-                out.push(p);
-                pos[p.y][p.x] = true;
+            const pt = {x: p.x + dx, y: p.y + dy};
+            if (isInRoom(pt) && !pos[pt.y][pt.x]) {
+                out.push(pt);
+                pos[pt.y][pt.x] = true;
             }
         }));
     return out;
