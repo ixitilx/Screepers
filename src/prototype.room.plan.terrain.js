@@ -162,7 +162,6 @@ function drawSomething(room) {
     // const terrainMap = room.name in tm_ ?
     //                    tm_[room.name] :
     //                    tm_[room.name] = buildTerrainMap(room);
-
     const terrainMap = buildTerrainMap(room);
     console.log('terrainMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
@@ -174,17 +173,17 @@ function drawSomething(room) {
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
     console.log('distanceMap', Game.cpu.getUsed()-cpu, maxScore);
     cpu = Game.cpu.getUsed();
-
     // const colorMap = room.name in cm_ ?
     //                  cm_[room.name] :
     //                  cm_[room.name] = buildColorMap(distanceMap, maxScore);
     const colorMap = buildColorMap(distanceMap, maxScore);
-    console.log('colorMap', Game.cpu.getUsed()-cpu);
+    const count = _.sum(colorMap.map(row => row.length));
+    console.log('colorMap', Game.cpu.getUsed()-cpu, count);
+
     cpu = Game.cpu.getUsed();
 
     colorMap.forEach((row, y) => drawRow(room.visual, y, row));
     console.log(colorMap[0][0]);
-    // _.each(colorMap, c => room.visual.circle(c.x, c.y, {fill: c.c}));
     console.log('drawCircle', Game.cpu.getUsed()-cpu);
 };
 
