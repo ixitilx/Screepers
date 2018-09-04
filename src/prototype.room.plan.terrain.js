@@ -81,7 +81,6 @@ function posAround(p, pos) {
         [-1, 0, 1].forEach(function(dx) {
             const pt = {x: p.x + dx, y: p.y + dy};
             if (isInRoom(pt) && pos[pt.y][pt.x]===false) {
-                console.log(`adding point at ${p.x}:${p.y}`);
                 out.push(pt);
                 pos[pt.y][pt.x] = true;
             }
@@ -163,7 +162,7 @@ function drawSomething(room) {
     //                    dm_[room.name] :
     //                    dm_[room.name] = buildDistanceMap(sourcePos, terrainMap);
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
-    console.log('distanceMap', Game.cpu.getUsed()-cpu);
+    console.log('distanceMap', Game.cpu.getUsed()-cpu, maxScore);
     cpu = Game.cpu.getUsed();
 
     const colorMap = room.name in cm_ ?
