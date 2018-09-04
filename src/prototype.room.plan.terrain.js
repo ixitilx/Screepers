@@ -120,7 +120,7 @@ function hexColorFromWeight(weight) {
 };
 
 function colorFromWeight(weight) {
-    if (0 <= weight && weight <= 1) {
+    if (weight !== null && 0 <= weight && weight <= 1) {
         const invWeight = 1 - weight;
         const red = hexColorFromWeight(weight);
         const green = hexColorFromWeight(invWeight);
@@ -131,12 +131,11 @@ function colorFromWeight(weight) {
 };
 
 function normalizeRow(row, maxScore) {
-    return row.map(value => value/maxScore);
+    return row.map(value => value === null ? null : value/maxScore);
 };
 
 function buildColorMap(distanceMap, maxScore) {
     assert(maxScore>0, `maxScore(${maxScore}) must be a positive integer`);
-    
     const normMap = distanceMap.map(row => normalizeRow(row, maxScore));
     const colorMap = normMap.map(row => row.map(colorFromWeight));
     return colorMap;
