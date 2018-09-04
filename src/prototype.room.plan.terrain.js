@@ -87,16 +87,16 @@ function buildDistanceMap(positions, terrainMap) {
     if (!_.isArray(positions) && positions.x && positions.y)
         positions = [positions];
 
-    const out = Array.from({length: 2500}, (v) => -1);
+    const out = Array.from({length: 50}, v => Array.from({length: 50}, vv => null));
     
     let queue = _.map(positions, p => _.pick(p, ['x', 'y']));
     let score;
     for (score = 0; queue.length > 0; score++) {
-        _.each(queue, q => out[mapIndex(q.x, q.y)] = score);
+        _.each(queue, q => out[q.y][q.x] = score);
         queue = _(queue).map(p => posAround(p)).flatten().value();
         queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
         queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
-        queue = _.filter(queue, p => mapLookup(out, p.x, p.y) === -1);
+        queue = _.filter(queue, p => out[p.y][p.x] === null);
     };
 
     return {distanceMap: out, maxScore: score-1};
