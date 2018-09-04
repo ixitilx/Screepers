@@ -80,7 +80,8 @@ function posAround(p, pos) {
     [-1, 0, 1].forEach(dy =>
         [-1, 0, 1].forEach(function(dx) {
             const pt = {x: p.x + dx, y: p.y + dy};
-            if (isInRoom(pt) && !pos[pt.y][pt.x]) {
+            if (isInRoom(pt) && pos[pt.y][pt.x]===false) {
+                console.log(`adding point at ${p.x}:${p.y}`);
                 out.push(pt);
                 pos[pt.y][pt.x] = true;
             }
