@@ -162,6 +162,7 @@ function drawSomething(room) {
     //                    tm_[room.name] :
     //                    tm_[room.name] = buildTerrainMap(room);
     const terrainMap = buildTerrainMap(room);
+    terrainMap.forEach(row => console.log(row));
     console.log('terrainMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
 
