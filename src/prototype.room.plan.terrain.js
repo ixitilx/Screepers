@@ -68,7 +68,7 @@ function scanRow(room, rowIdx) {
 };
 
 function buildTerrainMap(room) {
-    return Array.from({length: 50}, (v, i) => scanRow(room, i)).join('');
+    return Array.from({length: 50}, (v, i) => scanRow(room, i));
 };
 
 function isInRoom(p) {
@@ -95,7 +95,7 @@ function buildDistanceMap(positions, terrainMap) {
         _.each(queue, q => out[mapIndex(q.x, q.y)] = score);
         queue = _(queue).map(p => posAround(p)).flatten().value();
         queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
-        queue = _.filter(queue, p => mapLookup(terrainMap, p.x, p.y) !== '#');
+        queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
         queue = _.filter(queue, p => mapLookup(out, p.x, p.y) === -1);
     };
 
