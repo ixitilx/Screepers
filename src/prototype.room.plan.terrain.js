@@ -154,11 +154,11 @@ function drawSomething(room) {
     console.log('-'.repeat(80));
 
     let cpu = Game.cpu.getUsed();
-    const terrainMap = room.name in tm_ ?
-                       tm_[room.name] :
-                       tm_[room.name] = buildTerrainMap(room);
+    // const terrainMap = room.name in tm_ ?
+    //                    tm_[room.name] :
+    //                    tm_[room.name] = buildTerrainMap(room);
 
-    // const terrainMap = buildTerrainMap(room);
+    const terrainMap = buildTerrainMap(room);
     console.log('terrainMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
 
@@ -170,9 +170,10 @@ function drawSomething(room) {
     console.log('distanceMap', Game.cpu.getUsed()-cpu, maxScore);
     cpu = Game.cpu.getUsed();
 
-    const colorMap = room.name in cm_ ?
-                     cm_[room.name] :
-                     cm_[room.name] = buildColorMap(distanceMap, maxScore);
+    // const colorMap = room.name in cm_ ?
+    //                  cm_[room.name] :
+    //                  cm_[room.name] = buildColorMap(distanceMap, maxScore);
+    const colorMap = buildColorMap(distanceMap, maxScore);
     console.log('colorMap', Game.cpu.getUsed()-cpu);
     cpu = Game.cpu.getUsed();
 
