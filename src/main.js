@@ -7,7 +7,7 @@ console.log(`Reinitialized at ${Game.time}`);
 // require('prototype.spawn');
 // require('prototype.creep');
 // require('prototype.resource');
-const drawSomething = require('prototype.room.plan');
+const drawSomething = require('prototype.room.plan.terrain');
 
 // const SourceManager = require('manager.source');
 
