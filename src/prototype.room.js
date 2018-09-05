@@ -2,72 +2,28 @@
 
 const { defineProperty } = require('utils.prototype');
 
-const costMatrices = { };
-const grandPlans = { };
-
 function findSources() {
     return this.find(FIND_SOURCES);
 };
 
-function grandPlan() {
-    const controller = this.controller;
-    const sources = this.find(FIND_SOURCES);
-    const minerals = this.find(FIND_MINERALS);
-    const exits = Game.map.describeExits(this.name);
-    const spawns = _.filter(Game.spawns, {room: {name: this.name}});
-
-
+const terrainMap = {
+    'plain': 0,
+    'swamp': 1,
+    'wall' : 2
 };
 
-function getGrandPlan() {
-    
+function scanRow(room, rowIdx) {
+    return room.lookForAtArea(LOOK_TERRAIN, rowIdx, 0, rowIdx, 49, true)
+                    .map(rec => terrainMap[rec.terrain])
+                    .join('');
 };
 
-function populateCostMatrix(matrix, grandPlan) {
-
+function buildTerrainMap(room) {
+    return Array.from({length: 50}, (v, i) => scanRow(room, i));
 };
 
-function createCostMatrix(roomName) {
-    return populateCostMatrix(
-        new PathFinder.CostMatrix(),
-        getGrandPlan(roomName));
-};
-
-function getCostMatrix(roomName) {
-    if (!(roomName in costMatrices)) {
-        const path = ['rooms', roomName, 'costMatrix'];
-        if (!_.has(Memory, path)) {
-            const costMatrix = createCostMatrix(roomName);
-            _.set(Memory, path, costMatrix.serialize());
-            return costMatrices[roomName] = costMatrix;
-        } else {
-            const costMatrixDump = _.get(Memory, path);
-            const costMatrix = PathFinder.CostMatrix.deserialize(costMatrixDump);
-            return costMatrices[roomName] = costMatrix;
-        }
-    }
-
-    return costMatrices[roomName];
-};
-
-function findPath(origin, goal) {
-    const ret = PathFinder.search(origin, goal, {
-        roomCallback: getCostMatrix,
-        plainCost: 2,
-        swampCost: 10
-    });
-
-
-};
-
-function findControllerPath(controller, spawns) {
-};
-
-function findSourcePath(source, spawns) {
-};
-
-
-defineProperty(Room, 'sources', findSources);
+defineProperty(Room, 'sources', _.memoize(findSources));
+defineProperty(Room, 'terrain', _.memoize(buildTerrainMap));
 
 //
 // plan is refill && build && upgrade
