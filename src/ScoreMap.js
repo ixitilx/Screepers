@@ -30,15 +30,11 @@ class ScoreMap {
         if (nonNullValues.length === 0)
             throw new Error('Cannot normalize empty ScoreMap');
 
-        console.log(`nnv: ${nonNullValues}`);
-
         const minValue = Math.min(...nonNullValues);
         const maxValue = Math.max(...nonNullValues);
         const range = maxValue - minValue;
         if (range === 0)
             throw new Error(`Cannot normalize ScoreMap containing just one value: ${minValue}`);
-
-        console.log(`Normalizing ${minValue}, ${maxValue}, ${range}`);
 
         const normMap = new ScoreMap();
         for (let x=0; x<50; ++x) {
