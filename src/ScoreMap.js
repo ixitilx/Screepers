@@ -27,7 +27,7 @@ class ScoreMap {
 
     normalize() {
         const nonNullValues = [].concat(this.data).map(x => x !== null);
-        if (nonNullValue.length === 0)
+        if (nonNullValues.length === 0)
             throw new Error('Cannot normalize empty ScoreMap');
 
         const minValue = Math.min(nonNullValues);
