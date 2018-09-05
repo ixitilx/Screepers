@@ -137,14 +137,15 @@ function drawSomething(room) {
     const distanceMap = ScoreMap.combine(controllerMap, ...sourceMaps);
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
+    distanceMap.data.forEach(row => console.log(row));
     cpu = cpy;
 
-    const colorMap = buildColorMap(distanceMap);
+    // const colorMap = buildColorMap(distanceMap);
     cpy = Game.cpu.getUsed();
     console.log('colorMap', cpy-cpu);
     cpu = cpy;
 
-    colorMap.forEach((row, y) => drawRow(room, y, row));
+    // colorMap.forEach((row, y) => drawRow(room, y, row));
     cpy = Game.cpu.getUsed();
     console.log('drawCircle', cpy-cpu);
 };
