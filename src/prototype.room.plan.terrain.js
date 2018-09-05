@@ -132,7 +132,7 @@ function drawSomething(room) {
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
 
-    const sourceMaps = _.map(room.find(FIND_SOURCES), 'pos').map(p => getDistanceMap(p, terrainMap));
+    const sourceMaps = room.find(FIND_SOURCES).map(source => getDistanceMap(source, terrainMap));
     const controllerMap = getDistanceMap(room.controller, terrainMap);
     const distanceMap = ScoreMap.combine(controllerMap, ...sourceMaps);
     cpy = Game.cpu.getUsed();
