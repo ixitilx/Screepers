@@ -134,7 +134,7 @@ function drawSomething(room) {
 
     const objects = _.flatten([room.find(FIND_SOURCES), room.find(FIND_MINERALS), [room.controller]]);
     const maps = objects.map(o => getDistanceMap(o, terrainMap));
-    const distanceMap = ScoreMap.combine(...maps).filter(x => x >= 0.95);
+    const distanceMap = ScoreMap.combine(...maps).filter(x => x < 0.05);
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
