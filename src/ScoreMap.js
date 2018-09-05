@@ -49,22 +49,36 @@ class ScoreMap {
     };
 };
 
+// function posAround(p, pos) {
+//     const out = [];
+//     const checkAndAdd = function(x, y) {
+//         if(0 <= x && x < 50 && 0 <= y && y < 50 && pos[y][x]===false)
+//             out.push({x:x, y:y});
+//     };
+//     checkAndAdd(p.x-1, p.y-1);
+//     checkAndAdd(p.x-1, p.y  );
+//     checkAndAdd(p.x-1, p.y+1);
+//     checkAndAdd(p.x  , p.y-1);
+//     checkAndAdd(p.x  , p.y+1);
+//     checkAndAdd(p.x+1, p.y-1);
+//     checkAndAdd(p.x+1, p.y  );
+//     checkAndAdd(p.x+1, p.y+1);
+//     return out;
+// };
+
 function posAround(p, pos) {
     const out = [];
-    const checkAndAdd = function(x, y) {
-        if(0 <= x && x < 50 && 0 <= y && y < 50 && pos[y][x]===false)
-            out.push({x:x, y:y});
-    };
-    checkAndAdd(p.x-1, p.y-1);
-    checkAndAdd(p.x-1, p.y  );
-    checkAndAdd(p.x-1, p.y+1);
-    checkAndAdd(p.x  , p.y-1);
-    checkAndAdd(p.x  , p.y+1);
-    checkAndAdd(p.x+1, p.y-1);
-    checkAndAdd(p.x+1, p.y  );
-    checkAndAdd(p.x+1, p.y+1);
+    [-1, 0, 1].forEach(dy =>
+        [-1, 0, 1].forEach(function(dx) {
+            const pt = {x: p.x + dx, y: p.y + dy};
+            if (isInRoom(pt) && pos[pt.y][pt.x]===false) {
+                out.push(pt);
+                pos[pt.y][pt.x] = true;
+            }
+        }));
     return out;
 };
+
 
 function buildDistanceMap(positions, terrainMap) {
     if (!_.isArray(positions) && positions.x && positions.y)
