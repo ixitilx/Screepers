@@ -130,7 +130,7 @@ function drawSomething(room) {
     const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
     const distanceMap = buildDistanceMap(sourcePos, terrainMap).normalize();
     cpy = Game.cpu.getUsed();
-    console.log('distanceMap', cpy-cpu, maxScore);
+    console.log('distanceMap', cpy-cpu);
     cpu = cpy;
 
     // const colorMap = buildColorMap(distanceMap, maxScore);
