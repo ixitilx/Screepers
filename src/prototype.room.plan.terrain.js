@@ -52,7 +52,7 @@ function buildDistanceMap(positions, terrainMap) {
     if (!_.isArray(positions) && positions.x && positions.y)
         positions = [positions];
 
-    const out = Array.from({length: 50}, v => Array.from({length: 50}, vv => null));
+    const out = createArray(x => null, [50, 50]); //Array.from({length: 50}, v => Array.from({length: 50}, vv => null));
     const pos = Array.from({length: 50}, v => Array.from({length: 50}, vv => false));
     
     let queue = positions.map(p => _.pick(p, ['x', 'y']));
