@@ -94,10 +94,8 @@ function normalizeRow(row, maxScore) {
     return row.map(value => value === null ? null : value/maxScore);
 };
 
-function buildColorMap(distanceMap, maxScore) {
-    assert(maxScore>0, `maxScore(${maxScore}) must be a positive integer`);
-    const normMap = distanceMap.map(row => normalizeRow(row, maxScore));
-    const colorMap = normMap.map(row => row.map(colorFromWeight));
+function buildColorMap(distanceMap) {
+    const colorMap = normMap.data.map(row => row.map(colorFromWeight));
     return colorMap;
 };
 
@@ -133,10 +131,10 @@ function drawSomething(room) {
     console.log('distanceMap', cpy-cpu);
     cpu = cpy;
 
-    // const colorMap = buildColorMap(distanceMap, maxScore);
-    // cpy = Game.cpu.getUsed();
-    // console.log('colorMap', cpy-cpu);
-    // cpu = cpy;
+    const colorMap = buildColorMap(distanceMap, maxScore);
+    cpy = Game.cpu.getUsed();
+    console.log('colorMap', cpy-cpu);
+    cpu = cpy;
 
     // colorMap.forEach((row, y) => drawRow(room, y, row));
     // cpy = Game.cpu.getUsed();
