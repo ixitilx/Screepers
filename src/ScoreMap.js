@@ -53,6 +53,7 @@ class ScoreMap {
         for (let x=0; x<50; ++x) {
             for (let y=0; y<50; ++y) {
                 const v = maps.map(mm => mm.get(x, y)).filter(vv => vv !== null);
+                console.log(v);
                 if (v.length !== maps.length)
                     m.set(x, y, _.sum(v) / v.length);
             }

@@ -137,7 +137,7 @@ function drawSomething(room) {
     const distanceMap = ScoreMap.combine(controllerMap, ...sourceMaps);
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
-    distanceMap.data.forEach(row => console.log(row));
+    // distanceMap.data.forEach(row => console.log(row));
     cpu = cpy;
 
     // const colorMap = buildColorMap(distanceMap);
