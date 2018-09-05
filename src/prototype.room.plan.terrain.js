@@ -114,7 +114,7 @@ const tm = {};
 const sdm = {};
 
 function drawSomething(room) {
-    console.log('-'.repeat(80));
+    console.log(_.padRight(`${Game.time} `, 80, '-'));
 
     let cpu = Game.cpu.getUsed();
     let cpy;
