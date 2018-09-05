@@ -131,14 +131,14 @@ function drawSomething(room) {
     console.log('distanceMap', cpy-cpu);
     cpu = cpy;
 
-    const colorMap = buildColorMap(distanceMap, maxScore);
+    const colorMap = buildColorMap(distanceMap);
     cpy = Game.cpu.getUsed();
     console.log('colorMap', cpy-cpu);
     cpu = cpy;
 
-    // colorMap.forEach((row, y) => drawRow(room, y, row));
-    // cpy = Game.cpu.getUsed();
-    // console.log('drawCircle', cpy-cpu);
+    colorMap.forEach((row, y) => drawRow(room, y, row));
+    cpy = Game.cpu.getUsed();
+    console.log('drawCircle', cpy-cpu);
 };
 
 module.exports = drawSomething;
