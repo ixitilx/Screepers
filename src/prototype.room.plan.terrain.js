@@ -128,7 +128,7 @@ function drawSomething(room) {
     cpu = cpy;
 
     const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
-    const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
+    const distanceMap = buildDistanceMap(sourcePos, terrainMap).normalize();
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu, maxScore);
     cpu = cpy;
