@@ -26,7 +26,7 @@ class ScoreMap {
     };
 
     normalize() {
-        const nonNullValues = [].concat(this.data).filter(x => x !== null);
+        const nonNullValues = [].concat(...this.data).filter(x => x !== null);
         if (nonNullValues.length === 0)
             throw new Error('Cannot normalize empty ScoreMap');
 
