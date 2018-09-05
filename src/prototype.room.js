@@ -1,25 +1,24 @@
 'use strict';
 
-const { defineProperty } = require('utils.prototype');
+// const { defineProperty } = require('utils.prototype');
 
-function findSources() {
-    return this.find(FIND_SOURCES);
+function mapTerrain(terrain) {
+    switch(terrain) {
+        case 'wall' : return '#';
+        case 'plain': return ' ';
+        case 'swamp': return '*';
+        default: throw new Error(`Unknown terrain type: ${terrain}`);
+    };
 };
 
-const defaultTerrainMap = {
-    'wall' : '#',
-    'plain': ' ',
-    'swamp': '*',
-};
 
-function scanTerrain(terrainMap=defaultTerrainMap) {
+function scanTerrain(terrainMapper=mapTerrain) {
     const room = this;
     return Array.from({length: 50}, (v, i) => {
         return room.lookForAtArea(LOOK_TERRAIN, i, 0, i, 49, true)
-                   .map(rec => terrainMap[rec.terrain])
+                   .map(rec => terrainMapper(rec.terrain))
                    .join('');
     });
 };
 
-defineProperty(Room, 'sources', _.memoize(findSources));
 Room.prototype.scanTerrain = scanTerrain;
