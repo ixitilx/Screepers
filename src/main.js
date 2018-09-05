@@ -2,7 +2,7 @@
 
 console.log(`Reinitialized at ${Game.time}`);
 
-// require('prototype.room');
+require('prototype.room');
 // require('prototype.source');
 // require('prototype.spawn');
 // require('prototype.creep');
