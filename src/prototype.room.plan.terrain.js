@@ -134,7 +134,7 @@ function drawSomething(room) {
 
     const sourceMaps = room.find(FIND_SOURCES).map(source => getDistanceMap(source, terrainMap));
     const controllerMap = getDistanceMap(room.controller, terrainMap);
-    const distanceMap = ScoreMap.combine(controllerMap, ...sourceMaps);
+    const distanceMap = ScoreMap.combine(controllerMap, ...sourceMaps).normalize();
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
