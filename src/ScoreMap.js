@@ -52,9 +52,9 @@ class ScoreMap {
         const m = new ScoreMap();
         for (let x=0; x<50; ++x) {
             for (let y=0; y<50; ++y) {
-                const v = _.sum(maps.map(x => x.get(x, y)));
-                if (v !== null)
-                    m.set(x, y, v / maps.length);
+                const v = maps.map(mm => mm.get(x, y)).filter(v => v !== null);
+                if (v.length !== maps.length)
+                    m.set(x, y, _.sum(v) / v.length);
             }
         }
         return m;
