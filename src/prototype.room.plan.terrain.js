@@ -1,6 +1,6 @@
 'use strict';
 
-const {assert} = require('utils.prototype');
+const {assert, createArray} = require('utils.prototype');
 
 const planEncodeMap = {
     'wall' : '#',
@@ -30,46 +30,6 @@ const planEncodeMap = {
 };
 
 const planDecodeMap = _.invert(planEncodeMap);
-
-class Plan {
-    static encode(objectType) {
-        const ret = planEncodeMap[objectType];
-        if (ret)
-            return ret;
-        throw new Error(`Unknown object type: ${objectType}`);
-    };
-
-    static decode(planChar) {
-        const ret = planDecodeMap[planChar];
-        if (ret)
-            return ret;
-        throw new Error(`Unknown plan character: ${planChar}`);
-    };
-};
-
-function mapIndex(x, y) {
-    assert(x>=0 && y>=0, `Invalid coordinates: ${x}, ${y}`);
-    return 50*y + x;
-};
-
-function unmapIndex(idx) {
-    assert(0 <= idx && idx < 50*50, `Index is outside of the room: ${idx}`);
-    return {x: (idx % 50), y: Math.floor(idx/50)};
-};
-
-function mapLookup(roomMap, x, y) {
-    return roomMap[mapIndex(x, y)];
-};
-
-function scanRow(room, rowIdx) {
-    return room.lookForAtArea(LOOK_TERRAIN, rowIdx, 0, rowIdx, 49, true)
-                    .map(rec => Plan.encode(rec.terrain))
-                    .join('');
-};
-
-function buildTerrainMap(room) {
-    return Array.from({length: 50}, (v, i) => scanRow(room, i));
-};
 
 function isInRoom(p) {
     return (0 <= p.x && p.x < 50) && (0 <= p.y && p.y < 50);
@@ -104,7 +64,6 @@ function buildDistanceMap(positions, terrainMap) {
              .forEach(p => out[p.y][p.x] = score);
 
         queue = _(queue).map(p => posAround(p, pos)).flatten().value();
-        // queue = _.uniq(queue, false, p => mapIndex(p.x, p.y));
         queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
         queue = _.filter(queue, p => out[p.y][p.x] === null);
     };
@@ -157,11 +116,9 @@ function drawSomething(room) {
     let cpu = Game.cpu.getUsed();
     let cpy;
 
-    // const terrainMap = buildTerrainMap(room);
     const terrainMap = room.scanTerrain();
     cpy = Game.cpu.getUsed();
     console.log('terrainMap', cpy-cpu);
-    // room.scanTerrain().forEach(row => console.log(row));
     cpu = cpy;
 
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);

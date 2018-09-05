@@ -11,7 +11,6 @@ function mapTerrain(terrain) {
     };
 };
 
-
 function scanTerrain(terrainMapper=mapTerrain) {
     const room = this;
     return Array.from({length: 50}, (v, i) => {
