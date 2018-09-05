@@ -66,6 +66,10 @@ class ScoreMap {
 //     return out;
 // };
 
+function isInRoom(p) {
+    return (0 <= p.x && p.x < 50) && (0 <= p.y && p.y < 50);
+};
+
 function posAround(p, pos) {
     const out = [];
     [-1, 0, 1].forEach(dy =>
