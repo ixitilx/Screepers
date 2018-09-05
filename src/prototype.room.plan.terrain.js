@@ -157,7 +157,7 @@ function drawSomething(room) {
     let cpu = Game.cpu.getUsed();
     let cpy;
 
-    const terrainMap = buildTerrainMap(room);
+    const terrainMap = room.scanTerrain();
     cpy = Game.cpu.getUsed();
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
