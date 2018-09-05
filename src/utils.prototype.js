@@ -17,7 +17,7 @@ function assert(criteria, message='Assertion error') {
 };
 
 function createArray(filler, dimensions, coords) {
-    const subCoords = coords.slice(0, coords.length);
+    const subCoords = coords ? coords.slice(0, coords.length) : [];
     subCoords.push(0);
 
     if (dimensions.length == 1) {
