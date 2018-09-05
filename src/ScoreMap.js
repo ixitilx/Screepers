@@ -48,6 +48,18 @@ class ScoreMap {
         return normMap;
     };
 
+    filter(predicate) {
+        const m = new ScoreMap();
+        for (let x=0; x<50; ++x) {
+            for (let y=0; y<50; ++y) {
+                const v = this.get(x, y);
+                if (v && predicate(v))
+                    m.set(x, y, v);
+            }
+        }
+        return m;
+    };
+
     toString() {
         return 'ImaScoreMap!';
     };
