@@ -32,8 +32,8 @@ class ScoreMap {
 
         console.log(`nnv: ${nonNullValues}`);
 
-        const minValue = Math.min(nonNullValues);
-        const maxValue = Math.max(nonNullValues);
+        const minValue = Math.min(...nonNullValues);
+        const maxValue = Math.max(...nonNullValues);
         const range = maxValue - minValue;
         if (range === 0)
             throw new Error(`Cannot normalize ScoreMap containing just one value: ${minValue}`);
