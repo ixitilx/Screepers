@@ -1,6 +1,7 @@
 'use strict';
 
 const {assert, createArray} = require('utils.prototype');
+const {ScoreMap, buildDistanceMap} = require('ScoreMap');
 
 const planEncodeMap = {
     'wall' : '#',
@@ -31,45 +32,45 @@ const planEncodeMap = {
 
 const planDecodeMap = _.invert(planEncodeMap);
 
-function isInRoom(p) {
-    return (0 <= p.x && p.x < 50) && (0 <= p.y && p.y < 50);
-};
+// function isInRoom(p) {
+//     return (0 <= p.x && p.x < 50) && (0 <= p.y && p.y < 50);
+// };
 
-function posAround(p, pos) {
-    const out = [];
-    [-1, 0, 1].forEach(dy =>
-        [-1, 0, 1].forEach(function(dx) {
-            const pt = {x: p.x + dx, y: p.y + dy};
-            if (isInRoom(pt) && pos[pt.y][pt.x]===false) {
-                out.push(pt);
-                pos[pt.y][pt.x] = true;
-            }
-        }));
-    return out;
-};
+// function posAround(p, pos) {
+//     const out = [];
+//     [-1, 0, 1].forEach(dy =>
+//         [-1, 0, 1].forEach(function(dx) {
+//             const pt = {x: p.x + dx, y: p.y + dy};
+//             if (isInRoom(pt) && pos[pt.y][pt.x]===false) {
+//                 out.push(pt);
+//                 pos[pt.y][pt.x] = true;
+//             }
+//         }));
+//     return out;
+// };
 
-function buildDistanceMap(positions, terrainMap) {
-    if (!_.isArray(positions) && positions.x && positions.y)
-        positions = [positions];
+// function buildDistanceMap(positions, terrainMap) {
+//     if (!_.isArray(positions) && positions.x && positions.y)
+//         positions = [positions];
 
-    const out = createArray(x => null, [50, 50]); //Array.from({length: 50}, v => Array.from({length: 50}, vv => null));
-    const pos = Array.from({length: 50}, v => Array.from({length: 50}, vv => false));
+//     const out = createArray(() => null, [50, 50]);
+//     const pos = createArray(() => false, [50, 50]);
     
-    let queue = positions.map(p => _.pick(p, ['x', 'y']));
-    queue.forEach(p => pos[p.y][p.x] = true);
+//     let queue = positions.map(p => _.pick(p, ['x', 'y']));
+//     queue.forEach(p => pos[p.y][p.x] = true);
 
-    let score;
-    for (score = 0; queue.length > 0; score++) {
-        queue.filter(p => terrainMap[p.y][p.x] !== '#')
-             .forEach(p => out[p.y][p.x] = score);
+//     let score;
+//     for (score = 0; queue.length > 0; score++) {
+//         queue.filter(p => terrainMap[p.y][p.x] !== '#')
+//              .forEach(p => out[p.y][p.x] = score);
 
-        queue = _(queue).map(p => posAround(p, pos)).flatten().value();
-        queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
-        queue = _.filter(queue, p => out[p.y][p.x] === null);
-    };
+//         queue = _(queue).map(p => posAround(p, pos)).flatten().value();
+//         queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
+//         queue = _.filter(queue, p => out[p.y][p.x] === null);
+//     };
 
-    return {distanceMap: out, maxScore: score-1};
-};
+//     return {distanceMap: out, maxScore: score-1};
+// };
 
 function hexColorFromWeight(weight) {
     return _.padLeft(Math.floor(255*weight).toString(16), 2, '0');
@@ -109,31 +110,37 @@ function drawRow(room, y, row) {
     // row.forEach(drawLog);
 };
 
+const tm = {};
+const sdm = {};
+
 function drawSomething(room) {
     console.log('-'.repeat(80));
 
-    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
     let cpu = Game.cpu.getUsed();
     let cpy;
 
-    const terrainMap = room.scanTerrain();
+    if(!(room.name in tm))
+        tm[room.name] = room.scanTerrain();
+
+    const terrainMap = tm[room.name];
     cpy = Game.cpu.getUsed();
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
 
+    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu, maxScore);
     cpu = cpy;
 
-    const colorMap = buildColorMap(distanceMap, maxScore);
-    cpy = Game.cpu.getUsed();
-    console.log('colorMap', cpy-cpu);
-    cpu = cpy;
+    // const colorMap = buildColorMap(distanceMap, maxScore);
+    // cpy = Game.cpu.getUsed();
+    // console.log('colorMap', cpy-cpu);
+    // cpu = cpy;
 
-    colorMap.forEach((row, y) => drawRow(room, y, row));
-    cpy = Game.cpu.getUsed();
-    console.log('drawCircle', cpy-cpu);
+    // colorMap.forEach((row, y) => drawRow(room, y, row));
+    // cpy = Game.cpu.getUsed();
+    // console.log('drawCircle', cpy-cpu);
 };
 
 module.exports = drawSomething;
