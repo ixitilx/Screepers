@@ -53,6 +53,7 @@ class ScoreMap {
     };
 
     static combine(...maps) {
+        console.log(maps);
         const m = new ScoreMap();
         for (let x=0; x<50; ++x) {
             for (let y=0; y<50; ++y) {
