@@ -157,9 +157,10 @@ function drawSomething(room) {
     let cpu = Game.cpu.getUsed();
     let cpy;
 
-    const terrainMap = room.scanTerrain();
+    const terrainMap = buildTerrainMap(room);
     cpy = Game.cpu.getUsed();
     console.log('terrainMap', cpy-cpu);
+    room.scanTerrain().forEach(row => console.log(row));
     cpu = cpy;
 
     const {distanceMap, maxScore} = buildDistanceMap(sourcePos, terrainMap);
