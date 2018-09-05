@@ -15,9 +15,9 @@ const terrainMap = {
 function scanTerrain() {
     const room = this;
     return Array.from({length: 50}, (v, i) => {
-        room.lookForAtArea(LOOK_TERRAIN, i, 0, i, 49, true)
-            .map(rec => terrainMap[rec.terrain])
-            .join('');
+        return room.lookForAtArea(LOOK_TERRAIN, i, 0, i, 49, true)
+                   .map(rec => terrainMap[rec.terrain])
+                   .join('');
     });
 };
 
