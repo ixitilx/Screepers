@@ -95,7 +95,7 @@ function normalizeRow(row, maxScore) {
 };
 
 function buildColorMap(distanceMap) {
-    const colorMap = normMap.data.map(row => row.map(colorFromWeight));
+    const colorMap = distanceMap.data.map(row => row.map(colorFromWeight));
     return colorMap;
 };
 
