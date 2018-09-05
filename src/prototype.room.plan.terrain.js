@@ -111,6 +111,13 @@ function drawRow(room, y, row) {
 const tm = {};
 const sdm = {};
 
+function getDistanceMap(gameObject, terrainMap) {
+    if (!(gameObject.id in sdm)) {
+        sdm[gameObject.id] = buildDistanceMap(gameObject.pos, terrainMap).normalize();
+    }
+    return sdm[gameObject.id];
+};
+
 function drawSomething(room) {
     console.log(_.padRight(`${Game.time} `, 80, '-'));
 
@@ -125,9 +132,9 @@ function drawSomething(room) {
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
 
-    const sourcePos = _.map(room.find(FIND_SOURCES), 'pos');
-    const distanceMap = buildDistanceMap(sourcePos, terrainMap).normalize();
-    // distanceMap.data.forEach(row => console.log(row));
+    const sourceMaps = _.map(room.find(FIND_SOURCES), 'pos').map(p => getDistanceMap(p, terrainMap));
+    const controllerMap = getDistanceMap(room.controller, terrainMap);
+    const distanceMap = ScoreMap.combine(controllerMap, ...sourceMaps);
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     cpu = cpy;

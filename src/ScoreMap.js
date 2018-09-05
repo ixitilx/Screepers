@@ -47,6 +47,18 @@ class ScoreMap {
 
         return normMap;
     };
+
+    static combine(...maps) {
+        const m = new ScoreMap();
+        for (let x=0; x<50; ++x) {
+            for (let y=0; y<50; ++y) {
+                const v = _.sum(maps.map(x => x.get(x, y)));
+                if (v !== null)
+                    m.set(x, y, v / maps.length);
+            }
+        }
+        return m;
+    };
 };
 
 // function posAround(p, pos) {
