@@ -36,6 +36,8 @@ class ScoreMap {
         if (range === 0)
             throw new Error(`Cannot normalize ScoreMap containing just one value: ${minValue}`);
 
+        console.log(`Normalizing ${minValue}, ${maxValue}, ${range}`);
+
         const normMap = new ScoreMap();
         for (let x=0; x<50; ++x) {
             for (let y=0; y<50; ++y) {
