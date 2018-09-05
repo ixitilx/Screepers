@@ -30,6 +30,8 @@ class ScoreMap {
         if (nonNullValues.length === 0)
             throw new Error('Cannot normalize empty ScoreMap');
 
+        console.log(nonNullValues);
+
         const minValue = Math.min(nonNullValues);
         const maxValue = Math.max(nonNullValues);
         const range = maxValue - minValue;
