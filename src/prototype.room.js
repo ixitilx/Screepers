@@ -12,7 +12,7 @@ const terrainMap = {
     'swamp': '*',
 };
 
-function scanTerrain() {
+function scanTerrain(terrainMap=terrainMap) {
     const room = this;
     return Array.from({length: 50}, (v, i) => {
         return room.lookForAtArea(LOOK_TERRAIN, i, 0, i, 49, true)
