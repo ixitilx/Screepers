@@ -119,7 +119,7 @@ function getDistanceMap(gameObject, terrainMap) {
 };
 
 function drawSomething(room) {
-    console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket}`, 80, '-'));
+    console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket} `, 80, '-'));
 
     let cpu = Game.cpu.getUsed();
     let cpy;
