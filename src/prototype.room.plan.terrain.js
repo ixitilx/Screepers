@@ -218,10 +218,10 @@ function drawSomething(room) {
 
     const sourceMap = ScoreMap.combine(
         (arr, x, y) => _.all(arr) ? _.sum(arr) : null,
-        ...exitMaps).normalize();
+        ...sourceMaps).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
-    const distanceMap = sourceMaps[0].normalize();
+    const distanceMap = sourceMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
