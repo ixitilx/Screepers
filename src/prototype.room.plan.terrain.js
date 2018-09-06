@@ -171,7 +171,7 @@ function drawSomething(room) {
     console.log('colorMap', cpy-cpu);
     cpu = cpy;
 
-    colorMap.forEach((row, y) => drawRow(room, y, row));
+    // colorMap.forEach((row, y) => drawRow(room, y, row));
     cpy = Game.cpu.getUsed();
     console.log('drawCircle', cpy-cpu);
 };
