@@ -199,7 +199,7 @@ function drawSomething(room) {
     const gdm = (obj) => getDistanceMap(obj, terrainMap);
     const sourceMaps = room.find(FIND_SOURCES).map(
         s => getDistanceMap(s, terrainMap,
-            m => m.inverse().updateNonNull(v => v*v*v*v*v)));
+            m => m.inverse().updateNonNull(v => v*v*v).normalize().filter(x => x > 0.5).normalize()));
     const mineralMaps = room.find(FIND_MINERALS).map(gdm);
     const controllerMap = gdm(room.controller);
     
