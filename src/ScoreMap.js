@@ -15,6 +15,25 @@ class ScoreMap {
             throw new Error(`Point x=${x}, y=${y} is outside of the room`);
     };
 
+    _values() {
+        return [].concat(...this.data).filter(x => x !== null);
+    };
+
+    _minMax() {
+        const v = this._values();
+        if (nonNullValues.length === 0)
+            throw new Error('Cannot calculate minMax on empty ScoreMap');
+
+        let min = v[0];
+        let max = v[0];
+        v.forEach(item => {
+            min = Math.min(min, item);
+            max = Math.max(max, item);
+        });
+
+        return {min:min, max:max};
+    };
+
     set(x, y, value) {
         this._checkCoords(x, y);
         this.data[y][x] = value;
@@ -25,55 +44,48 @@ class ScoreMap {
         return this.data[y][x];
     };
 
-    normalize() {
-        const nonNullValues = [].concat(...this.data).filter(x => x !== null);
-        if (nonNullValues.length === 0)
-            throw new Error('Cannot normalize empty ScoreMap');
+    clone() {
+        return new ScoreMap(
+            this.data.map(row => row.slice(0, row.length)));
+    };
 
-        const minValue = Math.min(...nonNullValues);
-        const maxValue = Math.max(...nonNullValues);
+    update(func) {
+        this.data.forEach(
+            (row, y) => row.forEach(
+                (value, x, arr) => arr[x] = func(value, x, y)));
+        return this;
+    };
+
+    updateNonNull(func) {
+        return this.update((v, x, y) => v === null ? v : func(v, x, y));
+    };
+
+    filter(func) {
+        return this.updateNonNull((v, x, y) => func(v, x, y) ? value : null);
+    };
+
+    normalize() {
+        const {min: minValue, max: maxValue} = this._minMax();
         const range = maxValue - minValue;
         if (range === 0)
             throw new Error(`Cannot normalize ScoreMap containing just one value: ${minValue}`);
 
-        const normMap = new ScoreMap();
-        for (let x=0; x<50; ++x) {
-            for (let y=0; y<50; ++y) {
-                const v = this.get(x, y);
-                if (v !== null)
-                    normMap.set(x, y, (v - minValue) / range);
-            }
-        }
-
-        return normMap;
+        return this.updateNonNull((v, x, y) => (v-minValue)/range);
     };
 
-    filter(predicate) {
-        const m = new ScoreMap();
-        for (let x=0; x<50; ++x) {
-            for (let y=0; y<50; ++y) {
-                const v = this.get(x, y);
-                if (v && predicate(v))
-                    m.set(x, y, v);
-            }
-        }
-        return m;
+    inverse() {
+        const {min: minValue, max: maxValue} = this._minMax();
+        return this.updateNonNull(v => minValue + maxValue - v);
     };
 
     toString() {
         return 'ImaScoreMap!';
     };
 
-    static combine(...maps) {
-        const m = new ScoreMap();
-        for (let x=0; x<50; ++x) {
-            for (let y=0; y<50; ++y) {
-                const v = maps.map(mm => mm.get(x, y)).filter(vv => vv !== null);
-                if (v.length === maps.length)
-                    m.set(x, y, _.sum(v) / v.length);
-            }
-        }
-        return m.normalize();
+    static combine(func, ...maps) {
+        return new ScoreMap().update(
+            (v, x, y) => func(
+                maps.map(mm => mm.get(x, y)), x, y));
     };
 };
 

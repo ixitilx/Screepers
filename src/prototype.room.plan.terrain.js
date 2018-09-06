@@ -109,13 +109,36 @@ function drawRow(room, y, row) {
 };
 
 const tm = {};
-const sdm = {};
+const go_sdm = {};
+const named_sdm = {};
 
-function getDistanceMap(gameObject, terrainMap) {
-    if (!(gameObject.id in sdm)) {
-        sdm[gameObject.id] = buildDistanceMap(gameObject.pos, terrainMap).normalize();
+function getTerrainMap(room) {
+    if(!(room.name in tm))
+        tm[room.name] = room.scanTerrain();
+    return tm[room.name];
+};
+
+function getDistanceMap(obj, terrainMap) {
+    if (obj instanceof RoomObject) {
+        if (!(obj.id in go_sdm))
+            go_sdm[obj.id] = buildDistanceMap(obj.pos, terrainMap);
+        return go_sdm[obj.id];
+    } else if (obj.name && obj.posArray) {
+        if (!(obj.name in named_sdm))
+            named_sdm[obj.name] = buildDistanceMap(obj.posArray, terrainMap);
+        return named_sdm[obj.name];
     }
-    return sdm[gameObject.id];
+    throw new Error(`Cannot get distance map for ${obj}`);
+};
+
+function getPositions(item, terrainMap) {
+    const out = [];
+    terrainMap.forEach((row, y) =>
+        row.forEach((value, x) => {
+            if (value===item)
+                out.push({x:x, y:y});
+        }));
+    return out;
 };
 
 function drawSomething(room) {
@@ -124,17 +147,19 @@ function drawSomething(room) {
     let cpu = Game.cpu.getUsed();
     let cpy;
 
-    if(!(room.name in tm))
-        tm[room.name] = room.scanTerrain();
-
-    const terrainMap = tm[room.name];
+    const terrainMap = getTerrainMap(room);
     cpy = Game.cpu.getUsed();
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
 
-    const objects = _.flatten([room.find(FIND_SOURCES), room.find(FIND_MINERALS), [room.controller]]);
-    const maps = objects.map(o => getDistanceMap(o, terrainMap));
-    const distanceMap = ScoreMap.combine(...maps);
+    const gdm = obj => getDistanceMap(obj, terrainMap);
+    const sourceMaps = room.find(FIND_SOURCES).map(gdm);
+    const mineralMaps = room.find(FIND_MINERALS).map(gdm);
+    const controllerMap = gdm(room.controller);
+    
+    const wallMap = gdm({name: 'wall', posArray: getPositions('#', terrainMap)});
+
+    const distanceMap = wallMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
