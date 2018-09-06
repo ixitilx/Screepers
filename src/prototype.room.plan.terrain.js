@@ -206,12 +206,12 @@ function drawSomething(room) {
         terrainMap,
         scoreMap => scoreMap.inverse().normalize());
 
-    // const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
-    //     return getDistanceMap(
-    //         {name: `exit_${idx+1}`, posArray: exitPosArray},
-    //         terrainMap,
-    //         scoreMap => scoreMap.normalize());
-    // });
+    const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
+        return getDistanceMap(
+            {name: `exit_${idx+1}`, posArray: exitPosArray},
+            terrainMap,
+            scoreMap => scoreMap.normalize());
+    });
     
     // const exitMap = ScoreMap.combine(
     //     arr => _.any(arr) ? _.sum(_.map(arr, x => x*x)) : null,
