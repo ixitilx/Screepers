@@ -82,8 +82,8 @@ function hexColorFromWeight(weight) {
 function colorFromWeight(weight) {
     if (weight !== null && 0 <= weight && weight <= 1) {
         const invWeight = 1 - weight;
-        const red = hexColorFromWeight(weight);
-        const green = hexColorFromWeight(invWeight);
+        const red = hexColorFromWeight(invWeight);
+        const green = hexColorFromWeight(weight);
         const color = `#${red}${green}00`;
         return color;
     }
