@@ -205,7 +205,7 @@ function drawSomething(room) {
     const wallMap = getDistanceMap(
         {name: 'wall', posArray: getPositions('#', terrainMap)},
         terrainMap,
-        scoreMap => scoreMap.inverse().normalize());
+        scoreMap => scoreMap.normalize());
 
     // const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
     //     return getDistanceMap(
@@ -222,7 +222,7 @@ function drawSomething(room) {
         ...sourceMaps.concat(wallMap)).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
-    const distanceMap = wallMap;
+    const distanceMap = sourceMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
