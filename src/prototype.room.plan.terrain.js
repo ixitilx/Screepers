@@ -163,7 +163,7 @@ function drawSomething(room) {
     const distanceMap = wallMap.normalize();
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
-    distanceMap.data.forEach(row => console.log(row));
+    // distanceMap.data.forEach(row => console.log(row));
     console.log(distanceMap);
     cpu = cpy;
 
@@ -172,7 +172,7 @@ function drawSomething(room) {
     console.log('colorMap', cpy-cpu);
     cpu = cpy;
 
-    // colorMap.forEach((row, y) => drawRow(room, y, row));
+    colorMap.forEach((row, y) => drawRow(room, y, row));
     cpy = Game.cpu.getUsed();
     console.log('drawCircle', cpy-cpu);
 };
