@@ -216,7 +216,7 @@ function drawSomething(room) {
 
     // const exitMap = ScoreMap.combine(_.sum, exitMaps).normalize();
 
-    const distanceMap = wallMap;
+    const distanceMap = exitMaps[0];
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
