@@ -133,11 +133,13 @@ function getDistanceMap(obj, terrainMap) {
 
 function getPositions(item, terrainMap) {
     const out = [];
-    terrainMap.forEach((row, y) =>
+    terrainMap.forEach((row, y) => {
+        console.log(row);
         row.forEach((value, x) => {
             if (value===item)
                 out.push({x:x, y:y});
-        }));
+        })
+    });
     return out;
 };
 
