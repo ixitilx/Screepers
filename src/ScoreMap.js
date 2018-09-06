@@ -61,7 +61,7 @@ class ScoreMap {
     };
 
     filter(func) {
-        return this.updateNonNull((v, x, y) => func(v, x, y) ? value : null);
+        return this.updateNonNull((v, x, y) => func(v, x, y) ? v : null);
     };
 
     normalize() {
