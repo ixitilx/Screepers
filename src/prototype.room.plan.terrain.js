@@ -118,14 +118,18 @@ function getTerrainMap(room) {
     return tm[room.name];
 };
 
-function getDistanceMap(obj, terrainMap, normalize) {
+function getDistanceMap(obj, terrainMap, callback) {
     if (obj instanceof RoomObject) {
-        if (!(obj.id in go_sdm))
-            go_sdm[obj.id] = buildDistanceMap(obj.pos, terrainMap, normalize);
+        if (!(obj.id in go_sdm)) {
+            const m = buildDistanceMap(obj.pos, terrainMap);
+            go_sdm[obj.id] = callback ? callback(m) : m;
+        }
         return go_sdm[obj.id];
     } else if (obj.name && obj.posArray) {
-        if (!(obj.name in named_sdm))
-            named_sdm[obj.name] = buildDistanceMap(obj.posArray, terrainMap, normalize);
+        if (!(obj.name in named_sdm)) {
+            const m = buildDistanceMap(obj.posArray, terrainMap);
+            named_sdm[obj.name] = callback ? callback(m) : m;
+        }
         return named_sdm[obj.name];
     }
     throw new Error(`Cannot get distance map for ${obj}`);
@@ -158,7 +162,8 @@ function drawSomething(room) {
     const mineralMaps = room.find(FIND_MINERALS).map(gdm);
     const controllerMap = gdm(room.controller);
     
-    const wallMap = gdm({name: 'wall', posArray: getPositions('#', terrainMap)}, true);
+    const wallMap = gdm({name: 'wall', posArray: getPositions('#', terrainMap)},
+        scoreMap => scoreMap.inverse().normalize());
 
     const distanceMap = wallMap.inverse().normalize();
     cpy = Game.cpu.getUsed();

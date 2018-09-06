@@ -124,7 +124,7 @@ function posAround(p, pos) {
 };
 
 
-function buildDistanceMap(positions, terrainMap, normalize) {
+function buildDistanceMap(positions, terrainMap) {
     if (!_.isArray(positions) && positions.x && positions.y)
         positions = [positions];
 
@@ -144,7 +144,7 @@ function buildDistanceMap(positions, terrainMap, normalize) {
         queue = queue.filter(p => m.get(p.x, p.y) === null);
     };
 
-    return normalize ? m.normalize() : m;
+    return m;
 };
 
 module.exports = {
