@@ -218,7 +218,8 @@ function drawSomething(room) {
         arr => _.any(arr) ? _.sum(arr) : null,
         ...exitMaps).normalize();
 
-    const distanceMap = exitMaps[Game.time % exitMaps.length];
+    // const distanceMap = exitMaps[Game.time % exitMaps.length];
+    const distanceMap = exitMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
