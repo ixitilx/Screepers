@@ -172,7 +172,7 @@ function getExits(terrainMap) {
     const topExits = getRowExits(terrainMap[0]).map(
         r => exitToPosArray(r[0], r[1], x => ({x:x, y:0})));
 
-    const botExits = getRowExits(terrainMap[terrain.length-1]).map(
+    const botExits = getRowExits(terrainMap[terrainMap.length-1]).map(
         r => exitToPosArray(r[0], r[1], x => ({x:x, y:49})));
 
     const leftRow = terrainMap.map(row => row[0]).join('');
