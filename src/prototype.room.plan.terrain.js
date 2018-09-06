@@ -146,6 +146,46 @@ function getPositions(item, terrainMap) {
     return out;
 };
 
+function getRowExits(row) {
+    let start = 0;
+    const out = [];
+    let prev = row[0];
+    for (let idx = 1; idx < row.length; ++idx) {
+        let curr = row[idx];
+        if (prev === '#' && curr !== '#')
+            start = idx;
+        else if(prev !== '#' && curr === '#')
+            out.push([start, idx-1]);
+        prev = curr;
+    }
+    return out;
+};
+
+function exitToPosArray(start, end, func) {
+    const out = [];
+    for (let x = start; x <= end; ++x)
+        out.push(func(x));
+    return out;
+};
+
+function getExits(terrainMap) {
+    const topExits = getRowExits(terrainMap[0]).map(
+        [start, end] => exitToPosArray(start, end, x => {x:x, y:0}));
+
+    const botExits = getRowExits(terrainMap[terrain.length-1]).map(
+        [start, end] => exitToPosArray(start, end, x => {x:x, y:49}));
+
+    const leftRow = terrainMap.map(row => row[0]).join('');
+    const leftExits = getRowExits(leftRow).map(
+        [start, end] => exitToPosArray(start, end, x => {x:0, y:x}));
+
+    const rightRow = terrainMap.map(row => row[49]).join('');
+    const rightExits = getRowExits(rightRow).map(
+        [start, end] => exitToPosArray(start, end, x => {x:49, y:x}));
+    const cat1 = [].concat(topExits, botExits, leftExits, rightExits);
+    return [].concat(...cat1);
+};
+
 function drawSomething(room) {
     console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket} `, 80, '-'));
 
@@ -167,7 +207,12 @@ function drawSomething(room) {
         terrainMap,
         scoreMap => scoreMap.inverse().normalize());
 
-    const distanceMap = wallMap;
+    const exitMap = getDistanceMap(
+        {name: 'exit', posArray: getExits(terrainMap)},
+        terrainMap,
+        scoreMap => scoreMap.normalize());
+
+    const distanceMap = exitMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
