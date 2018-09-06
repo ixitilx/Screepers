@@ -160,7 +160,7 @@ function drawSomething(room) {
     
     const wallMap = gdm({name: 'wall', posArray: getPositions('#', terrainMap)}, true);
 
-    const distanceMap = wallMap;
+    const distanceMap = wallMap.normalize();
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     distanceMap.data.forEach(row => console.log(row));
