@@ -182,8 +182,7 @@ function getExits(terrainMap) {
     const rightRow = terrainMap.map(row => row[49]).join('');
     const rightExits = getRowExits(rightRow).map(
         r => exitToPosArray(r[0], r[1], x => ({x:49, y:x})));
-    const cat1 = [].concat(topExits, botExits, leftExits, rightExits);
-    return [].concat(...cat1);
+    return [].concat(topExits, leftExits, botExits, rightExits);
 };
 
 function drawSomething(room) {
@@ -207,10 +206,13 @@ function drawSomething(room) {
         terrainMap,
         scoreMap => scoreMap.inverse().normalize());
 
-    const exitMap = getDistanceMap(
-        {name: 'exit', posArray: getExits(terrainMap)},
-        terrainMap,
-        scoreMap => scoreMap.normalize());
+    const exitMaps = getExits(terrainMap).map((exit, idx) => {
+        return getDistanceMap(
+            {name: `exit_${idx+1}`, posArray: exit},
+            scoreMap => scoreMap.normalize());
+    });
+
+    const exitMap = ScoreMap.combine(_.sum, exitMaps).normalize();
 
     const distanceMap = exitMap;
     cpy = Game.cpu.getUsed();
