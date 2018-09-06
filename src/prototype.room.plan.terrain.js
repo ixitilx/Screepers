@@ -196,12 +196,11 @@ function drawSomething(room) {
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
 
-    const gdm = (obj) => getDistanceMap(obj, terrainMap);
-    const sourceMaps = room.find(FIND_SOURCES).map(
-        s => getDistanceMap(s, terrainMap, m => m.inverse().normalize()));
+    const gdm = (obj) => getDistanceMap(obj, terrainMap, m => m.inverse().normalize());
+    const sourceMaps = room.find(FIND_SOURCES).map(gdm);
     const mineralMaps = room.find(FIND_MINERALS).map(gdm);
     const controllerMap = gdm(room.controller);
-    
+
     const wallMap = getDistanceMap(
         {name: 'wall', posArray: getPositions('#', terrainMap)},
         terrainMap,
@@ -219,7 +218,7 @@ function drawSomething(room) {
 
     const sourceMap = ScoreMap.combine(
         (arr, x, y) => _.all(arr, v => v !== null) ? _.sum(arr) : null,
-        ...sourceMaps.concat(wallMap)).normalize().filter(v => v > 0.5).normalize();
+        ...sourceMaps.concat(wallMap, controllerMap, ...mineralMaps)).normalize().filter(v => v > 0.5).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
     const distanceMap = sourceMap;
