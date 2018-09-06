@@ -196,8 +196,8 @@ function drawSomething(room) {
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
 
-    const gdm = obj => getDistanceMap(obj, terrainMap);
-    const sourceMaps = room.find(FIND_SOURCES).map(gdm);
+    const gdm = (obj, ...args) => getDistanceMap(obj, terrainMap, ...args);
+    const sourceMaps = room.find(FIND_SOURCES).map(s => gdm(s, m => m.map(v => v*v).inverse()));
     const mineralMaps = room.find(FIND_MINERALS).map(gdm);
     const controllerMap = gdm(room.controller);
     
