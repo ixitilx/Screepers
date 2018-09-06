@@ -222,7 +222,7 @@ function drawSomething(room) {
         ...sourceMaps.concat(wallMap)).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
-    const distanceMap = sourceMap;
+    const distanceMap = wallMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
