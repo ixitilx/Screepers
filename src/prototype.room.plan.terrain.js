@@ -216,7 +216,7 @@ function drawSomething(room) {
 
     const exitMap = ScoreMap.combine(
         arr => _.sum(arr),
-        ...exitMaps.slice(0, 2)).normalize();
+        ...exitMaps).normalize();
 
     const distanceMap = exitMap;
     cpy = Game.cpu.getUsed();
