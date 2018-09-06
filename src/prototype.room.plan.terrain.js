@@ -206,8 +206,13 @@ function drawSomething(room) {
         terrainMap,
         scoreMap => scoreMap.inverse().normalize());
 
-    const exitMaps = getExits(terrainMap);
-    exitMaps.forEach(m => console.log(JSON.stringify(m)));
+    const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
+        return getDistanceMap(
+            {name: `exit_${idx+1}`, posArray: exitPosArray},
+            terrainMap,
+            scoreMap => scoreMap.normalize());
+    });
+    
 
     // const exitMap = ScoreMap.combine(_.sum, exitMaps).normalize();
 
