@@ -216,12 +216,9 @@ function drawSomething(room) {
     //     arr => _.any(arr) ? _.sum(_.map(arr, x => x*x)) : null,
     //     ...exitMaps).normalize();
 
-    // const sourceMap = ScoreMap.combine(
-    //     (arr, x, y) => {
-    //         console.log(x, y, JSON.stringify(arr));
-    //         return _.all(arr) ? _.sum(_.map(arr, v => v*v)) : null;
-    //     },
-    //     ...exitMaps).normalize();
+    const sourceMap = ScoreMap.combine(
+        (arr, x, y) => _.all(arr) ? _.sum(arr) : null,
+        ...exitMaps).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
     const distanceMap = sourceMaps[0].normalize();
