@@ -206,25 +206,25 @@ function drawSomething(room) {
         terrainMap,
         scoreMap => scoreMap.inverse().normalize());
 
-    const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
-        return getDistanceMap(
-            {name: `exit_${idx+1}`, posArray: exitPosArray},
-            terrainMap);
-    });
+    // const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
+    //     return getDistanceMap(
+    //         {name: `exit_${idx+1}`, posArray: exitPosArray},
+    //         terrainMap);
+    // });
     
     // const exitMap = ScoreMap.combine(
     //     arr => _.any(arr) ? _.sum(_.map(arr, x => x*x)) : null,
     //     ...exitMaps).normalize();
 
-    const sourceMap = ScoreMap.combine(
-        (arr, x, y) => {
-            console.log(x, y, JSON.stringify(arr));
-            return _.all(arr) ? _.sum(_.map(arr, v => v*v)) : null;
-        },
-        ...exitMaps).normalize();
+    // const sourceMap = ScoreMap.combine(
+    //     (arr, x, y) => {
+    //         console.log(x, y, JSON.stringify(arr));
+    //         return _.all(arr) ? _.sum(_.map(arr, v => v*v)) : null;
+    //     },
+    //     ...exitMaps).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
-    const distanceMap = exitMaps[exitMaps.length-1].normalize();
+    const distanceMap = sourceMaps[0].normalize();
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
