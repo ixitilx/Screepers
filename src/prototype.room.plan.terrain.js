@@ -201,7 +201,7 @@ function drawSomething(room) {
         s => getDistanceMap(s, terrainMap,
             m => m.inverse()
                   .normalize()
-                  .updateNonNull(v => v*v*v > 0.4 ? v*v*v : null)
+                  .updateNonNull(v => v*v > 0.5 ? v*v : null)
                   .normalize()));
     const mineralMaps = room.find(FIND_MINERALS).map(gdm);
     const controllerMap = gdm(room.controller);
