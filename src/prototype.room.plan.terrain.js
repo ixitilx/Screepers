@@ -162,7 +162,9 @@ function drawSomething(room) {
     const mineralMaps = room.find(FIND_MINERALS).map(gdm);
     const controllerMap = gdm(room.controller);
     
-    const wallMap = gdm({name: 'wall', posArray: getPositions('#', terrainMap)},
+    const wallMap = getDistanceMap(
+        {name: 'wall', posArray: getPositions('#', terrainMap)},
+        terrainMap,
         scoreMap => scoreMap.inverse().normalize());
 
     const distanceMap = wallMap;
