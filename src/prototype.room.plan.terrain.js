@@ -163,7 +163,8 @@ function drawSomething(room) {
     const distanceMap = wallMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
-    // console.log(distanceMap);
+    distanceMap.data.forEach(row => console.log(row));
+    console.log(distanceMap);
     cpu = cpy;
 
     const colorMap = buildColorMap(distanceMap);
