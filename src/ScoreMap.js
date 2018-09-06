@@ -84,8 +84,7 @@ class ScoreMap {
 
     static combine(func, ...maps) {
         return new ScoreMap().update(
-            (v, x, y) => func(
-                maps.map(mm => mm.get(x, y)), x, y));
+            (v, x, y) => func(maps.map(mm => mm.get(x, y)), x, y));
     };
 };
 
