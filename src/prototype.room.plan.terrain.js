@@ -209,8 +209,7 @@ function drawSomething(room) {
     const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
         return getDistanceMap(
             {name: `exit_${idx+1}`, posArray: exitPosArray},
-            terrainMap,
-            scoreMap => scoreMap.normalize());
+            terrainMap);
     });
     
     // const exitMap = ScoreMap.combine(
