@@ -224,7 +224,7 @@ function drawSomething(room) {
         ...exitMaps).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
-    const distanceMap = exitMaps[exitMaps.length-1];
+    const distanceMap = exitMaps[exitMaps.length-1].normalize();
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
