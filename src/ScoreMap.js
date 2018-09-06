@@ -21,7 +21,7 @@ class ScoreMap {
 
     _minMax() {
         const v = this._values();
-        if (nonNullValues.length === 0)
+        if (v.length === 0)
             throw new Error('Cannot calculate minMax on empty ScoreMap');
 
         let min = v[0];
