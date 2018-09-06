@@ -214,9 +214,9 @@ function drawSomething(room) {
     });
     
 
-    // const exitMap = ScoreMap.combine(_.sum, exitMaps).normalize();
+    const exitMap = ScoreMap.combine(_.sum, ...exitMaps).normalize();
 
-    const distanceMap = exitMaps[0];
+    const distanceMap = exitMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
     // distanceMap.data.forEach(row => console.log(row));
