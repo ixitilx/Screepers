@@ -207,7 +207,7 @@ function drawSomething(room) {
         scoreMap => scoreMap.inverse().normalize());
 
     const exitMaps = getExits(terrainMap);
-    exitMaps.forEach(m => console.log(m));
+    exitMaps.forEach(m => console.log(JSON.stringify(m)));
 
     // const exitMap = ScoreMap.combine(_.sum, exitMaps).normalize();
 
