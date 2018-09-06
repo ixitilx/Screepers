@@ -219,7 +219,7 @@ function drawSomething(room) {
 
     const sourceMap = ScoreMap.combine(
         (arr, x, y) => _.all(arr, v => v !== null) ? _.sum(arr) : null,
-        ...sourceMaps.concat(wallMap)).normalize();
+        ...sourceMaps.concat(wallMap)).normalize().filter(v => v > 0.5).normalize();
 
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
     const distanceMap = sourceMap;
