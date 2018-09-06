@@ -170,18 +170,18 @@ function exitToPosArray(start, end, func) {
 
 function getExits(terrainMap) {
     const topExits = getRowExits(terrainMap[0]).map(
-        r => exitToPosArray(r[0], r[1], x => {x:x, y:0}));
+        r => exitToPosArray(r[0], r[1], x => ({x:x, y:0})));
 
     const botExits = getRowExits(terrainMap[terrain.length-1]).map(
-        r => exitToPosArray(r[0], r[1], x => {x:x, y:49}));
+        r => exitToPosArray(r[0], r[1], x => ({x:x, y:49})));
 
     const leftRow = terrainMap.map(row => row[0]).join('');
     const leftExits = getRowExits(leftRow).map(
-        r => exitToPosArray(r[0], r[1], x => {x:0, y:x}));
+        r => exitToPosArray(r[0], r[1], x => ({x:0, y:x})));
 
     const rightRow = terrainMap.map(row => row[49]).join('');
     const rightExits = getRowExits(rightRow).map(
-        r => exitToPosArray(r[0], r[1], x => {x:49, y:x}));
+        r => exitToPosArray(r[0], r[1], x => ({x:49, y:x})));
     const cat1 = [].concat(topExits, botExits, leftExits, rightExits);
     return [].concat(...cat1);
 };
