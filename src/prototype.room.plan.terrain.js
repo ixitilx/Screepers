@@ -1,7 +1,13 @@
 'use strict';
 
 const {assert, createArray} = require('utils.prototype');
-const {ScoreMap, buildDistanceMap} = require('ScoreMap');
+
+const {TerrainMap} = require('map.terrain');
+const {DistanceMap} = require('map.distance');
+const {ScoreMap} = require('map.score');
+const {ColorMap} = require('map.color');
+const {RoomMap, idxToPos} = require('map.room');
+const {RoomPlan} = require('plan.room');
 
 const planEncodeMap = {
     'wall' : '#',
@@ -32,73 +38,6 @@ const planEncodeMap = {
 
 const planDecodeMap = _.invert(planEncodeMap);
 
-// function isInRoom(p) {
-//     return (0 <= p.x && p.x < 50) && (0 <= p.y && p.y < 50);
-// };
-
-// function posAround(p, pos) {
-//     const out = [];
-//     [-1, 0, 1].forEach(dy =>
-//         [-1, 0, 1].forEach(function(dx) {
-//             const pt = {x: p.x + dx, y: p.y + dy};
-//             if (isInRoom(pt) && pos[pt.y][pt.x]===false) {
-//                 out.push(pt);
-//                 pos[pt.y][pt.x] = true;
-//             }
-//         }));
-//     return out;
-// };
-
-// function buildDistanceMap(positions, terrainMap) {
-//     if (!_.isArray(positions) && positions.x && positions.y)
-//         positions = [positions];
-
-//     const out = createArray(() => null, [50, 50]);
-//     const pos = createArray(() => false, [50, 50]);
-    
-//     let queue = positions.map(p => _.pick(p, ['x', 'y']));
-//     queue.forEach(p => pos[p.y][p.x] = true);
-
-//     let score;
-//     for (score = 0; queue.length > 0; score++) {
-//         queue.filter(p => terrainMap[p.y][p.x] !== '#')
-//              .forEach(p => out[p.y][p.x] = score);
-
-//         queue = _(queue).map(p => posAround(p, pos)).flatten().value();
-//         queue = _.filter(queue, p => terrainMap[p.y][p.x] !== '#');
-//         queue = _.filter(queue, p => out[p.y][p.x] === null);
-//     };
-
-//     return {distanceMap: out, maxScore: score-1};
-// };
-
-function hexColorFromWeight(weight) {
-    return _.padLeft(Math.floor(255*weight).toString(16), 2, '0');
-    // const color = Math.floor(Math.min(255, Math.max(256 * weight, 0)));
-    // const hexcolor = _.padLeft(color.toString(16), 2, '0');
-    // return hexcolor;
-};
-
-function colorFromWeight(weight) {
-    if (weight !== null && 0 <= weight && weight <= 1) {
-        const invWeight = 1 - weight;
-        const red = hexColorFromWeight(invWeight);
-        const green = hexColorFromWeight(weight);
-        const color = `#${red}${green}00`;
-        return color;
-    }
-    return null;
-};
-
-function normalizeRow(row, maxScore) {
-    return row.map(value => value === null ? null : value/maxScore);
-};
-
-function buildColorMap(distanceMap) {
-    const colorMap = distanceMap.data.map(row => row.map(colorFromWeight));
-    return colorMap;
-};
-
 function drawRow(room, y, row) {
     // const drawLog = function(value, x) {
     //     console.log(`Drawing ${x}, ${y}, ${value}`);
@@ -109,39 +48,35 @@ function drawRow(room, y, row) {
 };
 
 const tm = {};
-const go_sdm = {};
+const dm = {};
 const named_sdm = {};
 
 function getTerrainMap(room) {
     if(!(room.name in tm))
-        tm[room.name] = room.scanTerrain();
+        tm[room.name] = new TerrainMap(room);
     return tm[room.name];
 };
 
-function getDistanceMap(obj, terrainMap, callback) {
-    if (obj instanceof RoomObject) {
-        if (!(obj.id in go_sdm)) {
-            const m = buildDistanceMap(obj.pos, terrainMap);
-            go_sdm[obj.id] = callback ? callback(m) : m;
-        }
-        return go_sdm[obj.id];
-    } else if (obj.name && obj.posArray) {
-        if (!(obj.name in named_sdm)) {
-            const m = buildDistanceMap(obj.posArray, terrainMap);
-            named_sdm[obj.name] = callback ? callback(m) : m;
-        }
-        return named_sdm[obj.name];
+function getDistanceMap(name, terrainMap, positions, callback) {
+    if(!(name in dm)) {
+        if (typeof(positions) === 'function')
+            positions = positions();
+        const newDistanceMap = new DistanceMap(terrainMap, positions);
+        dm[name] = callback ? callback(newDistanceMap) : newDistanceMap;
     }
-    throw new Error(`Cannot get distance map for ${obj}`);
+    return dm[name];
 };
 
-function getPositions(item, terrainMap) {
+function getPositions(value, terrainMap) {
     const out = [];
-    terrainMap.forEach((row, y) => {
-        _.each(row, (value, x) => {
-            if (value===item)
-                out.push({x:x, y:y});
-        });
+    if (!(terrainMap instanceof TerrainMap))
+        throw new Error(`Not a TerrainMap: ${terrainMap}`);
+
+    _.each(terrainMap.data, (v, i) => {
+        if (value===v) {
+            const [x, y] = idxToPos(i);
+            out.push({x:x, y:y});
+        }
     });
     return out;
 };
@@ -188,6 +123,8 @@ function getExits(terrainMap) {
 function drawSomething(room) {
     console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket} `, 80, '-'));
 
+    new RoomPlan(room.name);
+
     let cpu = Game.cpu.getUsed();
     let cpy;
 
@@ -196,47 +133,43 @@ function drawSomething(room) {
     console.log('terrainMap', cpy-cpu);
     cpu = cpy;
 
-    const gdm = (obj) => getDistanceMap(obj, terrainMap, m => m.inverse().normalize());
+    const gdm = (obj) => getDistanceMap(obj.id, terrainMap, obj.pos, m => m.inverse());
     const sourceMaps = room.find(FIND_SOURCES).map(gdm);
     const mineralMaps = room.find(FIND_MINERALS).map(gdm);
     const controllerMap = gdm(room.controller);
 
     const wallMap = getDistanceMap(
-        {name: 'wall', posArray: getPositions('#', terrainMap)},
+        `walls_${room.name}`,
         terrainMap,
-        scoreMap => scoreMap.normalize());
+        () => getPositions('#', terrainMap));
 
-    // const exitMaps = getExits(terrainMap).map((exitPosArray, idx) => {
-    //     return getDistanceMap(
-    //         {name: `exit_${idx+1}`, posArray: exitPosArray},
-    //         terrainMap);
-    // });
-    
-    // const exitMap = ScoreMap.combine(
-    //     arr => _.any(arr) ? _.sum(_.map(arr, x => x*x)) : null,
-    //     ...exitMaps).normalize();
+    const exits = terrainMap.getAllExits();
+    const exitMaps = exits.map((pos, i) => {
+        return getDistanceMap(
+            `exit_${room.name}_${i}`,
+            terrainMap,
+            pos
+        );
+    });
 
-    const sourceMap = ScoreMap.combine(
-        (arr, x, y) => _.all(arr, v => v !== null) ? _.sum(arr) : null,
-        ...sourceMaps.concat(wallMap, controllerMap, ...mineralMaps))
-                     .normalize()
-                     .filter(v => v > 0.8)
-                     .normalize();
+    // const megaExit = _.flatten(exits);
+    // const megaExitMap = getDistanceMap('megaExit', terrainMap, megaExit);
 
+    const combinedExitMap = DistanceMap.combineAdd(exitMaps);
+
+    const allMaps = [].concat(sourceMaps, mineralMaps, exitMaps, [combinedExitMap, controllerMap, wallMap]);
+    const distanceMap = allMaps[Game.time % allMaps.length];
     // const distanceMap = exitMaps[Game.time % exitMaps.length];
-    const distanceMap = sourceMap;
     cpy = Game.cpu.getUsed();
     console.log('distanceMap', cpy-cpu);
-    // distanceMap.data.forEach(row => console.log(row));
-    // console.log(distanceMap);
     cpu = cpy;
 
-    const colorMap = buildColorMap(distanceMap);
+    const colorMap = new ColorMap(distanceMap);
     cpy = Game.cpu.getUsed();
     console.log('colorMap', cpy-cpu);
     cpu = cpy;
 
-    colorMap.forEach((row, y) => drawRow(room, y, row));
+    room.drawColorMap(colorMap);
     cpy = Game.cpu.getUsed();
     console.log('drawCircle', cpy-cpu);
 };

@@ -1,12 +1,13 @@
 'use strict';
 
-console.log(`Reinitialized at ${Game.time}`);
+console.log(`Reinitialized at ${Game.time}. Hello!`);
 
 require('prototype.room');
 // require('prototype.source');
 // require('prototype.spawn');
 // require('prototype.creep');
 // require('prototype.resource');
+require('map.room');
 const drawSomething = require('prototype.room.plan.terrain');
 
 // const SourceManager = require('manager.source');
@@ -23,4 +24,3 @@ exports.loop = function() {
 
     _.each(Game.rooms, drawSomething);
 };
-
