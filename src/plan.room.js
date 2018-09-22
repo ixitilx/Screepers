@@ -131,7 +131,8 @@ class RoomPlan {
     constructor(room) {
         const roomName = room.name;
 
-        console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket} Cpu: ${Game.cpu.getUsed()} `, 80, '-'));
+        const cpuStart = Game.cpu.getUsed();
+        console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket} Cpu: ${cpuStart.toFixed(2)} `, 80, '-'));
 
         const inverse3 = m => m.inverse().mapNonNull(v => v*v*v).normalize();
         const positive3 = m => m.mapNonNull(v => v*v*v).normalize();
@@ -149,28 +150,15 @@ class RoomPlan {
         const sourceRangeMaps = get(`${room.name}_sources_range`, () => sourceMaps.map(inverse3));
         const mineralRangeMaps = get(`${room.name}_minerals_range`, () => mineralMaps.map(inverse3));
 
-        const maps = [].concat(sourceRangeMaps, mineralRangeMaps, exitMaps, [controllerMap, wallMap]);
-        const combinedMap = maps[Game.time % maps.length];
-        // const sourceMaps = getSourceMaps(roomName).map(inverse3);
-        // const mineralMaps = getMineralMaps(roomName).map(inverse3);
-        // const controllerMap = inverse3(getControllerMap(roomName));
-        // const wallMap = getWallMap(roomName).normalize();
-        // const exitMaps = terrainMap.getAllExits().map(
-        //     (pos, i) => getDistanceMap(roomName, pos, `${roomName}_exit_${i}`))
-        //     .map(m => m.inverse().mapNonNull(v => v*v*v).inverse().normalize());
+        const maps = [controllerMap, wallMap].concat(sourceRangeMaps, mineralRangeMaps, exitMaps);
+        const index = Game.time % maps.length;
+        const combinedMap = maps[index];
 
-        // const comboSourcesMap = DistanceMap.combineAdd(sourceMaps);
-        // const comboMineralsMap = DistanceMap.combineAdd(mineralMaps);
-        // const comboExitMap = DistanceMap.combineAdd(exitMaps).normalize();
+        const colorMap = get(`color_map_${Game.time % maps.length}`, () => new ColorMap(combinedMap));
 
-        // const maps = [comboSourcesMap, comboMineralsMap, controllerMap, wallMap, comboExitMap];
-        // const combiner  = makeCombiner((s,m,c,w,e) => w+e);
-        // const combiner2 = makeCombiner((s,m,c,w,e) => s+0.5*m+c+0.5*w+e);
-        
-        // const combinedMap = DistanceMap.combine(maps, combiner2).normalize().filter(v => v > 0.8);
-
-        room && room.drawColorMap(new ColorMap(combinedMap));
-        console.log(`Cpu: ${Game.cpu.getUsed()}`);
+        room && room.drawColorMap(colorMap);
+        const cpuEnd = (Game.cpu.getUsed()-cpuStart);
+        console.log(`Cpu: +${cpuEnd.toFixed(2)}`);
     };
 };
 

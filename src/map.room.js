@@ -2,12 +2,8 @@
 
 const {createArray} = require('utils.prototype');
 
-function inRange(value, minValue, maxValue) {
-    return minValue <= value && value < maxValue;
-};
-
 function inRoom(x, y) {
-    return inRange(x, 0, 50) && inRange(y, 0, 50);
+    return _.inRange(x, 0, 50) && _.inRange(y, 0, 50);
 };
 
 function posToIdx(x, y) {
@@ -68,16 +64,16 @@ class RoomMap {
 
     mapNonNull(func) {
         return this.map(
-            (v, i, a) => v === null ? v : func(v, i, a));
+            (v, ...args) => v === null ? v : func(v, ...args));
     };
 
     _filterFunc(func) {
         return this.map(
-            (v, i, a) => v !== null && func(v, i, a) ? v : null);
+            (v, ...args) => v !== null && func(v, ...args) ? v : null);
     };
 
     _filterMap(roomMap) {
-        return this.map((v, i, a) => roomMap.data[i] === null ? null : v);
+        return this.map((v, i) => roomMap.data[i] === null ? null : v);
     };
 
     filter(pred) {
