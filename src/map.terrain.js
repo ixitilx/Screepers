@@ -38,41 +38,25 @@ class TerrainMap extends RoomMap {
         }
     };
 
-    _getExits(coordToIdx) {
-        let prev = true;
-        let exit = [];
+    _getExit(coordToIdx) {
         let out = [];
         for (let i=1; i<49; ++i) {
             const idx = coordToIdx(i);
-            const curr = this.data[idx] === '#';
-
-            if (curr && !prev) {
-                out.push(exit);
-                exit = [];
-            }
-
-            if (!curr) {
+            if (this.data[idx] === '#')
+            {
                 const [x, y] = idxToPos(idx);
-                exit.push({x:x, y:y});
+                out.push({x:x, y:y});
             }
-
-            prev = curr;
         }
-
-        if (exit.length)
-            out.push(exit);
-
         return out;
     };
 
-    getLeftExits()   { return this._getExits(idx => posToIdx( 0, idx)); };
-    getTopExits()    { return this._getExits(idx => posToIdx(idx,  0)); };
-    getRightExits()  { return this._getExits(idx => posToIdx(49, idx)); };
-    getBottomExits() { return this._getExits(idx => posToIdx(idx, 49)); };
-    getAllExits()    { return [].concat(this.getTopExits(),
-                                        this.getLeftExits(),
-                                        this.getBottomExits(),
-                                        this.getRightExits()); };
+    getLeftExit()   { return this._getExit(idx => posToIdx( 0, idx)); };
+    getTopExit()    { return this._getExit(idx => posToIdx(idx,  0)); };
+    getRightExit()  { return this._getExit(idx => posToIdx(49, idx)); };
+    getBottomExit() { return this._getExit(idx => posToIdx(idx, 49)); };
+    getAllExits()   { return [this.getTopExit(), this.getLeftExit(),
+                              this.getBottomExit(), this.getRightExit()] };
 };
 
 module.exports = {

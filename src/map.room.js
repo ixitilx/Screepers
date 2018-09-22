@@ -62,16 +62,17 @@ class RoomMap {
     };
 
     map(func) {
-        return this.data.map(func);
+        return new this.constructor(
+            this.data.map(func));
     };
 
     mapNonNull(func) {
-        return this.data.map(
+        return this.map(
             (v, i, a) => v === null ? v : func(v, i, a));
     };
 
     _filterFunc(func) {
-        return this.data.map(
+        return this.map(
             (v, i, a) => v !== null && func(v, i, a) ? v : null);
     };
 
