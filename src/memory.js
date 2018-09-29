@@ -1,3 +1,15 @@
+/**
+    MemoryCell meta
+    meta = {
+        created: Game.time,
+        lastRead: Game.time,
+        lastWrite: Game.time,
+        deprecate: Game.time,
+    };
+
+    
+*/
+
 const k_memoryPropCallbacks = [];
 
 function makeCachedPropertyDescriptor(computeFunc) {

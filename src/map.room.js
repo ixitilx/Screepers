@@ -25,7 +25,7 @@ class RoomMap {
         } else if (data && data.length && data.length === 2500) {
             this.data = data;
         } else if (data && data.value) {
-            this.data = createArray(data.value, [50, 50]);
+            this.data = createArray(data.value, [2500]);
         } else {
             throw new Error(`Cannot initialize from ${data}`);
         }

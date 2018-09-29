@@ -11,7 +11,9 @@ function defineProperty(className, name, impl, enumerable=false, configurable=tr
 };
 
 function assert(criteria, message='Assertion error') {
-    if(!criteria) {
+    if (!criteria) {
+        if (_.isFunction(message))
+            message = message();
         throw new Error(message);
     }
 };

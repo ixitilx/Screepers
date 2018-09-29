@@ -30,8 +30,8 @@ function addNearby(x, y, i, data, out, terrainMap) {
     checkAndAdd(x-1, y-1);
     checkAndAdd(x  , y-1);
     checkAndAdd(x+1, y-1);
-    checkAndAdd(x-1, y);
-    checkAndAdd(x+1, y);
+    checkAndAdd(x-1, y  );
+    checkAndAdd(x+1, y  );
     checkAndAdd(x-1, y+1);
     checkAndAdd(x  , y+1);
     checkAndAdd(x+1, y+1);
