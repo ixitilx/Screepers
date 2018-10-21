@@ -14,7 +14,7 @@ function posToIdx(x, y) {
 
 function idxToPos(idx) {
     if (!Number.isInteger(idx))
-        throw new Error(`Attempt to coordinates from non-integer index ${idx}`);
+        throw new Error(`Attempt to compute coordinates from non-integer index [${idx}]`);
     return [idx%50, (idx/50)>>0];
 };
 
@@ -94,12 +94,14 @@ class RoomMap {
         return new this(data);
     };
 
+    static combineNotNull(maps, func) {
+        return this.combine(maps, args => {
+            return (_.any(args, _.isNull)) ? null : func(args);
+        });
+    };
+
     static combineAdd(maps) {
-        const combiner = function(v) {
-            return v.reduce((total, current) => 
-                total !== null && current != null ? total + current : null);
-        };
-        return this.combine(maps, combiner);
+        return this.combineNotNull(maps, _.sum);
     };
 };
 

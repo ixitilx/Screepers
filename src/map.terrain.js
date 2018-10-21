@@ -52,11 +52,24 @@ class TerrainMap extends RoomMap {
         }
     };
 
+    tiles(value) {
+        const out = [];
+        this.data.forEach((v, i) => {
+            if (v === value)
+                out.push(i);
+        });
+        return out;
+    };
+
+    walls () { return this.tiles('#'); };
+    swamps() { return this.tiles('*'); };
+    plains() { return this.tiles(' '); };
+
     _getExit(coordToIdx) {
         let out = [];
         for (let i=1; i<49; ++i) {
             const idx = coordToIdx(i);
-            if (this.data[idx] === '#')
+            if (this.data[idx] === ' ')
             {
                 const [x, y] = idxToPos(idx);
                 out.push({x:x, y:y});

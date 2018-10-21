@@ -33,6 +33,22 @@ class ScoreMap extends RoomMap {
         const [minValue, maxValue] = this.minMax();
         return new this.constructor(this.mapNonNull(v => minValue+maxValue-v));
     };
+
+    getBestScore() {
+        let bestScore = [0];
+        this.data.forEach((v, i) => {
+            if (v === null)
+                return;
+
+            const bestValue = this.data[bestScore[0]];
+            if (v > bestValue) {
+                bestScore = [i];
+            } else if (v === bestValue) {
+                bestScore.push(i);
+            }
+        });
+        return bestScore;
+    };
 };
 
 module.exports = {

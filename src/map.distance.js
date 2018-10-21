@@ -47,8 +47,12 @@ function buildDistanceMapData(terrainMap, positions) {
     if (!_.isArray(positions) && positions.x && positions.y)
         positions = [positions];
 
+    if (positions.length === 0)
+        throw new Error('Cannot build distance map out of empty input');
+
     let queue = {};
     positions.forEach(p => queue[posToIdx(p.x, p.y)] = [p.x, p.y]);
+
     const data = Array.from({length: 2500}, v => null);
 
     let score;
@@ -64,9 +68,6 @@ function buildDistanceMapData(terrainMap, positions) {
 
         queue = newQueue(queue, data, terrainMap);
     };
-
-    if (data.length !== 2500)
-        throw new Error(`Constructed corrupted data (length: ${data.length})`);
 
     return data;
 };
