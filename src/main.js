@@ -14,5 +14,5 @@ const {RoomPlan} = require('plan.room');
 
 exports.loop = function() {
     _.each(Game.rooms, room => room.updateData());
-    _.each(Game.rooms, room => new RoomPlan(room));
+    _.each(Game.rooms, room => new RoomPlan(room.name));
 };

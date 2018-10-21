@@ -84,9 +84,7 @@ function scanData() {
     return data;
 };
 
-function updateData() {
-    _.set(Memory, ['rooms', this.name, 'data'], this.scanData());
-};
+function updateData() { _.set(Memory, ['rooms', this.name, 'data'], this.scanData()); };
 
 Room.prototype.drawColorMap = drawColorMap;
 Room.prototype.scanData = scanData;
