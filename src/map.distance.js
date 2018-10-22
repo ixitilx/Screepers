@@ -1,47 +1,8 @@
 'use strict';
 
 const {ScoreMap} = require('map.score');
-const {posToIdx, inRoom} = require('map.room');
+const {posToIdx, inRoom, floodFill} = require('map.room');
 const {TerrainMap} = require('map.terrain');
-
-function posAround(p, pos) {
-    const out = [];
-    [-1, 0, 1].forEach(dy =>
-        [-1, 0, 1].forEach(function(dx) {
-            const pt = {x: p.x + dx, y: p.y + dy};
-            if (inRoom(pt) && pos[pt.y][pt.x]===false) {
-                out.push(pt);
-                pos[pt.y][pt.x] = true;
-            }
-        }));
-    return out;
-};
-
-function addNearby(x, y, i, data, out, terrainMap) {
-    const checkAndAdd = function(x, y) {
-        if (!inRoom(x, y))
-            return;
-
-        const i = posToIdx(x, y);
-        if (!(i in out) && data[i]===null && terrainMap.getIdx(i) !== '#')
-            out[i] = [x, y];
-    };
-
-    checkAndAdd(x-1, y-1);
-    checkAndAdd(x  , y-1);
-    checkAndAdd(x+1, y-1);
-    checkAndAdd(x-1, y  );
-    checkAndAdd(x+1, y  );
-    checkAndAdd(x-1, y+1);
-    checkAndAdd(x  , y+1);
-    checkAndAdd(x+1, y+1);
-};
-
-function newQueue(queue, data, terrainMap) {
-    const out = {};
-    _.each(queue, ([x, y], i) => addNearby(x, y, i, data, out, terrainMap));
-    return out;
-};
 
 function buildDistanceMapData(terrainMap, positions) {
     if (!_.isArray(positions) && positions.x && positions.y)
@@ -50,24 +11,18 @@ function buildDistanceMapData(terrainMap, positions) {
     if (positions.length === 0)
         throw new Error('Cannot build distance map out of empty input');
 
-    let queue = {};
-    positions.forEach(p => queue[posToIdx(p.x, p.y)] = [p.x, p.y]);
-
     const data = Array.from({length: 2500}, v => null);
 
-    let score;
-    for (score = 0; _.size(queue); score++) {
-        // set score for each passable tile in queue
-        _.each(queue, ([x, y], i) => {
-            if (terrainMap.getIdx(i) !== '#') {
-                if (!_.inRange(i, 0, 2500))
-                    throw new Error(`Attempt to set index ${i} (${x}, ${y})`);
-                data[i] = score;
-            }
-        });
+    let score = 0;
+    const idx = positions.map(p => posToIdx(p.x, p.y));
 
-        queue = newQueue(queue, data, terrainMap);
+    const callback = idx => {
+        if (score)
+            idx.forEach(i => data[i] = score);
+        score += 1;
     };
+
+    floodFill(idx, idx => _.inRange(idx, 0, 2500) && terrainMap.getIdx(idx) !== '#', callback);
 
     return data;
 };

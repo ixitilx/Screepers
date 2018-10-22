@@ -4,6 +4,7 @@ const {TerrainMap} = require('map.terrain');
 const {DistanceMap} = require('map.distance');
 const {ScoreMap} = require('map.score');
 const {ColorMap} = require('map.color');
+const {AreaMap} = require('map.area');
 const {posToIdx, idxToPos} = require('map.room');
 
 const terrainMapCache = {};
@@ -42,6 +43,7 @@ function getBasePos(roomName) {
         try {
             return new DistanceMap(terrainMap, pos);
         } catch (error) {
+            // throw error;
             return null;
         }
     }
@@ -87,8 +89,18 @@ function getBasePos(roomName) {
 
 class RoomPlan {
     constructor(roomName) {
-        const basePos = getBasePos(roomName);
-        Game.rooms[roomName] && Game.rooms[roomName].visual.circle(basePos[0], basePos[1], {fill: 'green', radius: 0.5});
+        // const basePos = getBasePos(roomName);
+        // Game.rooms[roomName] && Game.rooms[roomName].visual.circle(basePos[0], basePos[1], {fill: 'green', radius: 0.5});
+        let cpu = Game.cpu.getUsed();
+
+        const terrainMap = get(`${roomName}_terrain`, () => new TerrainMap(roomName));
+        const areaMap = get(`${roomName}_area`, () => new AreaMap(terrainMap));
+        const colorMap = get(`${roomName}_area_color`, () => new ColorMap(areaMap));
+        Game.rooms[roomName].drawColorMap(colorMap);
+        const cpuEnd = (Game.cpu.getUsed() - cpu);
+        console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket} Cpu:${cpuEnd.toFixed(2)} `, 80, '-'));
+        for(const prop in cache)
+            delete cache[prop];
     };
 };
 
@@ -100,6 +112,5 @@ module.exports = {
     Thoughts
 
     get is quite useful and could be generalized
-    roomdata could be preserved so no room instance is needed for a plan
     zones can be scanned with n-brush-size to identify constrictions
 */

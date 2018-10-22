@@ -6,6 +6,10 @@ function inRoom(x, y) {
     return _.inRange(x, 0, 50) && _.inRange(y, 0, 50);
 };
 
+function inBuildingRange(x, y) {
+    return _.inRange(x, 1, 49) && _.inRange(y, 1, 49);
+};
+
 function posToIdx(x, y) {
     if (!Number.isInteger(x) || !Number.isInteger(y))
         throw new Error(`Attempt to compute index from non-integer coordinates (${x}, ${y})`);
@@ -16,6 +20,36 @@ function idxToPos(idx) {
     if (!Number.isInteger(idx))
         throw new Error(`Attempt to compute coordinates from non-integer index [${idx}]`);
     return [idx%50, (idx/50)>>0];
+};
+
+const _nearIdx = [-51, -50, -49, -1, 1, 49, 50, 51];
+
+function floodFillIdxStep(idx, visited, filter) {
+    const wave = [];
+    _nearIdx.forEach(di => {
+        const newIdx = idx + di;
+        if (!visited.has(newIdx) && filter(newIdx)) {
+            visited.add(newIdx);
+            wave.push(newIdx);
+        }
+    });
+    return wave;
+};
+
+function floodFillStep(wave, visited, filter) {
+    return _(wave).map(idx => floodFillIdxStep(idx, visited, filter))
+                  .flatten()
+                  .value();
+};
+
+
+function floodFill(idxArray, filter, waveCallback) {
+    const visited = new Set(idxArray);
+    for (let wave = idxArray; wave.length; wave = floodFillStep(idxArray, visited, filter)) {
+        if (waveCallback)
+            waveCallback(nextWave);
+    }
+    return visited;
 };
 
 class RoomMap {
@@ -108,6 +142,10 @@ class RoomMap {
 module.exports = {
     RoomMap: RoomMap,
     inRoom : inRoom,
+    inBuildingRange: inBuildingRange,
     posToIdx: posToIdx,
     idxToPos: idxToPos,
+    floodFill: floodFill,
+    floodFillStep: floodFillStep,
+    floodFillIdxStep: floodFillIdxStep,
 };
