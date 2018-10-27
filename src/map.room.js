@@ -45,11 +45,11 @@ function floodFillStep(wave, visited, filter) {
 
 function floodFill(idxArray, filter, waveCallback) {
     const visited = new Set(idxArray);
-    for (let wave = idxArray; wave.length; wave = floodFillStep(idxArray, visited, filter)) {
+    for (let wave = idxArray; wave.length; wave = floodFillStep(wave, visited, filter)) {
         if (waveCallback)
             waveCallback(nextWave);
     }
-    return visited;
+    return Array.from(visited);
 };
 
 class RoomMap {

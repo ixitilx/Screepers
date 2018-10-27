@@ -4,7 +4,7 @@ const {TerrainMap} = require('map.terrain');
 const {DistanceMap} = require('map.distance');
 const {ScoreMap} = require('map.score');
 const {ColorMap} = require('map.color');
-const {AreaMap} = require('map.area');
+const {ZoneMap} = require('map.zone');
 const {posToIdx, idxToPos} = require('map.room');
 
 const terrainMapCache = {};
@@ -94,8 +94,8 @@ class RoomPlan {
         let cpu = Game.cpu.getUsed();
 
         const terrainMap = get(`${roomName}_terrain`, () => new TerrainMap(roomName));
-        const areaMap = get(`${roomName}_area`, () => new AreaMap(terrainMap));
-        const colorMap = get(`${roomName}_area_color`, () => new ColorMap(areaMap));
+        const zoneMap = get(`${roomName}_area`, () => new ZoneMap(terrainMap));
+        const colorMap = get(`${roomName}_area_color`, () => new ColorMap(zoneMap));
         Game.rooms[roomName].drawColorMap(colorMap);
         const cpuEnd = (Game.cpu.getUsed() - cpu);
         console.log(_.padRight(`Time:${Game.time} Bucket:${Game.cpu.bucket} Cpu:${cpuEnd.toFixed(2)} `, 80, '-'));
