@@ -1,7 +1,7 @@
 'use strict';
 
 const {ScoreMap} = require('map.score');
-const {posToIdx, inRoom, floodFill} = require('map.room');
+const {posToIdx, floodFill} = require('map.room');
 const {TerrainMap} = require('map.terrain');
 
 function buildDistanceMapData(terrainMap, positions) {

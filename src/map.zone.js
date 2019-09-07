@@ -12,14 +12,14 @@ function reach(x, y, terrainMap, howFar) {
         return howFar;
 
     let canReach = true;
-    for (let i=0; i<=howFar && canReach; ++i)
-        canReach = terrainMap.getPos(right, y+i) !== '#';
-    for (let i=0; i<=howFar && canReach; ++i)
-        canReach = terrainMap.getPos(x+i, bottom) !== '#';
+    for (let i=0; i<=howFar && canReach; ++i) {
+        canReach = terrainMap.getPos(right, y+i)  !== '#' &&
+                   terrainMap.getPos(x+i, bottom) !== '#';
+    }
     return canReach ? reach(x, y, terrainMap, howFar + 1) : howFar;
 };
 
-function updateReach(value, tileId, data, terrainMap) {
+function updateReach(value, tileId, terrainMap) {
     if (Number.isInteger(value))
         return value;
 
@@ -96,7 +96,7 @@ function mergeZones(zones, links) {
 
 function buildAreaMapData(terrainMap) {
     const reachMapData = Array.from({length: 2500})
-                              .map((v, i, a) => updateReach(v, i, a, terrainMap))
+                              .map((v, i) => updateReach(v, i, terrainMap))
                               .map(v => v === 0 ? null : v);
 
     const areaMapData = Array.from({length: 2500}, v => null);

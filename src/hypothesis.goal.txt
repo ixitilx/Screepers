@@ -1,7 +1,29 @@
 What are script's game goals?
 
-ExpansionRank (upgrade controllers)
-PowerRank (process power)
+GOAL = Raise expansion rank     RESULT = Energy fed to controller
+    STRATEGY = Feed energy to controllers
+        Act as if given infrastructure is in place!
+
+        Get suitable creep at required position
+        Get energy from nearby container
+        Fix container if needed
+        Feed energy to controller
+
+Every 'room' has a ... controller module responsible for some sort of operations in that room
+Every 'controller' structure has a ... controller module responsible for handling operations around controller structure
+Every 'source' has a ... controller module responsible for handling operations around that source
+
+There is a number of services where you can request information, creeps and buildings
+
+GOAL = Get suitable creep at required position      RESULT = suitable creep at required position
+    GOAL = Get suitable creep
+
+
+Raise Power Rank
+    Feed power to powerbanks
+        Collect power
+        Transport power
+        Feed power to powerspawn
 
 --
 
@@ -87,3 +109,9 @@ if (hascontainer && container.hasroom)
     container 
 else
     refill || build || upgrade
+
+# How to break room into sections?
+Calculate shortest paths from every natural wall to the every other one
+Among those intersecting each other, remove all walls but the shortest one
+
+# 

@@ -42,10 +42,9 @@ function floodFillStep(wave, visited, filter) {
                   .value();
 };
 
-
-function floodFill(idxArray, filter, waveCallback) {
-    const visited = new Set(idxArray);
-    for (let wave = idxArray; wave.length; wave = floodFillStep(wave, visited, filter)) {
+function floodFill(posArray, posFilter, waveCallback) {
+    const visited = new Set(posArray);
+    for (let wave = posArray; wave.length; wave = floodFillStep(wave, visited, posFilter)) {
         if (waveCallback)
             waveCallback(nextWave);
     }
@@ -63,16 +62,6 @@ class RoomMap {
         } else {
             throw new Error(`Cannot initialize from ${data}`);
         }
-    };
-
-    validatePos(x, y) {
-        if (!inRoom(x) || !inRoom(y))
-            throw new Error(`Position is outside of the room: [${x} ${y}]`);
-    };
-
-    validateIdx(idx) {
-        if (!inRange(idx, 0, 2500))
-            throw new Error(`Index is outside of the room: [${idx}]`);
     };
 
     _values() {
