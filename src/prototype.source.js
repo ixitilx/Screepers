@@ -28,6 +28,9 @@ function containerSpot() {
     }
 
     // this.room.visual.poly(path.path);
+
+    // const pathLen = _.size(path.path);
+    // const contIdx = pathLen - (pathLen > 1 ? 2 : 1);
     const spot = _.last(path.path);
     this.memory.containerSpot = {x: spot.x, y: spot.y};
     return spot;
@@ -55,8 +58,8 @@ function getHarvesters() {
 
 function drawSpots() {
     const visual = this.room.visual;
+    visual.circle(this.containerSpot, {fill: 'Red', radius: 0.3, opacity: 0.3});
     _.each(this.spots, pos => visual.circle(pos, {fill:'Yellow'}));
-    visual.circle(this.containerSpot, {fill: 'Red'});
 };
 
 defineProperty(Source, 'memory', getSourceMemory);

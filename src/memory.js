@@ -88,4 +88,4 @@ function makeMemoryBackedPropertyDescriptor(name, computeFunc, loadFunc, saveFun
 
 function onTickEnd() {
     _.each(k_memoryPropCallbacks, callback => callback());
-}
+};
