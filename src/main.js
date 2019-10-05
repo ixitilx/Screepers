@@ -7,7 +7,7 @@ exports.loop = function() {
     // const source = room.find(FIND_SOURCES)[0];
     // sourceHarvest(source);
 
-    const spawn = Game.spawns.Spawn1;
+    const spawn = _(Game.spawns).first();
     console.log(spawn);
 
     // const creepCountBefore = _.size(Game.creeps);
